@@ -3,10 +3,10 @@
 **Last Updated**: 2026-11-21
 
 ## Current Phase
-**Phase 02 — Design system: foundation complete, awaiting approval to start Phase 03.** Phase 01 is complete.
+**Phase 03 — Data architecture and TMDB integration: code complete, NOT verified against live TMDB.** Phases 01 and 02 are complete and committed (`e53741c`, `04de6c7`). Phase 03 is uncommitted. Awaiting approval to start Phase 04.
 
 ## Current Goal
-Phase 03 (pending approval). See "Next Work".
+Add a TMDB token, run the mapping, and verify the API with live data (see "Next Work"). Then Phase 04 (pending approval).
 
 ## Completed Work
 - Product flows, two journey modes, pan/zoom timeline, title detail layout, achievements and UI contract defined (pre-Phase 01).
@@ -66,13 +66,9 @@ No browser screenshots were taken because there is no UI to review in this phase
 - **No test runner installed.** No logic exists yet. Add Vitest when progress and achievement rules are written (Phase 7–9 in `ai-workflow-rules.md`).
 
 ## Open Issues
-- **Documents referenced but missing:**
-  - `PRODUCT.md` and `DESIGN.md` (expected; produced by the design skills)
-  - root `AGENTS.md`, `ARCHITECTURE.md` and `STANDARDS.md`, which `ai-workflow-rules.md`, `architecture.md` and `code-standards.md` say they inherit from. Either create them or remove those references.
-- **`CLAUDE.md` is in `docs/`, not at the repo root**, so Claude Code won't auto-load it. Consider moving it or adding a root `CLAUDE.md` that points to it.
-- **Not a git repository yet.** `skill-installation.md` asks for a commit or backup before installing skills.
+Resolved since Phase 01: `PRODUCT.md`, `DESIGN.md`, `AGENTS.md`, `ARCHITECTURE.md`, `STANDARDS.md` and `CLAUDE.md` now exist at the repo root; the project is a git repository; both design skills are installed (see Phase 02).
+Still open:
 - **`CLAUDE.md` formatting:** the §5 heading is duplicated and there is no §6.
-- **Design skills not installed:** Impeccable and Taste Skill are deliberately deferred per the Phase 01 brief.
 
 ## Phase 02 — Session Log (in progress)
 
@@ -140,9 +136,90 @@ No browser screenshots were taken because there is no UI to review in this phase
 - **No horizontal-overflow measurement** by script. Confirmed visually at three widths only.
 - **`PRODUCT.md`** still reports as a legacy schema to Impeccable (`route`). Not repaired, by decision.
 
-## Next Work (Phase 03 — awaiting approval)
-Phase 03 scope is not defined in the source documents. Per `ai-workflow-rules.md`, the next unit is "Curated data" (typed roadmap schema, migrated title list, TMDB ID validation), then "TMDB integration". Before starting:
-1. Confirm the phase order and whether the curated roadmap data is available to migrate.
-2. Resolve the `DESIGN.md` §12 open decisions that block the first page (landing needs none; the map needs 1, 2 and 3).
-3. Decide whether to run Impeccable `critique`/`audit` and a Taste Skill pass on the landing page when it is built.
-4. Commit the Phase 02 work (not committed; awaiting your instruction).
+## Phase 03 — Outcome
+
+### Status
+Architecture, validation, mapping tooling, local persistence and the server integration are implemented and unit tested. **Nothing has been verified against live TMDB data**: no TMDB credential was available, so no TMDB ID is recorded and no endpoint has returned real metadata.
+
+### Dataset audit (`app/constant/marvel_doomsday_watchlist.json`)
+- **Location:** `app/constant/` (singular). `app/constants` does not exist. The file was untracked in git when found.
+- **Structure:** `schema_version` `1.0.0`, `collection`, `titles` (82), `supplemental_titles` (10). Counts match the brief.
+- **Integrity:** all 92 IDs unique; `watch_order` 1–82, no gaps or duplicates, matches list order and each ID's number; no duplicate title and year; no whitespace or empty-string problems.
+- **Observed values:** type 38 movie / 37 series / 7 special; priority 10 essential / 19 recommended / 53 optional; connection 23 confirmed / 59 indirect; `completion_status` all `not_started`. Supplemental: 10 movies, 6 recommended / 4 optional, 6 confirmed / 4 indirect.
+- **Findings, none changed:**
+  1. `marvel_004` has an optional `notes` field no other title has (kept, allowed).
+  2. `special` (7 titles) is a third editorial type with no TMDB equivalent.
+  3. `unconfirmed` is defined in `connection_status_definitions` but never used.
+  4. Only `not_started` appears for `completion_status`; the other values (`watching`, `completed`) are assumed from `docs/architecture.md`.
+  5. 17 titles are season-level ("Daredevil - Season 1"), several sharing one TMDB series; the mapping carries `season_number`.
+  6. 6 titles are `recommended` but `is_doomsday_relevant: false`. Independent fields; not an error.
+  7. Several 2026 titles are unreleased or newly released; TMDB data may be missing or partial.
+- **Integrity of the file:** not modified by this phase. mtime unchanged (2026-11-21 02:32), 53,875 bytes, SHA-256 `16ea2167…7044`. The only file the new code writes is `tmdb_mapping.json`.
+
+### Implemented
+- Types (`shared/types`) and Zod schemas with cross-checks (`shared/schemas`); main and supplemental collections kept as separate types.
+- `pnpm validate:data`: validates without modifying; names the title and field; `--strict` requires every title verified. `pnpm build` runs it first.
+- `app/constant/tmdb_mapping.json` (all 92 `unmapped`) and `pnpm tmdb:map` (search, score, `needs_review`, `--verify` for manual matches). Never takes the first result; never overwrites a verified entry.
+- Personal progress: `app/utils/progress-storage.ts`, `app/composables/useProgress.ts`, `app/plugins/progress.client.ts`. Versioned key `marvel-roadmap:v1`, SSR-safe, backs up rejected data.
+- Server: four routes under `/api/titles/[titleId]/`, a TMDB client with typed errors, Zod-validated responses, normalisers, in-memory caching.
+- Docs: `ARCHITECTURE.md` §11, `STANDARDS.md` §14, `README.md` rewritten, superseded notices on `docs/architecture.md` and `docs/code-standards.md`.
+
+### Files created
+`shared/types/{roadmap,tmdb-mapping,progress,tmdb}.ts`, `shared/schemas/{roadmap,tmdb-mapping}.ts`, `shared/utils/{title-query,tmdb-match,tmdb-image}.ts`, `server/utils/roadmap.ts`, `server/utils/tmdb/{client,errors,schemas,normalize,service,cached,respond}.ts`, `server/api/titles/[titleId]/{index,credits,videos,providers}.get.ts`, `app/utils/progress-storage.ts`, `app/composables/useProgress.ts`, `app/plugins/progress.client.ts`, `app/constant/tmdb_mapping.json`, `scripts/{validate-data,tmdb-map,tmdb-map-lib}.ts`, `tests/*` (9 files), `vitest.config.ts`, `tsconfig.tools.json`.
+`app/constant/marvel_doomsday_watchlist.json` already existed and is untracked.
+
+### Files modified
+`nuxt.config.ts` (server-only `tmdbApiBaseUrl`, explicit in-memory cache storage), `package.json`, `pnpm-lock.yaml`, `.env.example`, `ARCHITECTURE.md`, `STANDARDS.md`, `README.md`, `docs/architecture.md`, `docs/code-standards.md`, `docs/progress-tracker.md`.
+
+### Dependencies added
+`zod@4.6.7` (runtime), `vitest@5.1.1` and `@types/node@24.19.2` (dev).
+
+### Commands run and actual results (final code state)
+| Command | Result |
+|---|---|
+| `pnpm validate:data` | exit 0: roadmap OK (82 + 10); mapping OK (verified 0, needs_review 0, unmapped 92) |
+| `pnpm validate:data --strict` | exit 1, as designed: 92 titles not verified |
+| `pnpm typecheck` (`nuxt typecheck` + `tsc -p tsconfig.tools.json`) | exit 0 |
+| `pnpm lint` | exit 0 |
+| `pnpm test` | exit 0: 9 files, 104 tests passed |
+| `pnpm build` | exit 0 (validation runs first); 4.2 MB total |
+| `pnpm tmdb:map` with no token | exits 1 with a clear message; writes nothing |
+| `pnpm tmdb:map --dry-run --only marvel_007` with an invalid token (real request to TMDB) | stopped with "TMDB rejected the configured credentials"; wrote nothing |
+
+### Runtime check of the routes (production build, temporary placeholder entry, then restored)
+A placeholder `verified` entry (ID `1`, never looked up because the token is rejected first) was added to `tmdb_mapping.json` for a smoke test. The file was restored byte for byte (SHA-256 confirmed) and the build redone; the placeholder is not in the final bundle.
+- No token → `503 credentials_missing`.
+- Invalid token → TMDB's real `401` mapped to `503 credentials_invalid`, for details, credits, videos and providers; 8 of 8 cold starts after the host change.
+- `?region=in` accepted; `?region=ZZZ` and `?region=1%20` → `400 invalid_region`.
+- Unmapped title → `404 tmdb_not_mapped`; unknown ID → `404 title_not_found`; malformed ID → `400 invalid_title_id`.
+- The token did not appear in server logs, responses, the SSR HTML or the client bundle.
+
+### Findings during testing
+- **`api.themoviedb.org` is unreliable from this network:** 8 of 10 new connections reset, against 0 of 10 for `api.tmdb.org` (same API). The default base URL is now `https://api.tmdb.org/3` and a reset connection is retried once. This was measured on one machine on 2026-11-21; revisit if the deployment network differs.
+- Lint originally linted `.claude/` (third-party skill code). Excluded in Phase 02.
+
+### NOT verified (needs a TMDB token)
+- That any endpoint returns correct real metadata, credits, videos or providers.
+- India (`IN`) provider results, and the shape of real provider responses beyond the documented fields.
+- That a second request is served from the cache (needs a live success).
+- Rate-limit behaviour against the real API.
+- The mapping tool's search results on the 92 real titles. The matching rules are unit tested with synthetic candidates only; real titles (the 7 `special` entries, season titles, 2026 releases) will likely produce `needs_review` entries.
+- The `useProgress` composable in a browser: the store is unit tested; the Nuxt wrapper, the `app:mounted` hydration and a real refresh have not been exercised in a browser.
+
+### Known issues and unresolved decisions
+- **Mapping is 0 of 92.** No TMDB ID is recorded.
+- **Uncommitted:** all Phase 03 work, including the untracked roadmap JSON.
+- Open decisions are listed in `ARCHITECTURE.md` §11.9 (full `completion_status` set, `unconfirmed`, `special` mapping, season-level credits and videos, Doomsday Journey membership field).
+- `docs/architecture.md` and `docs/code-standards.md` still contain the superseded camelCase model below their notices.
+- TMDB requires attribution and its watch-provider data requires JustWatch attribution; the UI must show both when built.
+- The in-memory cache is per process and cleared on restart.
+
+## Next Work (Phase 04 — awaiting approval)
+Before Phase 04:
+1. **Add a TMDB token** to `.env` (`NUXT_TMDB_API_TOKEN`; see README).
+2. Run `pnpm tmdb:map --dry-run`, then `pnpm tmdb:map`. Review every `needs_review` entry and settle it with `pnpm tmdb:map --verify id=movie:ID` or `id=tv:ID[:season]`. Do not guess IDs.
+3. Run `pnpm validate:data --strict` until it passes.
+4. With the dev server and a verified title, call all four routes; confirm real data, `IN` providers, and that a repeat request is served from cache. Record the results here.
+5. Decide the open data questions in `ARCHITECTURE.md` §11.9, and the `DESIGN.md` §12 items the first page needs.
+6. Commit Phase 03 (on request).
+Phase 04's scope is not defined in the source documents. `ai-workflow-rules.md` points to the landing page next; it needs the countdown date from `collection.target_release_date` (`2026-12-18`).

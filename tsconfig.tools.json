@@ -1,0 +1,20 @@
+{
+  // Type-checks code Nuxt's generated configs do not cover: scripts, tests, and the shared/server/app logic they import.
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "types": ["node"]
+  },
+  "include": ["scripts", "tests", "shared", "server/utils", "app/utils", "vitest.config.ts"],
+  // cached.ts and respond.ts depend on Nitro/h3 runtime types and are covered by `nuxt typecheck`.
+  "exclude": ["server/utils/tmdb/cached.ts", "server/utils/tmdb/respond.ts"]
+}

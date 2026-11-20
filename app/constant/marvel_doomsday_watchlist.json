@@ -1,0 +1,1574 @@
+{
+  "schema_version": "1.0.0",
+  "collection": {
+    "id": "road_to_avengers_doomsday",
+    "title": "Road to Avengers: Doomsday",
+    "description": "Marvel watchlist based on the titles supplied by the user. Priority indicates how useful each title is for understanding announced Doomsday characters and established multiverse context.",
+    "target_title": "Avengers: Doomsday",
+    "target_release_date": "2026-12-18",
+    "target_release_date_note": "Release date shown on the Disney Movies page checked on 2026-11-20; regional release dates may differ.",
+    "priority_definitions": {
+      "essential": "Strongly recommended for the main character or story context.",
+      "recommended": "Useful background for characters, factions, or story concepts.",
+      "optional": "Can be skipped without losing the core Doomsday setup."
+    },
+    "connection_status_definitions": {
+      "confirmed": "Direct character/franchise connection supported by the announced Doomsday cast or official premise.",
+      "indirect": "Provides wider MCU, character, or multiverse background but is not an established direct prerequisite.",
+      "unconfirmed": "A possible connection is not established by official information."
+    },
+    "sources": [
+      "https://movies.disney.com/avengers-doomsday",
+      "https://www.disneyplus.com/en-gb/explore/articles/avengers-doomsday-cast-characters"
+    ]
+  },
+  "titles": [
+    {
+      "id": "marvel_001",
+      "title": "Eyes of Wakanda",
+      "release_year": 2025,
+      "type": "series",
+      "watch_order": 1,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Adds Wakandan history and the legacy of vibranium.",
+      "doomsday_connection": "Wakanda background; the Doomsday cast includes Shuri and M'Baku.",
+      "connection_status": "indirect",
+      "characters": [
+        "Wakandans"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_002",
+      "title": "Captain America: The First Avenger",
+      "release_year": 2011,
+      "type": "movie",
+      "watch_order": 2,
+      "priority": "recommended",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Introduces Steve Rogers, whose return is part of Doomsday's announced cast.",
+      "doomsday_connection": "Establishes Steve Rogers and the Super Soldier legacy.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Steve Rogers"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_003",
+      "title": "Marvel One-Shot: Agent Carter",
+      "release_year": 2013,
+      "type": "special",
+      "watch_order": 3,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Adds Peggy Carter background, but is not required for the main story.",
+      "doomsday_connection": "Peggy Carter is listed in Doomsday-related cast coverage; this short gives extra history.",
+      "connection_status": "indirect",
+      "characters": [
+        "Peggy Carter"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_004",
+      "title": "Marvel's Agent Carter",
+      "release_year": 2015,
+      "type": "series",
+      "watch_order": 4,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Expands Peggy Carter's history and early S.H.I.E.L.D. connections.",
+      "doomsday_connection": "Background for Peggy Carter; not required to understand the central conflict.",
+      "connection_status": "indirect",
+      "characters": [
+        "Peggy Carter"
+      ],
+      "completion_status": "not_started",
+      "notes": "The supplied list names the series without specifying a season; this entry represents the series."
+    },
+    {
+      "id": "marvel_005",
+      "title": "The Fantastic Four: First Steps",
+      "release_year": 2025,
+      "type": "movie",
+      "watch_order": 5,
+      "priority": "essential",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Introduces the Fantastic Four, whose four core members are part of Doomsday's announced cast.",
+      "doomsday_connection": "Directly establishes Reed Richards, Sue Storm, Johnny Storm and Ben Grimm.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Reed Richards",
+        "Sue Storm",
+        "Johnny Storm",
+        "Ben Grimm"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_006",
+      "title": "Captain Marvel",
+      "release_year": 2019,
+      "type": "movie",
+      "watch_order": 6,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Provides wider cosmic and Kree-Skrull context, but no direct Doomsday setup has been established.",
+      "doomsday_connection": "Broader MCU cosmic background; no confirmed direct plot dependency.",
+      "connection_status": "indirect",
+      "characters": [
+        "Carol Danvers",
+        "Nick Fury"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_007",
+      "title": "Iron Man",
+      "release_year": 2008,
+      "type": "movie",
+      "watch_order": 7,
+      "priority": "recommended",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Establishes Tony Stark and the original MCU era, useful context for the returning actor Robert Downey Jr. in a different role.",
+      "doomsday_connection": "Tony Stark is not Victor von Doom; Downey Jr. plays Doctor Doom in Doomsday.",
+      "connection_status": "indirect",
+      "characters": [
+        "Tony Stark"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_008",
+      "title": "Iron Man 2",
+      "release_year": 2010,
+      "type": "movie",
+      "watch_order": 8,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues Tony Stark's story and introduces more of the wider Avengers world.",
+      "doomsday_connection": "General MCU continuity; no confirmed direct Doomsday setup.",
+      "connection_status": "indirect",
+      "characters": [
+        "Tony Stark",
+        "Natasha Romanoff"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_009",
+      "title": "The Incredible Hulk",
+      "release_year": 2008,
+      "type": "movie",
+      "watch_order": 9,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Introduces Bruce Banner's MCU history, but Hulk is not listed in the announced Doomsday cast.",
+      "doomsday_connection": "General MCU continuity; no confirmed direct Doomsday connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Bruce Banner"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_010",
+      "title": "Marvel One-Shot: A Funny Thing Happened on the Way to Thor's Hammer",
+      "release_year": 2011,
+      "type": "special",
+      "watch_order": 10,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "A short Coulson adventure with little bearing on Doomsday.",
+      "doomsday_connection": "Small S.H.I.E.L.D. continuity detail; no confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Phil Coulson"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_011",
+      "title": "Thor",
+      "release_year": 2011,
+      "type": "movie",
+      "watch_order": 11,
+      "priority": "recommended",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Introduces Thor and Asgard, and Thor is part of Doomsday's announced cast.",
+      "doomsday_connection": "Direct character continuity for Thor.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Thor",
+        "Loki"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_012",
+      "title": "Marvel One-Shot: The Consultant",
+      "release_year": 2011,
+      "type": "special",
+      "watch_order": 12,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "A short S.H.I.E.L.D. story that is not needed for Doomsday.",
+      "doomsday_connection": "Adds a small continuity bridge involving Coulson and Sitwell.",
+      "connection_status": "indirect",
+      "characters": [
+        "Phil Coulson",
+        "Jasper Sitwell"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_013",
+      "title": "The Avengers",
+      "release_year": 2012,
+      "type": "movie",
+      "watch_order": 13,
+      "priority": "essential",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Establishes the original Avengers team and Loki, a character returning in Doomsday.",
+      "doomsday_connection": "Foundational team-up and Loki's history.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Iron Man",
+        "Captain America",
+        "Thor",
+        "Hulk",
+        "Black Widow",
+        "Hawkeye",
+        "Loki"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_014",
+      "title": "Item 47",
+      "release_year": 2012,
+      "type": "special",
+      "watch_order": 14,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "A small post-Battle of New York story; not necessary for Doomsday.",
+      "doomsday_connection": "Shows the aftermath of the first Avengers battle.",
+      "connection_status": "indirect",
+      "characters": [
+        "S.H.I.E.L.D."
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_015",
+      "title": "Thor: The Dark World",
+      "release_year": 2013,
+      "type": "movie",
+      "watch_order": 15,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Adds more Asgardian history, but is not a core Doomsday prerequisite.",
+      "doomsday_connection": "Background for Thor and Loki.",
+      "connection_status": "indirect",
+      "characters": [
+        "Thor",
+        "Loki"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_016",
+      "title": "Iron Man 3",
+      "release_year": 2013,
+      "type": "movie",
+      "watch_order": 16,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues Tony Stark's personal arc, but is not a direct Doomsday prerequisite.",
+      "doomsday_connection": "Useful MCU history; do not confuse Tony Stark with Doctor Doom.",
+      "connection_status": "indirect",
+      "characters": [
+        "Tony Stark"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_017",
+      "title": "Captain America: The Winter Soldier",
+      "release_year": 2014,
+      "type": "movie",
+      "watch_order": 17,
+      "priority": "recommended",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Explains Bucky Barnes and the fall of S.H.I.E.L.D., helping with the returning character's history.",
+      "doomsday_connection": "Bucky Barnes is part of the announced Doomsday cast.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Steve Rogers",
+        "Bucky Barnes",
+        "Sam Wilson",
+        "Black Widow"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_018",
+      "title": "Guardians of the Galaxy",
+      "release_year": 2014,
+      "type": "movie",
+      "watch_order": 18,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Introduces the cosmic side of the MCU, but the Guardians are not in the announced Doomsday cast.",
+      "doomsday_connection": "Wider cosmic universe context; no confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Star-Lord",
+        "Gamora",
+        "Rocket",
+        "Drax",
+        "Groot"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_019",
+      "title": "I Am Groot",
+      "release_year": 2022,
+      "type": "series",
+      "watch_order": 19,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Short comedy episodes with little relevance to Doomsday.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Groot"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_020",
+      "title": "Guardians of the Galaxy Vol. 2",
+      "release_year": 2017,
+      "type": "movie",
+      "watch_order": 20,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues the Guardians' cosmic story, but is not a confirmed Doomsday prerequisite.",
+      "doomsday_connection": "Wider cosmic MCU background.",
+      "connection_status": "indirect",
+      "characters": [
+        "Guardians"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_021",
+      "title": "Daredevil - Season 1",
+      "release_year": 2015,
+      "type": "series",
+      "watch_order": 21,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Introduces Matt Murdock's street-level story; he is not in the announced Doomsday cast.",
+      "doomsday_connection": "Street-level Marvel background, not a confirmed Doomsday setup.",
+      "connection_status": "indirect",
+      "characters": [
+        "Matt Murdock"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_022",
+      "title": "Jessica Jones - Season 1",
+      "release_year": 2015,
+      "type": "series",
+      "watch_order": 22,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "A standalone street-level story with no established direct Doomsday connection.",
+      "doomsday_connection": "Defenders-era background only.",
+      "connection_status": "indirect",
+      "characters": [
+        "Jessica Jones"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_023",
+      "title": "Avengers: Age of Ultron",
+      "release_year": 2015,
+      "type": "movie",
+      "watch_order": 23,
+      "priority": "recommended",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Develops the Avengers and the consequences of their actions, useful background for the team.",
+      "doomsday_connection": "Avengers continuity and the wider team history.",
+      "connection_status": "indirect",
+      "characters": [
+        "Avengers",
+        "Vision",
+        "Wanda Maximoff"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_024",
+      "title": "Ant-Man",
+      "release_year": 2015,
+      "type": "movie",
+      "watch_order": 24,
+      "priority": "recommended",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Introduces Scott Lang, who is part of Doomsday's announced cast.",
+      "doomsday_connection": "Direct character background for Ant-Man.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Scott Lang",
+        "Hank Pym"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_025",
+      "title": "Daredevil - Season 2",
+      "release_year": 2016,
+      "type": "series",
+      "watch_order": 25,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues Matt Murdock's story but is not required for Doomsday.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Matt Murdock",
+        "Frank Castle"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_026",
+      "title": "Luke Cage - Season 1",
+      "release_year": 2016,
+      "type": "series",
+      "watch_order": 26,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Street-level character development with no confirmed direct Doomsday role.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Luke Cage"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_027",
+      "title": "Iron Fist - Season 1",
+      "release_year": 2017,
+      "type": "series",
+      "watch_order": 27,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Street-level story that is not needed for Doomsday.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Danny Rand"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_028",
+      "title": "The Defenders - Season 1",
+      "release_year": 2017,
+      "type": "series",
+      "watch_order": 28,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Brings the Netflix street-level heroes together, but they are not in the announced Doomsday cast.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Daredevil",
+        "Jessica Jones",
+        "Luke Cage",
+        "Iron Fist"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_029",
+      "title": "Captain America: Civil War",
+      "release_year": 2016,
+      "type": "movie",
+      "watch_order": 29,
+      "priority": "recommended",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Explains the division among the Avengers and the histories of Bucky and Sam.",
+      "doomsday_connection": "Important background for Sam Wilson, Bucky Barnes and the Avengers.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Steve Rogers",
+        "Sam Wilson",
+        "Bucky Barnes",
+        "Tony Stark"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_030",
+      "title": "Your Friendly Neighborhood Spider-Man - Season 1",
+      "release_year": 2025,
+      "type": "series",
+      "watch_order": 30,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "An alternate animated Spider-Man continuity, not a required Doomsday story.",
+      "doomsday_connection": "Separate animated continuity; no confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Peter Parker"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_031",
+      "title": "Black Widow",
+      "release_year": 2021,
+      "type": "movie",
+      "watch_order": 31,
+      "priority": "recommended",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Introduces Yelena and develops Natasha's family, including characters returning in Doomsday.",
+      "doomsday_connection": "Yelena, Red Guardian and other characters connect to the Thunderbolts group.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Natasha Romanoff",
+        "Yelena Belova",
+        "Red Guardian"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_032",
+      "title": "Black Panther",
+      "release_year": 2018,
+      "type": "movie",
+      "watch_order": 32,
+      "priority": "recommended",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Introduces Wakanda, T'Challa, Shuri and the political world continued in later films.",
+      "doomsday_connection": "Foundation for Wakandan characters returning in Doomsday.",
+      "connection_status": "confirmed",
+      "characters": [
+        "T'Challa",
+        "Shuri",
+        "M'Baku",
+        "Okoye"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_033",
+      "title": "Spider-Man: Homecoming",
+      "release_year": 2017,
+      "type": "movie",
+      "watch_order": 33,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues Peter Parker's MCU story, but Spider-Man is not in the announced Doomsday cast.",
+      "doomsday_connection": "No confirmed direct Doomsday connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Peter Parker"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_034",
+      "title": "The Punisher - Season 1",
+      "release_year": 2017,
+      "type": "series",
+      "watch_order": 34,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "A street-level crime story with no confirmed direct Doomsday role.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Frank Castle"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_035",
+      "title": "Doctor Strange",
+      "release_year": 2016,
+      "type": "movie",
+      "watch_order": 35,
+      "priority": "recommended",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Introduces the sorcerer and mystical rules that help contextualize the multiverse-era MCU.",
+      "doomsday_connection": "Important mystical and dimensional background, though Strange is not on the announced cast list.",
+      "connection_status": "indirect",
+      "characters": [
+        "Stephen Strange"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_036",
+      "title": "Jessica Jones - Season 2",
+      "release_year": 2018,
+      "type": "series",
+      "watch_order": 36,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues Jessica's personal story; no confirmed Doomsday dependency.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Jessica Jones"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_037",
+      "title": "Luke Cage - Season 2",
+      "release_year": 2018,
+      "type": "series",
+      "watch_order": 37,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues Luke Cage's street-level story; no confirmed Doomsday dependency.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Luke Cage"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_038",
+      "title": "Iron Fist - Season 2",
+      "release_year": 2018,
+      "type": "series",
+      "watch_order": 38,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Concludes more of Danny Rand's story but is not needed for Doomsday.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Danny Rand"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_039",
+      "title": "Daredevil - Season 3",
+      "release_year": 2018,
+      "type": "series",
+      "watch_order": 39,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues the Kingpin and Matt Murdock storyline; no confirmed Doomsday dependency.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Matt Murdock",
+        "Wilson Fisk"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_040",
+      "title": "Thor: Ragnarok",
+      "release_year": 2017,
+      "type": "movie",
+      "watch_order": 40,
+      "priority": "recommended",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Develops Thor, Loki and the events leading into Infinity War.",
+      "doomsday_connection": "Useful direct background for Thor and Loki.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Thor",
+        "Loki",
+        "Hulk"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_041",
+      "title": "The Punisher - Season 2",
+      "release_year": 2019,
+      "type": "series",
+      "watch_order": 41,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Further Frank Castle story; no confirmed Doomsday dependency.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Frank Castle"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_042",
+      "title": "Jessica Jones - Season 3",
+      "release_year": 2019,
+      "type": "series",
+      "watch_order": 42,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Completes Jessica's series arc; no confirmed Doomsday dependency.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Jessica Jones"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_043",
+      "title": "Ant-Man and the Wasp",
+      "release_year": 2018,
+      "type": "movie",
+      "watch_order": 43,
+      "priority": "recommended",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Develops Scott Lang and the Quantum Realm, useful background for the later MCU timeline.",
+      "doomsday_connection": "Scott Lang returns in Doomsday; Quantum Realm is broader multiverse-era context.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Scott Lang",
+        "Hope van Dyne"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_044",
+      "title": "Avengers: Infinity War",
+      "release_year": 2018,
+      "type": "movie",
+      "watch_order": 44,
+      "priority": "essential",
+      "is_doomsday_relevant": true,
+      "importance_statement": "The major Avengers confrontation with Thanos and a key turning point in the MCU.",
+      "doomsday_connection": "Essential history for the Avengers and the universe-wide stakes leading to the Multiverse Saga.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Avengers",
+        "Thanos",
+        "Loki"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_045",
+      "title": "Avengers: Endgame",
+      "release_year": 2019,
+      "type": "movie",
+      "watch_order": 45,
+      "priority": "essential",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Resolves the Infinity Saga and establishes the post-Blip world and the original Avengers' legacy.",
+      "doomsday_connection": "Essential foundation for the current MCU timeline and returning Avengers.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Avengers",
+        "Steve Rogers",
+        "Tony Stark",
+        "Thor"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_046",
+      "title": "Marvel Zombies - Season 1",
+      "release_year": 2025,
+      "type": "series",
+      "watch_order": 46,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "An alternate-reality animated story; not required for the main Doomsday continuity.",
+      "doomsday_connection": "Multiverse-adjacent concept, but no confirmed direct plot dependency.",
+      "connection_status": "indirect",
+      "characters": [
+        "Alternate-universe heroes"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_047",
+      "title": "WandaVision",
+      "release_year": 2021,
+      "type": "series",
+      "watch_order": 47,
+      "priority": "recommended",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Explains Wanda's transformation and introduces key Vision-related developments.",
+      "doomsday_connection": "Useful context for Vision's story and the wider reality/multiverse themes.",
+      "connection_status": "indirect",
+      "characters": [
+        "Wanda Maximoff",
+        "Vision",
+        "Monica Rambeau"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_048",
+      "title": "Loki - Season 1",
+      "release_year": 2021,
+      "type": "series",
+      "watch_order": 48,
+      "priority": "essential",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Introduces the TVA, branching timelines and the multiverse framework.",
+      "doomsday_connection": "Central multiverse and timeline context for the saga.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Loki",
+        "Mobius",
+        "Sylvie"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_049",
+      "title": "Deadpool & Wolverine",
+      "release_year": 2024,
+      "type": "movie",
+      "watch_order": 49,
+      "priority": "essential",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Connects the Fox-era Marvel world with the MCU and brings multiverse travel into focus.",
+      "doomsday_connection": "Directly relevant to the X-Men/Fox universe side; Channing Tatum's Gambit is also in Doomsday's announced cast.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Deadpool",
+        "Wolverine",
+        "Gambit"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_050",
+      "title": "Shang-Chi and the Legend of the Ten Rings",
+      "release_year": 2021,
+      "type": "movie",
+      "watch_order": 50,
+      "priority": "recommended",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Introduces Shang-Chi, who is part of Doomsday's announced cast.",
+      "doomsday_connection": "Direct character background for Shang-Chi and the Ten Rings.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Shang-Chi",
+        "Katy"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_051",
+      "title": "The Falcon and the Winter Soldier",
+      "release_year": 2021,
+      "type": "series",
+      "watch_order": 51,
+      "priority": "recommended",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Shows Sam Wilson taking up the Captain America mantle and develops Bucky.",
+      "doomsday_connection": "Direct background for two announced Doomsday characters.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Sam Wilson",
+        "Bucky Barnes",
+        "John Walker"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_052",
+      "title": "Spider-Man: Far From Home",
+      "release_year": 2019,
+      "type": "movie",
+      "watch_order": 52,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues Peter Parker's story after Endgame, but he is not in the announced Doomsday cast.",
+      "doomsday_connection": "No confirmed direct Doomsday connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Peter Parker"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_053",
+      "title": "Eternals",
+      "release_year": 2021,
+      "type": "movie",
+      "watch_order": 53,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Introduces cosmic beings and world-scale mythology, but no direct Doomsday dependency is established.",
+      "doomsday_connection": "Broader MCU mythology only.",
+      "connection_status": "indirect",
+      "characters": [
+        "Eternals"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_054",
+      "title": "Spider-Man: No Way Home",
+      "release_year": 2021,
+      "type": "movie",
+      "watch_order": 54,
+      "priority": "essential",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Makes the multiverse and cross-universe character encounters central to the live-action MCU.",
+      "doomsday_connection": "Key multiverse bridge and context for universe collisions.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Peter Parker",
+        "Doctor Strange"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_055",
+      "title": "Doctor Strange in the Multiverse of Madness",
+      "release_year": 2022,
+      "type": "movie",
+      "watch_order": 55,
+      "priority": "essential",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Explores incursions and dangerous travel between universes.",
+      "doomsday_connection": "One of the clearest MCU introductions to multiverse incursions and their risks.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Doctor Strange",
+        "Wanda Maximoff",
+        "America Chavez"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_056",
+      "title": "Hawkeye",
+      "release_year": 2021,
+      "type": "series",
+      "watch_order": 56,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Develops Clint and Kate Bishop, but neither is in the announced Doomsday cast.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Clint Barton",
+        "Kate Bishop"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_057",
+      "title": "What If...? - Season 1",
+      "release_year": 2021,
+      "type": "series",
+      "watch_order": 57,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Explores alternate realities, useful as optional multiverse-themed viewing.",
+      "doomsday_connection": "Alternate timelines are thematically relevant; no required direct plot connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "The Watcher",
+        "Alternate Avengers"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_058",
+      "title": "Moon Knight",
+      "release_year": 2022,
+      "type": "series",
+      "watch_order": 58,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "A largely self-contained supernatural story with no confirmed Doomsday role.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Marc Spector",
+        "Steven Grant"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_059",
+      "title": "Black Panther: Wakanda Forever",
+      "release_year": 2022,
+      "type": "movie",
+      "watch_order": 59,
+      "priority": "recommended",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Introduces Namor and develops Shuri's role as Black Panther; both Wakandan and Talokan characters are represented in Doomsday's cast.",
+      "doomsday_connection": "Direct character and nation background for Shuri, M'Baku and Namor.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Shuri",
+        "M'Baku",
+        "Namor",
+        "Namora"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_060",
+      "title": "Echo",
+      "release_year": 2024,
+      "type": "series",
+      "watch_order": 60,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues Maya Lopez's story; no confirmed Doomsday dependency.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Maya Lopez"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_061",
+      "title": "She-Hulk: Attorney at Law",
+      "release_year": 2022,
+      "type": "series",
+      "watch_order": 61,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "A legal-comedy series with no confirmed direct Doomsday setup.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Jennifer Walters"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_062",
+      "title": "Ms. Marvel",
+      "release_year": 2022,
+      "type": "series",
+      "watch_order": 62,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Introduces Kamala Khan, but she is not in the announced Doomsday cast.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Kamala Khan"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_063",
+      "title": "Thor: Love and Thunder",
+      "release_year": 2022,
+      "type": "movie",
+      "watch_order": 63,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues Thor's story, but is not a core Doomsday prerequisite.",
+      "doomsday_connection": "Thor's broader character history.",
+      "connection_status": "indirect",
+      "characters": [
+        "Thor",
+        "Jane Foster"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_064",
+      "title": "Werewolf by Night",
+      "release_year": 2022,
+      "type": "special",
+      "watch_order": 64,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "A standalone supernatural special with no confirmed Doomsday connection.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Jack Russell"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_065",
+      "title": "Ironheart - Season 1",
+      "release_year": 2025,
+      "type": "series",
+      "watch_order": 65,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues Riri Williams' story after Wakanda Forever; she is not in the announced Doomsday cast.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Riri Williams"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_066",
+      "title": "The Guardians of the Galaxy Holiday Special",
+      "release_year": 2022,
+      "type": "special",
+      "watch_order": 66,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "A character-focused holiday special; not needed for Doomsday.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Guardians"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_067",
+      "title": "Wonder Man - Season 1",
+      "release_year": 2026,
+      "type": "series",
+      "watch_order": 67,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Adds another MCU character story, but no direct Doomsday dependency is established.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Simon Williams",
+        "Trevor Slattery"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_068",
+      "title": "Ant-Man and the Wasp: Quantumania",
+      "release_year": 2023,
+      "type": "movie",
+      "watch_order": 68,
+      "priority": "recommended",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Expands the Quantum Realm and introduces Kang's multiverse-era threat.",
+      "doomsday_connection": "Useful multiverse-saga context, although Kang is not the announced Doomsday villain.",
+      "connection_status": "indirect",
+      "characters": [
+        "Scott Lang",
+        "Hope van Dyne",
+        "Kang"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_069",
+      "title": "Guardians of the Galaxy Vol. 3",
+      "release_year": 2023,
+      "type": "movie",
+      "watch_order": 69,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Concludes the Guardians' trilogy, but the team is not in the announced Doomsday cast.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Guardians"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_070",
+      "title": "Secret Invasion",
+      "release_year": 2023,
+      "type": "series",
+      "watch_order": 70,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Explores Skrull infiltration and Nick Fury's world, but no direct Doomsday dependency is established.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Nick Fury",
+        "Talos"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_071",
+      "title": "The Marvels",
+      "release_year": 2023,
+      "type": "movie",
+      "watch_order": 71,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues Captain Marvel, Monica and Kamala's stories; none is in the announced Doomsday cast.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Carol Danvers",
+        "Monica Rambeau",
+        "Kamala Khan"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_072",
+      "title": "Loki - Season 2",
+      "release_year": 2023,
+      "type": "series",
+      "watch_order": 72,
+      "priority": "essential",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Continues the TVA story and reaches a major turning point for the multiverse.",
+      "doomsday_connection": "Crucial context for the state of timelines and the multiverse going into Doomsday.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Loki",
+        "Mobius",
+        "Sylvie"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_073",
+      "title": "What If...? - Season 2",
+      "release_year": 2023,
+      "type": "series",
+      "watch_order": 73,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "More alternate-universe stories; optional multiverse exploration.",
+      "doomsday_connection": "No confirmed direct plot dependency.",
+      "connection_status": "indirect",
+      "characters": [
+        "The Watcher"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_074",
+      "title": "Agatha All Along - Season 1",
+      "release_year": 2024,
+      "type": "series",
+      "watch_order": 74,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues the magical corner of the MCU, but no direct Doomsday dependency is established.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Agatha Harkness",
+        "Billy Maximoff"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_075",
+      "title": "What If...? - Season 3",
+      "release_year": 2024,
+      "type": "series",
+      "watch_order": 75,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Concludes the animated anthology of alternate realities.",
+      "doomsday_connection": "Multiverse-themed but not required for the live-action Doomsday story.",
+      "connection_status": "indirect",
+      "characters": [
+        "The Watcher"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_076",
+      "title": "Daredevil: Born Again - Season 1",
+      "release_year": 2025,
+      "type": "series",
+      "watch_order": 76,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues Matt Murdock's street-level story; he is not in the announced Doomsday cast.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Matt Murdock",
+        "Wilson Fisk"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_077",
+      "title": "Captain America: Brave New World",
+      "release_year": 2025,
+      "type": "movie",
+      "watch_order": 77,
+      "priority": "recommended",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Develops Sam Wilson as Captain America and the political landscape after The Falcon and the Winter Soldier.",
+      "doomsday_connection": "Direct background for Sam Wilson, who is part of Doomsday's announced cast.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Sam Wilson",
+        "Joaquin Torres",
+        "Red Hulk"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_078",
+      "title": "Thunderbolts*",
+      "release_year": 2025,
+      "type": "movie",
+      "watch_order": 78,
+      "priority": "essential",
+      "is_doomsday_relevant": true,
+      "importance_statement": "Introduces the New Avengers team and develops characters confirmed for Doomsday.",
+      "doomsday_connection": "Direct setup for Yelena, Bucky, U.S. Agent, Red Guardian, Ghost and Sentry.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Yelena Belova",
+        "Bucky Barnes",
+        "U.S. Agent",
+        "Red Guardian",
+        "Ghost",
+        "Sentry"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_079",
+      "title": "Daredevil: Born Again - Season 2",
+      "release_year": 2026,
+      "type": "series",
+      "watch_order": 79,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues the street-level story; no direct Doomsday requirement is established.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Matt Murdock",
+        "Wilson Fisk"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_080",
+      "title": "The Punisher: One Last Kill",
+      "release_year": 2026,
+      "type": "special",
+      "watch_order": 80,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "A Frank Castle story; no confirmed direct Doomsday connection is established.",
+      "doomsday_connection": "No confirmed direct connection.",
+      "connection_status": "indirect",
+      "characters": [
+        "Frank Castle"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_081",
+      "title": "VisionQuest - Limited Series",
+      "release_year": 2026,
+      "type": "series",
+      "watch_order": 81,
+      "priority": "recommended",
+      "is_doomsday_relevant": false,
+      "importance_statement": "Continues the Vision storyline after WandaVision and may help viewers follow the character's wider history.",
+      "doomsday_connection": "Vision-related background; do not treat a direct Doomsday role as confirmed unless Marvel announces it.",
+      "connection_status": "indirect",
+      "characters": [
+        "Vision"
+      ],
+      "completion_status": "not_started"
+    },
+    {
+      "id": "marvel_082",
+      "title": "Spider-Man: Brand New Day",
+      "release_year": 2026,
+      "type": "movie",
+      "watch_order": 82,
+      "priority": "optional",
+      "is_doomsday_relevant": false,
+      "importance_statement": "A Spider-Man story released in 2026, but Spider-Man is not in the announced Doomsday cast list used for this dataset.",
+      "doomsday_connection": "No confirmed direct Doomsday connection based on the announced cast.",
+      "connection_status": "indirect",
+      "characters": [
+        "Peter Parker"
+      ],
+      "completion_status": "not_started"
+    }
+  ],
+  "supplemental_titles": [
+    {
+      "id": "legacy_xmen_001",
+      "title": "X-Men",
+      "release_year": 2000,
+      "type": "movie",
+      "priority": "recommended",
+      "importance_statement": "Introduces the original Fox X-Men world and several characters returning in Doomsday.",
+      "doomsday_connection": "Background for Professor X, Magneto, Mystique and the original X-Men universe.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Professor X",
+        "Magneto",
+        "Mystique"
+      ]
+    },
+    {
+      "id": "legacy_xmen_002",
+      "title": "X2: X-Men United",
+      "release_year": 2003,
+      "type": "movie",
+      "priority": "recommended",
+      "importance_statement": "Deepens the original X-Men team's relationships and conflict.",
+      "doomsday_connection": "More background for the returning legacy X-Men characters.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Professor X",
+        "Magneto",
+        "Mystique",
+        "Nightcrawler"
+      ]
+    },
+    {
+      "id": "legacy_xmen_003",
+      "title": "X-Men: The Last Stand",
+      "release_year": 2006,
+      "type": "movie",
+      "priority": "optional",
+      "importance_statement": "Continues the original trilogy and adds context to its character history.",
+      "doomsday_connection": "Legacy X-Men continuity background; not a required Doomsday plot prerequisite.",
+      "connection_status": "indirect",
+      "characters": [
+        "Professor X",
+        "Magneto",
+        "Beast",
+        "Mystique"
+      ]
+    },
+    {
+      "id": "legacy_xmen_004",
+      "title": "X-Men: First Class",
+      "release_year": 2011,
+      "type": "movie",
+      "priority": "recommended",
+      "importance_statement": "Explains the younger-era origins of Xavier and Magneto's relationship.",
+      "doomsday_connection": "Character background for the X-Men universe represented in Doomsday.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Professor X",
+        "Magneto",
+        "Mystique",
+        "Beast"
+      ]
+    },
+    {
+      "id": "legacy_xmen_005",
+      "title": "The Wolverine",
+      "release_year": 2013,
+      "type": "movie",
+      "priority": "optional",
+      "importance_statement": "Adds Wolverine background, although Wolverine is not listed among the announced Doomsday cast in this dataset.",
+      "doomsday_connection": "Broader Fox X-Men continuity only.",
+      "connection_status": "indirect",
+      "characters": [
+        "Wolverine"
+      ]
+    },
+    {
+      "id": "legacy_xmen_006",
+      "title": "X-Men: Days of Future Past",
+      "release_year": 2014,
+      "type": "movie",
+      "priority": "recommended",
+      "importance_statement": "A major story about timelines and the future of the X-Men universe.",
+      "doomsday_connection": "Especially useful for understanding the Fox X-Men timeline and returning characters.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Professor X",
+        "Magneto",
+        "Mystique",
+        "Beast"
+      ]
+    },
+    {
+      "id": "legacy_xmen_007",
+      "title": "X-Men: Apocalypse",
+      "release_year": 2016,
+      "type": "movie",
+      "priority": "optional",
+      "importance_statement": "Adds more background to the younger X-Men team.",
+      "doomsday_connection": "Fox X-Men universe background; not essential to the announced Doomsday setup.",
+      "connection_status": "indirect",
+      "characters": [
+        "Professor X",
+        "Magneto",
+        "Beast",
+        "Nightcrawler"
+      ]
+    },
+    {
+      "id": "legacy_xmen_008",
+      "title": "Logan",
+      "release_year": 2017,
+      "type": "movie",
+      "priority": "optional",
+      "importance_statement": "A standalone future-set Wolverine story; valuable franchise context but not a confirmed Doomsday prerequisite.",
+      "doomsday_connection": "Fox-era X-Men background. Wolverine is not in the announced Doomsday cast list used here.",
+      "connection_status": "indirect",
+      "characters": [
+        "Wolverine",
+        "Professor X"
+      ]
+    },
+    {
+      "id": "legacy_xmen_009",
+      "title": "Deadpool",
+      "release_year": 2016,
+      "type": "movie",
+      "priority": "recommended",
+      "importance_statement": "Introduces Deadpool and the Fox-era tone and continuity continued in Deadpool & Wolverine.",
+      "doomsday_connection": "Useful context for the Fox universe and the multiverse crossover.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Deadpool",
+        "Colossus"
+      ]
+    },
+    {
+      "id": "legacy_xmen_010",
+      "title": "Deadpool 2",
+      "release_year": 2018,
+      "type": "movie",
+      "priority": "recommended",
+      "importance_statement": "Continues Deadpool's story and introduces time-travel elements before Deadpool & Wolverine.",
+      "doomsday_connection": "Useful background for Deadpool's multiverse-related story.",
+      "connection_status": "confirmed",
+      "characters": [
+        "Deadpool",
+        "Cable"
+      ]
+    }
+  ]
+}

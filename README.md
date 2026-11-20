@@ -2,66 +2,140 @@
 
 A fan-made cinematic watch journey to Avengers: Doomsday. Not affiliated with or endorsed by Marvel or Disney.
 
-Project documentation lives in [`docs/`](docs/README.md). Start with `docs/CLAUDE.md` and `docs/progress-tracker.md`.
+Start with [`CLAUDE.md`](CLAUDE.md) and [`docs/progress-tracker.md`](docs/progress-tracker.md). Product, design, architecture and standards are in `PRODUCT.md`, `DESIGN.md`, `ARCHITECTURE.md` and `STANDARDS.md`; the older feature notes are in [`docs/`](docs/README.md).
 
 ## Requirements
 
-- Node.js 22+ (developed on 26.8.1)
+- Node.js 22.18+ (developed on 26.8.1). The scripts run TypeScript directly (native type stripping) and read `.env` with `--env-file-if-exists`.
 - pnpm (developed on 12.3.4)
 
 ## Setup
 
 ```bash
-pnpm install          # also runs `nuxt prepare` (generates .nuxt types)
-cp .env.example .env  # optional until TMDB integration (Phase 03)
+pnpm install              # also runs `nuxt prepare` (generates .nuxt types)
+cp .env.example .env      # then add your TMDB token (see below)
+pnpm validate:data        # check the roadmap data and TMDB mapping
+pnpm dev                  # http://localhost:3000
 ```
+
+The app runs without a TMDB token. The `/api/titles/*` routes then answer `503 credentials_missing`.
+
+## TMDB credentials
+
+TMDB supplies posters, descriptions, cast, trailers and watch providers. The token is used only on the server and is never sent to the browser.
+
+1. Create a free account at [themoviedb.org](https://www.themoviedb.org/) and open **Settings → API**.
+2. Copy the **API Read Access Token** (the long one, not the short API key).
+3. Put it in `.env`:
+
+   ```bash
+   NUXT_TMDB_API_TOKEN=your-read-access-token
+   ```
+
+4. Restart the dev server.
+
+| Variable | Scope | Default | Purpose |
+|---|---|---|---|
+| `NUXT_TMDB_API_TOKEN` | server only | none | TMDB API Read Access Token |
+| `NUXT_TMDB_API_BASE_URL` | server only | `https://api.tmdb.org/3` | Only `api.tmdb.org` and `api.themoviedb.org` are accepted, because the token is sent there |
+| `NUXT_PUBLIC_TMDB_REGION` | public | `IN` | Default watch-provider region. Routes also accept `?region=XX` |
+
+`api.tmdb.org` is the default because `api.themoviedb.org` reset most new connections on the development network. If you see `network_error`, try the other host.
+
+Never commit `.env`.
+
+## Linking titles to TMDB
+
+Each title's TMDB identity is stored in `app/constant/tmdb_mapping.json`, separate from the editorial data. All titles start as `unmapped`; no ID is recorded until it has been confirmed against TMDB.
+
+```bash
+pnpm tmdb:map --dry-run                       # search and show results, write nothing
+pnpm tmdb:map                                 # search every title that is not verified yet
+pnpm tmdb:map --only marvel_007,marvel_011    # specific titles
+pnpm tmdb:map --retry-review                  # re-search titles marked needs_review
+pnpm tmdb:map --verify marvel_015=movie:12345 # record a manual match (TV: marvel_021=tv:6789:1)
+pnpm validate:data --strict                   # fails while any title is not verified
+```
+
+A title is verified automatically only when exactly one TMDB result matches both its title and year. Everything else becomes `needs_review` with candidates for a person to check. Verified entries are never overwritten by a search.
 
 ## Commands
 
 | Command | Purpose |
 |---|---|
 | `pnpm dev` | Dev server at http://localhost:3000 |
-| `pnpm build` | Production build to `.output/` |
+| `pnpm build` | Validates the data, then builds to `.output/` |
 | `pnpm preview` | Serve the production build locally |
-| `pnpm typecheck` | Strict `vue-tsc` type check |
+| `pnpm validate:data` | Validate the roadmap JSON and the TMDB mapping (`--strict` also requires every title verified) |
+| `pnpm tmdb:map` | Search TMDB and update the mapping (needs a token) |
+| `pnpm typecheck` | `nuxt typecheck` (app and server) plus `tsc` for scripts and tests |
 | `pnpm lint` / `pnpm lint:fix` | ESLint (flat config via `@nuxt/eslint`) |
+| `pnpm test` | Vitest unit tests |
+
+## Data
+
+| File | Owner | Purpose |
+|---|---|---|
+| `app/constant/marvel_doomsday_watchlist.json` | Editorial | 82 roadmap titles plus 10 supplemental titles. Source of truth; code never writes it |
+| `app/constant/tmdb_mapping.json` | Tooling and people | Project ID → verified TMDB movie/tv ID |
+| Browser `localStorage` (`marvel-roadmap:v1`) | The visitor | Watched, watchlist, notes, display name. Never in the JSON |
+
+`titles` have `watch_order` and `completion_status`; `supplemental_titles` do not, and are never merged into the main list. See `ARCHITECTURE.md` §11.
+
+## API
+
+| Route | Returns |
+|---|---|
+| `GET /api/titles/:titleId` | Movie or TV metadata |
+| `GET /api/titles/:titleId/credits` | Cast and key crew |
+| `GET /api/titles/:titleId/videos` | Embeddable YouTube trailers and teasers |
+| `GET /api/titles/:titleId/providers?region=IN` | Watch providers for a region |
+
+`:titleId` is the project ID, such as `marvel_007`. Success is `{ titleId, mediaType, data }`; failure is `{ error: { code, message } }` with a matching HTTP status. A title with no verified TMDB match answers `404 tmdb_not_mapped`. Responses are cached in memory per server process (details 24 h, providers 3 h).
 
 ## Stack
 
 | Package | Version | Role |
 |---|---|---|
-| `nuxt` | 4.6.x | App framework, routing, SSR, server API (later) |
+| `nuxt` | 4.6.x | App framework, routing, SSR, server routes |
 | `vue` / `vue-router` | 3.5.x / 5.5.x | UI and routing (versions match Nuxt's own deps) |
 | `tailwindcss` + `@tailwindcss/vite` | 4.3.x | Styling; tokens defined with `@theme` in `app/assets/css/main.css` |
+| `@fontsource/barlow-condensed`, `@fontsource-variable/dm-sans` | 5.3.x | Self-hosted display and UI fonts |
 | `lucide-vue-next` | 1.0.x | Icons (import per icon, e.g. `import { Play } from 'lucide-vue-next'`) |
+| `zod` | 4.6.x | Runtime validation of the dataset, the mapping and TMDB responses |
+| `vitest` | 5.1.x | Unit tests |
 | `@nuxt/eslint` + `eslint` | 1.17.x / 10.x | Linting |
 | `typescript` | 6.0.x | Pinned below 7: Volar and typescript-eslint don't support TS 7 yet |
 | `vue-tsc` | 3.3.x | Type checking for `.vue` files |
+| `@types/node` | 24.x | Types for scripts and tests |
 
 ## Structure
 
 ```
-app/                  Nuxt 4 source directory (`~` alias)
-  app.vue             Root: <NuxtLayout><NuxtPage/>
-  assets/css/main.css Tailwind entry, design tokens, global base styles
-  components/         Auto-imported components; group by feature folder (timeline/, title/, achievement/)
-  layouts/default.vue Default layout (skip link + <main>)
-  pages/index.vue     `/` route — placeholder only, landing page not built yet
-server/               Nitro server routes (empty; TMDB proxy goes in server/api, server/utils)
-docs/                 Product, architecture, UI and workflow documentation
-nuxt.config.ts        Modules, Tailwind plugin, strict TS, runtimeConfig, default <head>
-eslint.config.mjs     Extends the Nuxt-generated ESLint config
-pnpm-workspace.yaml   pnpm settings (allows the esbuild install script)
-.env.example          Documented environment variables
+app/                    Nuxt 4 source directory (`~` alias)
+  constant/             Editorial JSON and the TMDB mapping
+  composables/          useProgress (Vue wrapper over the progress store)
+  plugins/              progress.client.ts hydrates saved progress after mount
+  utils/                progress-storage.ts (versioned localStorage, no Vue)
+  components/ui/        UiButton, UiBadge
+  pages/                index (placeholder), design-system (style guide, noindex)
+  layouts/ assets/      Default layout; Tailwind tokens and global styles
+shared/                 Used by app, server, scripts and tests
+  types/                Dataset, mapping, progress and TMDB types
+  schemas/              Zod schemas and cross-checks
+  utils/                Title parsing, TMDB matching, image URLs
+server/
+  api/titles/[titleId]/ details, credits, videos, providers
+  utils/                roadmap lookup; tmdb/ (client, schemas, normalisers, cache)
+scripts/                validate-data.ts, tmdb-map.ts
+tests/                  Vitest tests
+docs/                   Product, UI and workflow notes (data model sections superseded; see ARCHITECTURE.md §11)
 ```
-
-Planned folders from `docs/code-standards.md` (`app/composables`, `app/utils`, `app/types` or `shared/types`, `data/`) are created when their first file lands.
 
 ## Conventions
 
 - **Components:** PascalCase `.vue` files with `<script setup lang="ts">`. Nuxt auto-imports by path, so `components/timeline/MapNode.vue` is used as `<TimelineMapNode>`.
 - **Styling:** use the token utilities (`bg-void`, `text-ink-muted`, `border-line`, …), not arbitrary hex values.
-- **Environment variables:** read through `useRuntimeConfig()`, never `process.env` in app code.
-  - `runtimeConfig.tmdbApiToken` (`NUXT_TMDB_API_TOKEN`) is server-only and must only be read in `server/`.
-  - `runtimeConfig.public.tmdbRegion` (`NUXT_PUBLIC_TMDB_REGION`, default `IN`) is safe for the client.
+- **Environment variables:** read through `useRuntimeConfig()`, never `process.env` in app or server code.
+- **Data:** do not edit the editorial JSON from code. See `STANDARDS.md` §14.
 - Never commit `.env`.

@@ -116,3 +116,36 @@ Check keyboard behaviour, responsive overflow, reduced motion, and relevant empt
 - Keep setup commands accurate and verify them where possible.
 - Keep `progress-tracker.md` current at phase boundaries.
 - Clearly label provisional decisions and unresolved questions.
+
+## 14. Data validation and API integration (Phase 03)
+
+### Editorial data
+- `app/constant/marvel_doomsday_watchlist.json` is the source of truth. Code never writes to it. Do not rename fields, change IDs, reorder `watch_order`, reclassify priorities or rewrite editorial text in a code change; make it a deliberate, reviewed data edit.
+- Keep the main and supplemental collections separate. Do not give supplemental titles `watch_order` or `completion_status`.
+- Field names in code follow the JSON (snake_case) for dataset types. Use camelCase only for app-side shapes such as normalised TMDB data and progress state.
+- Every change to either JSON file must pass `pnpm validate:data`. A failing validation is fixed in the data or the schema, never bypassed.
+- Schemas are strict. A new field means updating the type, the schema and the tests together.
+
+### TMDB
+- TMDB identity lives only in `tmdb_mapping.json`, keyed by project ID. Never put TMDB IDs in the editorial JSON, and never look titles up by name at request time.
+- Never record a TMDB ID that was not confirmed against TMDB. Do not take the first or most popular search result. Use `needs_review` when unsure.
+- A `verified` entry is changed only by a person, not by a search.
+- Do not hardcode metadata, trailers, cast or providers. If TMDB has no data, return `null` or an empty list and let the UI show an unavailable state.
+- Never invent streaming availability. Provider links come from TMDB only and must be https on `www.themoviedb.org`.
+
+### Server routes
+- Routes take the project title ID, validate it, and resolve the TMDB target server-side.
+- Responses are `{ titleId, mediaType, data }` or `{ error: { code, message } }` with a matching status. Add new failure modes as `ApiErrorCode` values, not free text.
+- Validate TMDB responses with Zod before use, tolerate missing optional fields, and normalise in `server/utils/tmdb/normalize.ts`.
+- Keep pure logic (normalisers, matching, validation) free of Nitro and h3 imports so it can be unit tested.
+- The TMDB token stays in server runtime config. It is never logged, returned, or sent to a host other than the two allowed TMDB API hosts.
+- Cache only successful lookups, with shorter lifetimes for data that changes (providers).
+
+### Personal data
+- All localStorage access goes through `app/utils/progress-storage.ts`. Do not call `localStorage` elsewhere.
+- Keys are versioned. A format change bumps the version and adds a migration; it never reinterprets old data silently.
+- Treat stored data as untrusted: validate on load, keep a backup of anything rejected, and never let a bad value stop the app.
+
+### Tests
+- `pnpm test` (Vitest) covers validation, matching, the TMDB client and normalisers, the progress store and the mapping tool. TMDB test data is synthetic and must not use real-looking IDs for real titles.
+- A test that mocks TMDB proves the code handles a response shape, not that TMDB works. Say so when reporting results.

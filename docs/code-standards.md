@@ -1,5 +1,7 @@
 # Marvel: Road to Doomsday — Code Standards
 
+> **Superseded in Phase 03 (2026-11-21):** the data model, file layout and module names in this document predate the real dataset. The editorial data is `app/constant/marvel_doomsday_watchlist.json` (snake_case, separate `supplemental_titles`), and the current design is in the root `ARCHITECTURE.md` §11 and `STANDARDS.md` §14. Where they differ, the root documents win.
+
 > Inherits the repository's root `STANDARDS.md`. Inspect and follow it; this file records feature-specific conventions only.
 
 ## Feature-Specific Conventions

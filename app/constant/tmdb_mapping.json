@@ -1,0 +1,281 @@
+{
+  "schema_version": "1.0.0",
+  "entries": {
+    "marvel_001": {
+      "status": "unmapped"
+    },
+    "marvel_002": {
+      "status": "unmapped"
+    },
+    "marvel_003": {
+      "status": "unmapped"
+    },
+    "marvel_004": {
+      "status": "unmapped"
+    },
+    "marvel_005": {
+      "status": "unmapped"
+    },
+    "marvel_006": {
+      "status": "unmapped"
+    },
+    "marvel_007": {
+      "status": "unmapped"
+    },
+    "marvel_008": {
+      "status": "unmapped"
+    },
+    "marvel_009": {
+      "status": "unmapped"
+    },
+    "marvel_010": {
+      "status": "unmapped"
+    },
+    "marvel_011": {
+      "status": "unmapped"
+    },
+    "marvel_012": {
+      "status": "unmapped"
+    },
+    "marvel_013": {
+      "status": "unmapped"
+    },
+    "marvel_014": {
+      "status": "unmapped"
+    },
+    "marvel_015": {
+      "status": "unmapped"
+    },
+    "marvel_016": {
+      "status": "unmapped"
+    },
+    "marvel_017": {
+      "status": "unmapped"
+    },
+    "marvel_018": {
+      "status": "unmapped"
+    },
+    "marvel_019": {
+      "status": "unmapped"
+    },
+    "marvel_020": {
+      "status": "unmapped"
+    },
+    "marvel_021": {
+      "status": "unmapped"
+    },
+    "marvel_022": {
+      "status": "unmapped"
+    },
+    "marvel_023": {
+      "status": "unmapped"
+    },
+    "marvel_024": {
+      "status": "unmapped"
+    },
+    "marvel_025": {
+      "status": "unmapped"
+    },
+    "marvel_026": {
+      "status": "unmapped"
+    },
+    "marvel_027": {
+      "status": "unmapped"
+    },
+    "marvel_028": {
+      "status": "unmapped"
+    },
+    "marvel_029": {
+      "status": "unmapped"
+    },
+    "marvel_030": {
+      "status": "unmapped"
+    },
+    "marvel_031": {
+      "status": "unmapped"
+    },
+    "marvel_032": {
+      "status": "unmapped"
+    },
+    "marvel_033": {
+      "status": "unmapped"
+    },
+    "marvel_034": {
+      "status": "unmapped"
+    },
+    "marvel_035": {
+      "status": "unmapped"
+    },
+    "marvel_036": {
+      "status": "unmapped"
+    },
+    "marvel_037": {
+      "status": "unmapped"
+    },
+    "marvel_038": {
+      "status": "unmapped"
+    },
+    "marvel_039": {
+      "status": "unmapped"
+    },
+    "marvel_040": {
+      "status": "unmapped"
+    },
+    "marvel_041": {
+      "status": "unmapped"
+    },
+    "marvel_042": {
+      "status": "unmapped"
+    },
+    "marvel_043": {
+      "status": "unmapped"
+    },
+    "marvel_044": {
+      "status": "unmapped"
+    },
+    "marvel_045": {
+      "status": "unmapped"
+    },
+    "marvel_046": {
+      "status": "unmapped"
+    },
+    "marvel_047": {
+      "status": "unmapped"
+    },
+    "marvel_048": {
+      "status": "unmapped"
+    },
+    "marvel_049": {
+      "status": "unmapped"
+    },
+    "marvel_050": {
+      "status": "unmapped"
+    },
+    "marvel_051": {
+      "status": "unmapped"
+    },
+    "marvel_052": {
+      "status": "unmapped"
+    },
+    "marvel_053": {
+      "status": "unmapped"
+    },
+    "marvel_054": {
+      "status": "unmapped"
+    },
+    "marvel_055": {
+      "status": "unmapped"
+    },
+    "marvel_056": {
+      "status": "unmapped"
+    },
+    "marvel_057": {
+      "status": "unmapped"
+    },
+    "marvel_058": {
+      "status": "unmapped"
+    },
+    "marvel_059": {
+      "status": "unmapped"
+    },
+    "marvel_060": {
+      "status": "unmapped"
+    },
+    "marvel_061": {
+      "status": "unmapped"
+    },
+    "marvel_062": {
+      "status": "unmapped"
+    },
+    "marvel_063": {
+      "status": "unmapped"
+    },
+    "marvel_064": {
+      "status": "unmapped"
+    },
+    "marvel_065": {
+      "status": "unmapped"
+    },
+    "marvel_066": {
+      "status": "unmapped"
+    },
+    "marvel_067": {
+      "status": "unmapped"
+    },
+    "marvel_068": {
+      "status": "unmapped"
+    },
+    "marvel_069": {
+      "status": "unmapped"
+    },
+    "marvel_070": {
+      "status": "unmapped"
+    },
+    "marvel_071": {
+      "status": "unmapped"
+    },
+    "marvel_072": {
+      "status": "unmapped"
+    },
+    "marvel_073": {
+      "status": "unmapped"
+    },
+    "marvel_074": {
+      "status": "unmapped"
+    },
+    "marvel_075": {
+      "status": "unmapped"
+    },
+    "marvel_076": {
+      "status": "unmapped"
+    },
+    "marvel_077": {
+      "status": "unmapped"
+    },
+    "marvel_078": {
+      "status": "unmapped"
+    },
+    "marvel_079": {
+      "status": "unmapped"
+    },
+    "marvel_080": {
+      "status": "unmapped"
+    },
+    "marvel_081": {
+      "status": "unmapped"
+    },
+    "marvel_082": {
+      "status": "unmapped"
+    },
+    "legacy_xmen_001": {
+      "status": "unmapped"
+    },
+    "legacy_xmen_002": {
+      "status": "unmapped"
+    },
+    "legacy_xmen_003": {
+      "status": "unmapped"
+    },
+    "legacy_xmen_004": {
+      "status": "unmapped"
+    },
+    "legacy_xmen_005": {
+      "status": "unmapped"
+    },
+    "legacy_xmen_006": {
+      "status": "unmapped"
+    },
+    "legacy_xmen_007": {
+      "status": "unmapped"
+    },
+    "legacy_xmen_008": {
+      "status": "unmapped"
+    },
+    "legacy_xmen_009": {
+      "status": "unmapped"
+    },
+    "legacy_xmen_010": {
+      "status": "unmapped"
+    }
+  }
+}

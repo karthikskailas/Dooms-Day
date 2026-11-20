@@ -1,5 +1,7 @@
 # Marvel: Road to Doomsday — Architecture
 
+> **Superseded in Phase 03 (2026-11-21):** the data model, file layout and module names in this document predate the real dataset. The editorial data is `app/constant/marvel_doomsday_watchlist.json` (snake_case, separate `supplemental_titles`), and the current design is in the root `ARCHITECTURE.md` §11 and `STANDARDS.md` §14. Where they differ, the root documents win.
+
 > This document records feature-specific architecture. Inspect and follow the repository's root `ARCHITECTURE.md` before implementation; this file does not replace global architecture rules.
 
 ## Technology Roles

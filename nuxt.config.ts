@@ -21,9 +21,15 @@ export default defineNuxtConfig({
   // Server-only values are overridden by NUXT_* env vars at runtime; see .env.example.
   runtimeConfig: {
     tmdbApiToken: '',
+    // TMDB API base URL. Only api.tmdb.org and api.themoviedb.org are accepted (the token is sent there).
+    tmdbApiBaseUrl: 'https://api.tmdb.org/3',
     public: {
       tmdbRegion: 'IN',
     },
+  },
+  // TMDB responses are cached in process memory: cleared on restart, not shared between instances.
+  nitro: {
+    storage: { cache: { driver: 'memory' } },
   },
   app: {
     head: {
