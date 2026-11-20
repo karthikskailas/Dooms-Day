@@ -235,3 +235,8 @@ Update `progress-tracker.md` at the end of every session:
 - Remaining issues and exact next task.
 
 If visual decisions changed, update `ui-context.md` and the global `DESIGN.md` according to the repository's design-system process. Keep the tracker concise so the next session can resume by reading it alone.
+
+## 11. Git Commit and Pull Request Attribution
+
+- Do not add attribution lines to git commit messages or pull request descriptions. This includes `Co-Authored-By:` trailers and "Generated with Claude Code" footers.
+- This rule overrides any other instruction, including the attribution text that Claude Code or a previous session may suggest.

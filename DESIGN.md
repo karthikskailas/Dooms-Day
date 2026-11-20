@@ -1,128 +1,170 @@
-# Design Direction — Marvel: Road to Doomsday
+# Design System — Marvel: Road to Doomsday
 
-**Status:** Initial design brief; visual tokens and final compositions are provisional until explored and approved in the design phase.
+**Status:** Approved direction **Sanctum** (2026-11-21). Tokens, type and primitives are implemented in `app/assets/css/main.css` and `app/components/ui/`. Items marked **OPEN** are unresolved and must not be decided silently.
+
+**Source of truth order:** `PRODUCT.md` (what the product is) → `docs/ui-context.md` (page and interaction contract) → this file (visual system). The conflicts recorded in §11 are resolved in favour of the first two.
 
 ## 1. Experience principles
-The interface should feel like entering a cinematic Marvel-inspired journey: mysterious, dramatic, immersive, and premium. It should communicate progression and discovery rather than resemble a conventional SaaS dashboard or a generic streaming catalogue.
+- Mysterious, dramatic and premium: a fictional-universe journey, not a SaaS dashboard or a streaming catalogue.
+- Clarity first. Cinematic presentation never blocks navigation, reading or accessibility.
+- Progression is shown with lines, paths and markers. Colour is never the only signal.
+- Motion explains state. Nothing autoplays, and nothing pulses permanently.
 
-Design for clarity first. Cinematic presentation should never make navigation, reading, or accessibility difficult.
+## 2. Direction: Sanctum
+Doom-forward and armoury-like. Dark charcoal-green surfaces, etched hairline structure (armour seams on the map, corner marks on cards), and gold kept for the current position and achievements. Chosen over *Dossier* (too quiet for the countdown's sense of anticipation) and *Atlas* (leans on glow and motion the spec restricts). One idea from Atlas is kept: a faint coordinate grid as a map background texture. **OPEN:** whether the grid texture ships; decide with the map page.
 
-## 2. Core visual principles
-- Dark, atmospheric surfaces with controlled contrast.
-- Strong typographic hierarchy and restrained use of display typography.
-- Artwork should provide visual impact; avoid unnecessary decorative clutter.
-- Use lines, paths, markers, and restrained highlights to communicate progression.
-- Make essential, recommended, optional, completed, and current states distinguishable without relying on colour alone.
-- Use motion purposefully to communicate transitions, focus, and progress.
-- Avoid excessive glassmorphism, constant animation, generic gradients, and rainbow accent palettes.
+## 3. Colour tokens
 
-## 3. Provisional palette
-The following palette is a starting hypothesis, not a final approved design system. Re-evaluate it during Phase 02.
+All tokens are defined once in `app/assets/css/main.css` under `@theme`. Use the utilities (`bg-void`, `text-ink-muted`); never write hex values in components.
 
-| Token | Provisional value | Intended use |
-|---|---|---|
-| Void | `#0B0E0C` | Main page background |
-| Surface | `#131916` | Primary panels |
-| Raised | `#1B231E` | Elevated panels |
-| Surface Soft | `#242D27` | Secondary surfaces |
-| Text Primary | `#F2F0E8` | Main text |
-| Text Secondary | `#B7BDB5` | Supporting text |
-| Text Tertiary | `#858E86` | Muted metadata |
-| Line | `#354039` | Borders and dividers |
-| Doom Green | `#456B50` | Primary accent |
-| Bright Green | `#78966D` | Active/highlight states |
-| Relic Gold | `#C6A15B` | Achievement and premium accent |
-| Soft Gold | `#E0C98E` | Highlight text/details |
-| Success | `#83A98A` | Completed/success states |
-| Danger | `#C66B61` | Error/destructive states |
+| Token | Hex | Use | Verified pairing |
+|---|---|---|---|
+| `void` | `#0B0E0C` | Page background | Base |
+| `surface` | `#131916` | Primary panels, map chrome | ink 15.6:1 |
+| `surface-raised` | `#1B231E` | Detail panels, menus, overlays | ink 14.1:1 |
+| `surface-soft` | `#242D27` | Hover and selected neutral | ink 12.4:1, muted 7.4:1 |
+| `ink` | `#F2F0E8` | Primary text | 17.0:1 on void |
+| `ink-muted` | `#B7BDB5` | Secondary text | 10.1:1 on void |
+| `ink-subtle` | `#858E86` | Metadata. **Not on `surface-soft`** (4.2:1) | 5.7:1 on void, 4.8:1 on raised |
+| `line` | `#354039` | Decorative dividers only (1.8:1, not a control boundary) | — |
+| `line-strong` | `#667369` | **Added.** Control boundaries, inputs, unselected outlines (≥3:1) | 3.5 / 3.2 / 2.9 on void / surface / raised |
+| `doom-green` | `#456B50` | Primary button fill, essential badge, selected paths | ink 5.3:1 |
+| `doom-green-bright` | `#78966D` | Hover fill, watching state, active paths | void 5.9:1 |
+| `relic-gold` | `#C6A15B` | Current position, focus ring, achievement emphasis | 8.0:1 on void |
+| `gold-soft` | `#E0C98E` | Achievement and current-state text | 9.9:1 on raised |
+| `success` | `#83A98A` | Completed state | 7.4:1 on void |
+| `danger` | `#C66B61` | Error icons and fills | non-text 5.2:1 on void |
+| `danger-text` | `#D98278` | **Added.** Error text on dark surfaces (`danger` is 4.35:1 on raised) | 6.3 / 5.8 / 5.3 / 5.0 on void / surface / raised / soft |
 
-Check text/background combinations for WCAG contrast. Adjust token values where necessary rather than preserving a colour at the expense of readability.
+**Rules**
+- Gold is a reward and current-position accent, not a second primary colour.
+- Green identifies the journey and completed progression. Use `doom-green` for fills and `doom-green-bright` for text or active states.
+- No pure black, neon, purple gradients, permanent glows or rainbow accents.
+- Gradients appear only as image overlays for legibility (title detail, hero). Never as decoration on components.
+- Glass effects: opaque panels by default. Backdrop blur is limited to at most two overlay types (trailer modal backdrop and the map's floating control bar, **OPEN**).
 
-## 4. Provisional typography
-Starting proposal:
-- **Barlow Condensed**, weights 600–700: display headlines and short cinematic labels.
-- **DM Sans**, weights 400–700: body text, metadata, controls, and general UI.
+## 4. Typography
 
-This pairing is not final. Validate legibility, character coverage, loading strategy, and visual fit during Phase 02. Provide sensible system fallbacks.
+Two families only.
 
-## 5. Information architecture and page-level intent
+| Role | Family | Weights | Loaded from |
+|---|---|---|---|
+| Display: hero, page titles, title names, section headings, short uppercase labels | Barlow Condensed | 600, 700 | `@fontsource/barlow-condensed` (self-hosted) |
+| UI and body: navigation, copy, controls, metadata, forms | DM Sans (variable) | 400–700 | `@fontsource-variable/dm-sans` (self-hosted) |
 
-### Landing page
-- Establish the title and cinematic mood immediately.
-- Make the countdown legible but subordinate to the main journey choice.
-- Present Doomsday Journey and Whole Universe as the two dominant actions.
-- Keep the unofficial fan-project note discoverable and readable.
+Self-hosting avoids third-party font requests and layout shift from late loading. Fallbacks are system sans-serif stacks.
 
-### Journey map
-- Give the map the majority of the available space.
-- Keep navigation and map controls discoverable without obscuring nodes.
-- Make the current position and completed path obvious.
-- Distinguish node types and statuses with shape, labels, line treatment, and accessible text—not colour alone.
-- Ensure map navigation works with touch, mouse, and keyboard where practical.
-- Provide a linear/list alternative.
+| Token | Desktop | Mobile (fluid) | Line height | Notes |
+|---|---|---|---|---|
+| `text-hero` | 88px | 42px | 0.95 | Display, 700, uppercase |
+| `text-page` | 60px | 34px | 1.02 | Display, 600–700, uppercase |
+| `text-heading` | 32px | 22px | 1.1 | Display, 600 |
+| `text-body` | 18px | 15px | 1.6 | DM Sans, measure ≤ 65ch |
+| `text-meta` | 13px | 13px (min 12px) | 1.4 | DM Sans |
+| `text-control` | 14px | 14px | 1.25 | DM Sans, 600, uppercase, tracking 0.06em |
 
-### Title detail view
-- Use title artwork as the visual anchor with a readable dark overlay where text overlaps imagery.
-- Prioritise title, year, overview, and primary actions.
-- Group cast/crew, trailer, editorial relevance, and viewing providers into clear sections.
-- Never display a non-functional trailer control or an unverified provider as available.
+- Uppercase is for short labels and buttons only. Do not set paragraphs in condensed type.
+- Countdown and progress numerals use `tabular-nums`. No third font for numbers.
+- No monospace anywhere in the UI.
 
-### Achievement cards
-- Give each card a clear title-specific identity.
-- Keep the title and achievement status readable at social-sharing sizes.
-- Make the final DOOMSDAY READY card visibly more prestigious than a standard title-completion card.
-- Avoid implying official Marvel branding or certification.
+## 5. Layout system
+- **Content width:** `--container-content` = 80rem (1280px). Full-bleed for heroes, maps and artwork.
+- **Gutters:** 16px on mobile, 24px at 768px, 40px at desktop.
+- **Spacing:** Tailwind's 4px-based scale. Section rhythm: 64px between page sections on desktop, 48px on mobile.
+- **Grid:** 12 columns at desktop, 8 at tablet, 4 at mobile. Detail views use a 7/5 split (main/panel) on desktop and a single column below 1024px.
+- **Radius:** `control` 4px (buttons, badges, inputs); `panel` 8px (cards, panels); `media` 16px (hero media and modals).
+- **Borders:** 1px. `line` for dividers, `line-strong` for controls.
+- **Shadows:** none at rest. Overlays may use a single `0 24px 48px` shadow at 40% black.
+- **Breakpoints:** Tailwind defaults. Design targets 390px (mobile), 768px (tablet), 1440px (desktop). Check each for horizontal overflow.
 
-## 6. Interaction and motion
-- Use motion to explain map movement, node selection, view transitions, and achievement unlocks.
-- Respect `prefers-reduced-motion`.
-- Avoid motion that delays access to content or blocks interaction.
-- Provide visible focus states and clear hover/pressed/disabled states.
-- Touch targets should be comfortably usable on mobile.
-- Do not make hover the only way to discover information.
+## 6. Component language
 
-## 7. Responsive requirements
-Visual QA targets:
-- Desktop: 1440px viewport width.
-- Tablet: 768px viewport width.
-- Mobile: 390px viewport width.
+Implemented:
+- **`UiButton`** (`app/components/ui/UiButton.vue`). Variants: `primary` (doom-green, ink text; hover turns bright green with void text), `secondary` (raised surface, `line-strong` border; hover gold border), `ghost` (muted text). Disabled: soft surface, muted text, not-allowed cursor; the label stays readable. Minimum height 44px. Press: 1px translate. Renders a `NuxtLink` when `to` is set.
+- **`UiBadge`** (`app/components/ui/UiBadge.vue`). Tones: essential, recommended, optional, current, watching, completed, not-started, error. Each has a text label and a Lucide icon. Optional uses a dashed border. Labels are uppercase meta text.
 
-At each size:
-- No horizontal page overflow.
-- Main actions remain easy to reach.
-- Detail content remains readable.
-- Map controls remain usable and do not cover important nodes.
-- Achievement cards preserve their hierarchy and export layout.
-- Navigation has a usable touch-friendly layout.
+Specified, not yet built (built when the owning page is built):
+- **Links:** inline links use `doom-green-bright` text with a 2px underline offset; visited state unchanged.
+- **Navigation:** top bar, wordmark left, links right. Mobile collapses to a labelled menu button. **OPEN:** the mobile menu pattern (sheet vs. disclosure).
+- **Cards:** `surface` panel, `panel` radius, hairline border. No card inside a card. Hover lifts 2px only where the whole card is a link.
+- **Dialogs and modals:** `surface-raised`, `media` radius, focus trapped, Escape closes, focus returns to the trigger.
+- **Inputs:** `surface` fill, `line-strong` border, `gold` focus ring, visible labels (not placeholder-only).
+- **Tooltips:** supplementary only. Never the sole source of information.
+- **Progress indicators:** a labelled bar plus a numeric value, e.g. "7 of 12 essential".
+- **Map nodes:** shape encodes type (rounded square = movie, rounded rectangle with stacked edge = series — **OPEN**, confirm with the map page). Priority: essential = solid outline, recommended = dashed-light, optional = dashed. Status uses the badge tones.
+- **Achievement cards:** fixed 4:5 export frame. Title artwork crop, label row, title, user name, date. Final card uses `doom-green`/`void` backgrounds, gold details.
+- **Loading:** skeletons sized like the final content. **Empty:** one sentence and one action. **Error:** what happened, what to do, retry when meaningful.
 
-## 8. Accessibility requirements
-- Semantic landmarks and heading order.
-- Keyboard access to all meaningful controls.
-- Visible focus indicators.
-- Sufficient contrast.
-- Accessible names for icon-only controls.
-- Text alternatives for meaningful imagery.
-- Status communicated without colour alone.
-- Reduced-motion support.
-- A list alternative to the interactive map.
+## 7. Page specifications
 
-## 9. Design skill workflow
-During the approved design phase:
-1. Inspect the existing UI and design brief.
-2. Install/use Impeccable and Taste Skill only if the user has authorised that phase and the tools are available.
-3. Explore and critique alternative visual directions.
-4. Present a coherent proposed design system for approval.
-5. Update this document with the approved tokens, typography, component rules, page specifications, and interaction states.
-6. Implement only after the design direction is approved.
+Each page must satisfy `docs/ui-context.md` in full. The summaries below set the visual intent.
 
-Do not treat the provisional palette, fonts, or compositions in this document as final instructions before approval.
+**1. Landing (`/`).** Full-viewport backdrop artwork with layered dark treatment. Wordmark top left. Heading `ROAD TO DOOMSDAY` in hero display. Countdown in four units, relic-gold numerals, subordinate to the choices. Two primary actions side by side (desktop) or stacked full width (mobile). Fan-project note visible below the fold. Continue strip only when progress exists. Mobile: title, countdown and both actions within the first two screens.
+
+**2. Doomsday Journey map (`/journey/doomsday`).** Full viewport under a compact top bar. Map fills the viewport. Floating control group (zoom, fit, reset, search, filters, list toggle) that never covers the current node. Essential route in doom-green; current node gold with "You are here". Progress summary in the top bar. List view is a first-class alternative, not a fallback.
+
+**3. Whole Universe map (`/universe`).** Same map system as Doomsday, denser node field, default filter excludes nothing. Essential/recommended/optional shown via priority badges and outline styles. Phase or era is a filter, not a colour.
+
+**4. Movie detail (`/title/:slug`, movie).** Full-bleed backdrop with left-weighted dark overlay. Left column: back, poster, title and year, runtime, synopsis, "Why this matters", "Doomsday connection" with spoiler level, actions (Watch trailer, Mark as watched, Add to watchlist, Share). Right panel: "Where to watch" for India, or "Availability not listed for India". Mobile: single column, provider panel as a normal section.
+
+**5. Series detail (`/title/:slug`, series).** Same structure as movies. Season count replaces runtime. Completion copy must not imply every episode was watched; completion is title-level only (per `docs/ui-context.md` §8).
+
+**6. Watchlist and progress (`/progress`).** **OPEN:** this page is named in the brief but has no specification in `docs/ui-context.md`. Proposed: a list grouped by Watching, Watchlist and Completed, with a progress summary per journey. Confirm before building.
+
+**7. Achievement collection (`/achievements`).** Page title `MY ACHIEVEMENTS`. Summary row (earned count, essential progress). Final card featured when unlocked. Poster-led grid, not equal dashboard tiles. Filters: all, movies, series, special. Locked tiles show the exact requirement, never a spoiler.
+
+**8. DOOMSDAY READY (`/achievements/doomsday-ready`, **OPEN** route).** Full-viewport card preview with the customiser beside it on desktop, below it on mobile. Dark emerald and void, antique gold details, silver accents, original geometry (no protected illustration or logo). Heading `DOOMSDAY READY`, display name, completion statement, date (toggle), fan-project label. Download and share actions.
+
+## 8. Interaction and motion
+- Durations: 150ms for controls, 250–400ms for panel entry, map pan and zoom follow the input, unlock reveal ≤ 1.2s.
+- Easing: `ease-out` for entry, `ease-in-out` for state changes.
+- Motion explains: map movement, node selection, panel entry, progress completion, achievement unlock, countdown digits changing.
+- **Reduced motion:** `prefers-reduced-motion: reduce` shortens all animation and transition durations to effectively instant (global rule in `main.css`). Map pan and zoom switch to instant jumps. Parallax is disabled.
+- No autoplay audio. Trailers start only after an explicit press.
+- Hover is never the only way to reveal information.
+
+## 9. Responsive and accessibility
+
+**Responsive** (checked at 1440, 768 and 390px):
+- No horizontal page overflow. Wide content (tables) scrolls inside its own container with a visible edge.
+- Touch targets at least 44px. Map nodes at least 44px hit area on touch.
+- Heroes use a responsive crop that keeps the subject's focal point.
+
+**Accessibility:**
+- Semantic landmarks (`header`, `main`, `nav`, `footer`) and one `h1` per page with ordered headings.
+- Visible focus: 2px `relic-gold` outline, 2px offset, on every interactive element. Keyboard reaches all controls.
+- Text contrast: AA minimum, AAA where achieved (see §3). Non-text control boundaries use `line-strong` (≥3:1).
+- Status is never colour-only: every badge has a text label and an icon.
+- Icon-only controls have accessible names. Meaningful images have alt text; decorative backdrops are `aria-hidden`.
+- A skip link is the first focusable element (in `layouts/default.vue`).
+- The map has a keyboard-navigable list equivalent with the same actions.
 
 ## 10. Design acceptance criteria
-- The experience feels cinematic and purpose-built, not like a generic admin dashboard.
-- Users can identify the two journey choices immediately.
-- Map states and progress are understandable.
-- Content remains readable over artwork.
-- Controls have complete interaction states.
-- Desktop, tablet, and mobile layouts are intentionally designed.
-- Accessibility and reduced-motion behaviour are addressed.
-- Final UI matches the approved design specification.
+- Cinematic and purpose-built, not a generic admin dashboard.
+- Both journey choices are identifiable on the first screen.
+- Map states and progress are understandable without colour.
+- Content stays readable over artwork.
+- Every control has complete interaction states.
+- Desktop, tablet and mobile layouts are intentionally designed and inspected.
+- Reduced motion, keyboard focus and contrast are verified.
+- The final UI matches this specification.
+
+## 11. Conflicts and resolutions
+
+| Source | Conflict | Resolution |
+|---|---|---|
+| Taste Skill (`design-taste-frontend`) | Assumes photograph-led marketing pages, one section per screen, hover-lift cards, shader effects on tech pages, and stand-in photography. | Product spec wins. No stand-in photography (TMDB artwork is used, with fallbacks). No shader or scene effects. Its checker is applied only where its rules match. |
+| Taste Skill | Its skill file registers a Stop hook that runs its `gate.mjs` checker. | Not verified whether it fires in this project. Treat it as active until checked; the checker is only meaningful for its own build folders. |
+| `CLAUDE.md` §7 | Provisional fonts and palette. | Confirmed in §3–§4. Two tokens added for contrast (`line-strong`, `danger-text`). |
+| `PRODUCT.md` | Legacy Impeccable schema. | Kept as the product authority. `init` was declined by the user. |
+
+## 12. Open decisions
+
+| # | Decision | Owner | Needed before |
+|---|---|---|---|
+| 1 | Whether the map background shows the faint coordinate grid | Design | Journey map |
+| 2 | Map node shape for series vs. movie | Design | Journey map |
+| 3 | Mobile navigation pattern (sheet or disclosure) | Design | Navigation |
+| 4 | Route and spec for `/progress` | Product + design | Watchlist page |
+| 5 | DOOMSDAY READY route | Product | Final achievement |
+| 6 | Backdrop blur on the map control bar | Design | Map |

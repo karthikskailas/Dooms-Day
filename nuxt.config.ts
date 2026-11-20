@@ -4,7 +4,13 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-11-21',
   devtools: { enabled: true },
   modules: ['@nuxt/eslint'],
-  css: ['~/assets/css/main.css'],
+  // Self-hosted fonts (no third-party font requests). Display: Barlow Condensed 600/700. UI/body: DM Sans variable.
+  css: [
+    '@fontsource-variable/dm-sans',
+    '@fontsource/barlow-condensed/600.css',
+    '@fontsource/barlow-condensed/700.css',
+    '~/assets/css/main.css',
+  ],
   vite: {
     plugins: [tailwindcss()],
   },

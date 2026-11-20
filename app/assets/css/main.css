@@ -1,6 +1,11 @@
 @import "tailwindcss";
 
-/* Provisional palette from docs/CLAUDE.md §7 — finalise via DESIGN.md before page work. */
+/*
+ * Design tokens — "Sanctum" direction (approved 2026-11-21, see docs/DESIGN.md).
+ * Palette values come from docs/CLAUDE.md §7. Two tokens are added for contrast:
+ *   --color-danger-text  (text on dark surfaces; #C66B61 fails 4.5:1 on raised panels)
+ *   --color-line-strong  (control boundaries; --color-line is 1.8:1 and decorative only)
+ */
 @theme {
   --color-void: #0B0E0C;
   --color-surface: #131916;
@@ -10,18 +15,47 @@
   --color-ink-muted: #B7BDB5;
   --color-ink-subtle: #858E86;
   --color-line: #354039;
+  --color-line-strong: #667369;
   --color-doom-green: #456B50;
   --color-doom-green-bright: #78966D;
   --color-relic-gold: #C6A15B;
   --color-gold-soft: #E0C98E;
   --color-danger: #C66B61;
+  --color-danger-text: #D98278;
   --color-success: #83A98A;
+
+  --font-display: "Barlow Condensed", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans Variable", "DM Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Fluid type scale (docs/ui-context.md §3 starting values). */
+  --text-hero: clamp(2.625rem, 1.2rem + 5.2vw, 5.5rem);
+  --text-hero--line-height: 0.95;
+  --text-page: clamp(2.125rem, 1.4rem + 2.6vw, 3.75rem);
+  --text-page--line-height: 1.02;
+  --text-heading: clamp(1.375rem, 1.1rem + 0.9vw, 2rem);
+  --text-heading--line-height: 1.1;
+  --text-body: clamp(0.9375rem, 0.9rem + 0.2vw, 1.125rem);
+  --text-body--line-height: 1.6;
+  --text-meta: 0.8125rem;
+  --text-meta--line-height: 1.4;
+  --text-control: 0.875rem;
+  --text-control--line-height: 1.25;
+
+  --radius-control: 0.25rem;
+  --radius-panel: 0.5rem;
+  --radius-media: 1rem;
+
+  --container-content: 80rem;
 }
 
 @layer base {
   html {
     color-scheme: dark;
-    @apply bg-void text-ink antialiased;
+    @apply bg-void text-ink font-sans antialiased;
+  }
+
+  body {
+    @apply bg-void text-ink;
   }
 
   :focus-visible {
