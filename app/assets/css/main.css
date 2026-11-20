@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+/* Provisional palette from docs/CLAUDE.md §7 — finalise via DESIGN.md before page work. */
+@theme {
+  --color-void: #0B0E0C;
+  --color-surface: #131916;
+  --color-surface-raised: #1B231E;
+  --color-surface-soft: #242D27;
+  --color-ink: #F2F0E8;
+  --color-ink-muted: #B7BDB5;
+  --color-ink-subtle: #858E86;
+  --color-line: #354039;
+  --color-doom-green: #456B50;
+  --color-doom-green-bright: #78966D;
+  --color-relic-gold: #C6A15B;
+  --color-gold-soft: #E0C98E;
+  --color-danger: #C66B61;
+  --color-success: #83A98A;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    @apply bg-void text-ink antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-relic-gold;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
