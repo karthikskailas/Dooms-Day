@@ -228,7 +228,7 @@ The editorial JSON is never changed to hold TMDB IDs. TMDB IDs are not looked up
 
 **Tooling** (needs a token): `pnpm tmdb:map` searches unverified titles; `--only`, `--dry-run`, `--retry-review`; `--verify id=movie:ID` or `id=tv:ID[:season]` records a manual verification after fetching the record. A verified entry is never overwritten by a search.
 
-**Status:** all 92 entries are `unmapped`. No TMDB ID has been recorded, because no credential was available.
+**Status (2026-11-21):** all 92 entries are `verified`: 73 by the automatic exact title-and-year rule and 19 manually after review (the Netflix-era Marvel series, whose TMDB titles carry a "Marvel's" prefix; The Fantastic Four, Item 47, X2; and the three "What If...?" seasons, where many unrelated shows share the name). Manual entries record what TMDB returned for the ID, and season titles were checked against TMDB's season list. Re-run `pnpm validate:data --strict` after any edit.
 
 ### 11.6 Server API
 
@@ -286,7 +286,7 @@ Progress is self-reported and unverified.
 
 Failures are never cached and stale entries are not served (`swr: false`). **Limits:** the cache is per server process, empties on restart, and is not shared between instances or serverless isolates, so each instance fetches its own copy. No Redis, KV, or database is used.
 
-**Not yet verified:** that a second request is served from cache. It needs a live token (see the tracker).
+**Verified live (2026-11-21):** a repeat request is served from cache (cold 160–550 ms, repeat about 3 ms), and each region is cached separately. Rate-limit behaviour has not been exercised against the real API.
 
 ### 11.9 Open decisions
 

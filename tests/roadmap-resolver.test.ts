@@ -20,7 +20,7 @@ describe('resolveTarget', () => {
   })
 
   it('reports unknown and unmapped titles differently', async () => {
-    const { resolveTarget } = await withMapping({})
+    const { resolveTarget } = await withMapping({ marvel_001: { status: 'unmapped' } })
     expect(() => resolveTarget('marvel_999')).toThrowError(expect.objectContaining({ code: 'title_not_found', statusCode: 404 }))
     expect(() => resolveTarget('marvel_001')).toThrowError(expect.objectContaining({ code: 'tmdb_not_mapped', statusCode: 404 }))
   })

@@ -3,10 +3,10 @@
 **Last Updated**: 2026-11-21
 
 ## Current Phase
-**Phase 03 — Data architecture and TMDB integration: code complete, NOT verified against live TMDB.** Phases 01 and 02 are complete and committed (`e53741c`, `04de6c7`). Phase 03 is uncommitted. Awaiting approval to start Phase 04.
+**Phase 03 — Data architecture and TMDB integration: complete and verified against live TMDB** (after the token was added). Phases 01–03 are committed (`e53741c`, `04de6c7`, `5b9a378`, plus the live-mapping commit that follows it). Awaiting approval to start Phase 04.
 
 ## Current Goal
-Add a TMDB token, run the mapping, and verify the API with live data (see "Next Work"). Then Phase 04 (pending approval).
+Phase 04 (pending approval). See "Next Work".
 
 ## Completed Work
 - Product flows, two journey modes, pan/zoom timeline, title detail layout, achievements and UI contract defined (pre-Phase 01).
@@ -139,7 +139,7 @@ Still open:
 ## Phase 03 — Outcome
 
 ### Status
-Architecture, validation, mapping tooling, local persistence and the server integration are implemented and unit tested. **Nothing has been verified against live TMDB data**: no TMDB credential was available, so no TMDB ID is recorded and no endpoint has returned real metadata.
+Architecture, validation, mapping tooling, local persistence and the server integration are implemented and unit tested. The initial commit had no TMDB credential; the token was added afterwards and the mapping and live API checks below were done (see "Live TMDB session").
 
 ### Dataset audit (`app/constant/marvel_doomsday_watchlist.json`)
 - **Location:** `app/constant/` (singular). `app/constants` does not exist. The file was untracked in git when found.
@@ -207,19 +207,30 @@ A placeholder `verified` entry (ID `1`, never looked up because the token is rej
 - The `useProgress` composable in a browser: the store is unit tested; the Nuxt wrapper, the `app:mounted` hydration and a real refresh have not been exercised in a browser.
 
 ### Known issues and unresolved decisions
-- **Mapping is 0 of 92.** No TMDB ID is recorded.
-- **Uncommitted:** all Phase 03 work, including the untracked roadmap JSON.
+- **Uncommitted:** the live mapping, test and doc updates made after the first Phase 03 commit.
 - Open decisions are listed in `ARCHITECTURE.md` §11.9 (full `completion_status` set, `unconfirmed`, `special` mapping, season-level credits and videos, Doomsday Journey membership field).
 - `docs/architecture.md` and `docs/code-standards.md` still contain the superseded camelCase model below their notices.
 - TMDB requires attribution and its watch-provider data requires JustWatch attribution; the UI must show both when built.
 - The in-memory cache is per process and cleared on restart.
 
+## Live TMDB session (after the token was added)
+
+- **`.env` problem found and fixed:** `NUXT_TMDB_API_BASE_URL` was `https://api.themoviedb.org` (blocked from this network, 0 of 5 reachable, and missing `/3`), so mapping runs used a command-line override. The owner then corrected `.env` to `https://api.tmdb.org/3`; confirmed with a live request using `.env` as saved (HTTP 200). The code default is also `https://api.tmdb.org/3` (`nuxt.config.ts`, `server/utils/tmdb/client.ts`).
+- **Mapping run:** `pnpm tmdb:map`: 92 searched, 0 failed. 73 verified automatically, 19 `needs_review`. Every automatic match was listed and read; titles and years agree with the editorial data.
+- **19 manual verifications** with `pnpm tmdb:map --verify` (each fetches the TMDB record and checks season existence): `marvel_005` (TMDB title "The Fantastic 4: First Steps"), `marvel_014` (Item 47), Daredevil S1–3, Jessica Jones S1–3, Luke Cage S1–2, Iron Fist S1–2, The Defenders, The Punisher S1–2, What If...? S1–3, and `legacy_xmen_002` (TMDB title "X2"). The Defenders and The Punisher were found by searching their TMDB titles ("Marvel's The Defenders", "Marvel's The Punisher") because the first search only returned unrelated shows. These judgements were mine, based on title, year and franchise; they are not independently reviewed.
+- **Result:** `pnpm validate:data --strict` passes: verified 92, needs_review 0, unmapped 0.
+- **API, live (dev server):** all four routes returned 200 for a movie (`marvel_007`) and a season title (`marvel_025`). Movie: Iron Man, 126 min, 20 cast, real trailer, India provider JioHotstar (subscription) plus YouTube (rent, buy). Season title: Daredevil with season 2 (aired 2016-03-18, 13 episodes), India providers JioHotstar and VI movies and tv. `?region=US` and lowercase `?region=in` behave correctly.
+- **Cache, live:** cold requests 160–550 ms, repeats about 3 ms, per-region entries separate.
+- **Tests:** 105 passing. Tests no longer depend on the real mapping's progress (they use a blank baseline).
+
+### Still not verified
+- Rate-limit behaviour against the real API.
+- Unreleased or sparse 2026 titles (`marvel_067`, `079`, `080`, `081`, `082`) were matched but their routes were not called; metadata may be partial.
+- Crew lists for TV are show-level aggregates (48 entries for Daredevil); check what the UI needs.
+- The `useProgress` composable in a browser (store is unit tested; wrapper and hydration are not).
+
 ## Next Work (Phase 04 — awaiting approval)
 Before Phase 04:
-1. **Add a TMDB token** to `.env` (`NUXT_TMDB_API_TOKEN`; see README).
-2. Run `pnpm tmdb:map --dry-run`, then `pnpm tmdb:map`. Review every `needs_review` entry and settle it with `pnpm tmdb:map --verify id=movie:ID` or `id=tv:ID[:season]`. Do not guess IDs.
-3. Run `pnpm validate:data --strict` until it passes.
-4. With the dev server and a verified title, call all four routes; confirm real data, `IN` providers, and that a repeat request is served from cache. Record the results here.
-5. Decide the open data questions in `ARCHITECTURE.md` §11.9, and the `DESIGN.md` §12 items the first page needs.
-6. Commit Phase 03 (on request).
+1. Optionally spot-check the 19 manual mappings (list above) against themoviedb.org.
+2. Decide the open data questions in `ARCHITECTURE.md` §11.9, and the `DESIGN.md` §12 items the first page needs.
 Phase 04's scope is not defined in the source documents. `ai-workflow-rules.md` points to the landing page next; it needs the countdown date from `collection.target_release_date` (`2026-12-18`).

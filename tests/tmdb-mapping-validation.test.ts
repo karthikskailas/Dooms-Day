@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { validateTmdbMapping } from '../shared/schemas/tmdb-mapping.ts'
 import type { TmdbMappingEntry } from '../shared/types/tmdb-mapping.ts'
 import { parseTitleForSearch } from '../shared/utils/title-query.ts'
-import { loadMapping, loadRoadmap } from './helpers.ts'
+import { loadBlankMapping, loadMapping, loadRoadmap } from './helpers.ts'
 
 // Synthetic IDs below are test fixtures, not real TMDB identifiers.
 const verified = (over: Partial<Extract<TmdbMappingEntry, { status: 'verified' }>> = {}): TmdbMappingEntry => ({
@@ -16,17 +16,25 @@ const verified = (over: Partial<Extract<TmdbMappingEntry, { status: 'verified' }
   ...over,
 })
 const run = (mutate: (m: ReturnType<typeof loadMapping>) => void) => {
-  const m = loadMapping()
+  const m = loadBlankMapping()
   mutate(m)
   return validateTmdbMapping(m, loadRoadmap())
 }
 const text = (r: ReturnType<typeof run>) => r.issues.map((i) => `${i.titleId} ${i.message}`).join('\n')
 
 describe('tmdb mapping (real file)', () => {
-  it('covers every title, with no invented IDs', () => {
+  it('is valid and covers every title', () => {
     const report = validateTmdbMapping(loadMapping(), loadRoadmap())
     expect(report.issues).toEqual([])
-    expect(report.counts).toEqual({ verified: 0, needs_review: 0, unmapped: 92 })
+    expect(report.counts.verified + report.counts.needs_review + report.counts.unmapped).toBe(92)
+  })
+
+  it('records evidence for every verified entry', () => {
+    for (const [id, e] of Object.entries(loadMapping().entries)) {
+      if (e.status !== 'verified') continue
+      expect(e.matched_title, id).not.toBe('')
+      expect(['auto_exact', 'manual'], id).toContain(e.method)
+    }
   })
 })
 

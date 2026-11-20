@@ -2,280 +2,857 @@
   "schema_version": "1.0.0",
   "entries": {
     "marvel_001": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 241388,
+      "media_type": "tv",
+      "matched_title": "Eyes of Wakanda",
+      "matched_year": 2025,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_002": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 1771,
+      "media_type": "movie",
+      "matched_title": "Captain America: The First Avenger",
+      "matched_year": 2011,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_003": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 211387,
+      "media_type": "movie",
+      "matched_title": "Marvel One-Shot: Agent Carter",
+      "matched_year": 2013,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_004": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 61550,
+      "media_type": "tv",
+      "matched_title": "Marvel's Agent Carter",
+      "matched_year": 2015,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_005": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 617126,
+      "media_type": "movie",
+      "matched_title": "The Fantastic 4: First Steps",
+      "matched_year": 2025,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_006": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 299537,
+      "media_type": "movie",
+      "matched_title": "Captain Marvel",
+      "matched_year": 2019,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_007": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 1726,
+      "media_type": "movie",
+      "matched_title": "Iron Man",
+      "matched_year": 2008,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_008": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 10138,
+      "media_type": "movie",
+      "matched_title": "Iron Man 2",
+      "matched_year": 2010,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_009": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 1724,
+      "media_type": "movie",
+      "matched_title": "The Incredible Hulk",
+      "matched_year": 2008,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_010": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 76535,
+      "media_type": "movie",
+      "matched_title": "Marvel One-Shot: A Funny Thing Happened on the Way to Thor's Hammer",
+      "matched_year": 2011,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_011": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 10195,
+      "media_type": "movie",
+      "matched_title": "Thor",
+      "matched_year": 2011,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_012": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 76122,
+      "media_type": "movie",
+      "matched_title": "Marvel One-Shot: The Consultant",
+      "matched_year": 2011,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_013": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 24428,
+      "media_type": "movie",
+      "matched_title": "The Avengers",
+      "matched_year": 2012,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_014": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 119569,
+      "media_type": "movie",
+      "matched_title": "Marvel One-Shot: Item 47",
+      "matched_year": 2012,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_015": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 76338,
+      "media_type": "movie",
+      "matched_title": "Thor: The Dark World",
+      "matched_year": 2013,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_016": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 68721,
+      "media_type": "movie",
+      "matched_title": "Iron Man 3",
+      "matched_year": 2013,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_017": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 100402,
+      "media_type": "movie",
+      "matched_title": "Captain America: The Winter Soldier",
+      "matched_year": 2014,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_018": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 118340,
+      "media_type": "movie",
+      "matched_title": "Guardians of the Galaxy",
+      "matched_year": 2014,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_019": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 232125,
+      "media_type": "tv",
+      "matched_title": "I Am Groot",
+      "matched_year": 2022,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_020": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 283995,
+      "media_type": "movie",
+      "matched_title": "Guardians of the Galaxy Vol. 2",
+      "matched_year": 2017,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_021": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 61889,
+      "media_type": "tv",
+      "season_number": 1,
+      "matched_title": "Marvel's Daredevil",
+      "matched_year": 2015,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_022": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 38472,
+      "media_type": "tv",
+      "season_number": 1,
+      "matched_title": "Marvel's Jessica Jones",
+      "matched_year": 2015,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_023": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 99861,
+      "media_type": "movie",
+      "matched_title": "Avengers: Age of Ultron",
+      "matched_year": 2015,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_024": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 102899,
+      "media_type": "movie",
+      "matched_title": "Ant-Man",
+      "matched_year": 2015,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_025": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 61889,
+      "media_type": "tv",
+      "season_number": 2,
+      "matched_title": "Marvel's Daredevil",
+      "matched_year": 2015,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_026": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 62126,
+      "media_type": "tv",
+      "season_number": 1,
+      "matched_title": "Marvel's Luke Cage",
+      "matched_year": 2016,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_027": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 62127,
+      "media_type": "tv",
+      "season_number": 1,
+      "matched_title": "Marvel's Iron Fist",
+      "matched_year": 2017,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_028": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 62285,
+      "media_type": "tv",
+      "season_number": 1,
+      "matched_title": "Marvel's The Defenders",
+      "matched_year": 2017,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_029": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 271110,
+      "media_type": "movie",
+      "matched_title": "Captain America: Civil War",
+      "matched_year": 2016,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_030": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 138503,
+      "media_type": "tv",
+      "season_number": 1,
+      "matched_title": "Your Friendly Neighborhood Spider-Man",
+      "matched_year": 2025,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_031": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 497698,
+      "media_type": "movie",
+      "matched_title": "Black Widow",
+      "matched_year": 2021,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_032": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 284054,
+      "media_type": "movie",
+      "matched_title": "Black Panther",
+      "matched_year": 2018,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_033": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 315635,
+      "media_type": "movie",
+      "matched_title": "Spider-Man: Homecoming",
+      "matched_year": 2017,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_034": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 67178,
+      "media_type": "tv",
+      "season_number": 1,
+      "matched_title": "Marvel's The Punisher",
+      "matched_year": 2017,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_035": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 284052,
+      "media_type": "movie",
+      "matched_title": "Doctor Strange",
+      "matched_year": 2016,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_036": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 38472,
+      "media_type": "tv",
+      "season_number": 2,
+      "matched_title": "Marvel's Jessica Jones",
+      "matched_year": 2015,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_037": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 62126,
+      "media_type": "tv",
+      "season_number": 2,
+      "matched_title": "Marvel's Luke Cage",
+      "matched_year": 2016,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_038": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 62127,
+      "media_type": "tv",
+      "season_number": 2,
+      "matched_title": "Marvel's Iron Fist",
+      "matched_year": 2017,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_039": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 61889,
+      "media_type": "tv",
+      "season_number": 3,
+      "matched_title": "Marvel's Daredevil",
+      "matched_year": 2015,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_040": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 284053,
+      "media_type": "movie",
+      "matched_title": "Thor: Ragnarok",
+      "matched_year": 2017,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_041": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 67178,
+      "media_type": "tv",
+      "season_number": 2,
+      "matched_title": "Marvel's The Punisher",
+      "matched_year": 2017,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_042": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 38472,
+      "media_type": "tv",
+      "season_number": 3,
+      "matched_title": "Marvel's Jessica Jones",
+      "matched_year": 2015,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_043": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 363088,
+      "media_type": "movie",
+      "matched_title": "Ant-Man and the Wasp",
+      "matched_year": 2018,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_044": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 299536,
+      "media_type": "movie",
+      "matched_title": "Avengers: Infinity War",
+      "matched_year": 2018,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_045": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 299534,
+      "media_type": "movie",
+      "matched_title": "Avengers: Endgame",
+      "matched_year": 2019,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_046": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 138505,
+      "media_type": "tv",
+      "season_number": 1,
+      "matched_title": "Marvel Zombies",
+      "matched_year": 2025,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_047": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 85271,
+      "media_type": "tv",
+      "matched_title": "WandaVision",
+      "matched_year": 2021,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_048": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 84958,
+      "media_type": "tv",
+      "season_number": 1,
+      "matched_title": "Loki",
+      "matched_year": 2021,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_049": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 533535,
+      "media_type": "movie",
+      "matched_title": "Deadpool & Wolverine",
+      "matched_year": 2024,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_050": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 566525,
+      "media_type": "movie",
+      "matched_title": "Shang-Chi and the Legend of the Ten Rings",
+      "matched_year": 2021,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_051": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 88396,
+      "media_type": "tv",
+      "matched_title": "The Falcon and the Winter Soldier",
+      "matched_year": 2021,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_052": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 429617,
+      "media_type": "movie",
+      "matched_title": "Spider-Man: Far From Home",
+      "matched_year": 2019,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_053": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 524434,
+      "media_type": "movie",
+      "matched_title": "Eternals",
+      "matched_year": 2021,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_054": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 634649,
+      "media_type": "movie",
+      "matched_title": "Spider-Man: No Way Home",
+      "matched_year": 2021,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_055": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 453395,
+      "media_type": "movie",
+      "matched_title": "Doctor Strange in the Multiverse of Madness",
+      "matched_year": 2022,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_056": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 88329,
+      "media_type": "tv",
+      "matched_title": "Hawkeye",
+      "matched_year": 2021,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_057": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 91363,
+      "media_type": "tv",
+      "season_number": 1,
+      "matched_title": "What If...?",
+      "matched_year": 2021,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_058": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 92749,
+      "media_type": "tv",
+      "matched_title": "Moon Knight",
+      "matched_year": 2022,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_059": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 505642,
+      "media_type": "movie",
+      "matched_title": "Black Panther: Wakanda Forever",
+      "matched_year": 2022,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_060": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 122226,
+      "media_type": "tv",
+      "matched_title": "Echo",
+      "matched_year": 2024,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_061": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 92783,
+      "media_type": "tv",
+      "matched_title": "She-Hulk: Attorney at Law",
+      "matched_year": 2022,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_062": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 92782,
+      "media_type": "tv",
+      "matched_title": "Ms. Marvel",
+      "matched_year": 2022,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_063": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 616037,
+      "media_type": "movie",
+      "matched_title": "Thor: Love and Thunder",
+      "matched_year": 2022,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_064": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 894205,
+      "media_type": "movie",
+      "matched_title": "Werewolf by Night",
+      "matched_year": 2022,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_065": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 114471,
+      "media_type": "tv",
+      "season_number": 1,
+      "matched_title": "Ironheart",
+      "matched_year": 2025,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_066": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 774752,
+      "media_type": "movie",
+      "matched_title": "The Guardians of the Galaxy Holiday Special",
+      "matched_year": 2022,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_067": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 198178,
+      "media_type": "tv",
+      "season_number": 1,
+      "matched_title": "Wonder Man",
+      "matched_year": 2026,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_068": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 640146,
+      "media_type": "movie",
+      "matched_title": "Ant-Man and the Wasp: Quantumania",
+      "matched_year": 2023,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_069": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 447365,
+      "media_type": "movie",
+      "matched_title": "Guardians of the Galaxy Vol. 3",
+      "matched_year": 2023,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_070": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 114472,
+      "media_type": "tv",
+      "matched_title": "Secret Invasion",
+      "matched_year": 2023,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_071": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 609681,
+      "media_type": "movie",
+      "matched_title": "The Marvels",
+      "matched_year": 2023,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_072": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 84958,
+      "media_type": "tv",
+      "season_number": 2,
+      "matched_title": "Loki",
+      "matched_year": 2021,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_073": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 91363,
+      "media_type": "tv",
+      "season_number": 2,
+      "matched_title": "What If...?",
+      "matched_year": 2021,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_074": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 138501,
+      "media_type": "tv",
+      "season_number": 1,
+      "matched_title": "Agatha All Along",
+      "matched_year": 2024,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_075": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 91363,
+      "media_type": "tv",
+      "season_number": 3,
+      "matched_title": "What If...?",
+      "matched_year": 2021,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "marvel_076": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 202555,
+      "media_type": "tv",
+      "season_number": 1,
+      "matched_title": "Daredevil: Born Again",
+      "matched_year": 2025,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_077": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 822119,
+      "media_type": "movie",
+      "matched_title": "Captain America: Brave New World",
+      "matched_year": 2025,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_078": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 986056,
+      "media_type": "movie",
+      "matched_title": "Thunderbolts*",
+      "matched_year": 2025,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_079": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 202555,
+      "media_type": "tv",
+      "season_number": 2,
+      "matched_title": "Daredevil: Born Again",
+      "matched_year": 2025,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_080": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 1439930,
+      "media_type": "movie",
+      "matched_title": "The Punisher: One Last Kill",
+      "matched_year": 2026,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_081": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 213375,
+      "media_type": "tv",
+      "matched_title": "VisionQuest",
+      "matched_year": 2026,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "marvel_082": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 969681,
+      "media_type": "movie",
+      "matched_title": "Spider-Man: Brand New Day",
+      "matched_year": 2026,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "legacy_xmen_001": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 36657,
+      "media_type": "movie",
+      "matched_title": "X-Men",
+      "matched_year": 2000,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "legacy_xmen_002": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 36658,
+      "media_type": "movie",
+      "matched_title": "X2",
+      "matched_year": 2003,
+      "method": "manual",
+      "verified_on": "2026-11-20"
     },
     "legacy_xmen_003": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 36668,
+      "media_type": "movie",
+      "matched_title": "X-Men: The Last Stand",
+      "matched_year": 2006,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "legacy_xmen_004": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 49538,
+      "media_type": "movie",
+      "matched_title": "X-Men: First Class",
+      "matched_year": 2011,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "legacy_xmen_005": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 76170,
+      "media_type": "movie",
+      "matched_title": "The Wolverine",
+      "matched_year": 2013,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "legacy_xmen_006": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 127585,
+      "media_type": "movie",
+      "matched_title": "X-Men: Days of Future Past",
+      "matched_year": 2014,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "legacy_xmen_007": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 246655,
+      "media_type": "movie",
+      "matched_title": "X-Men: Apocalypse",
+      "matched_year": 2016,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "legacy_xmen_008": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 263115,
+      "media_type": "movie",
+      "matched_title": "Logan",
+      "matched_year": 2017,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "legacy_xmen_009": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 293660,
+      "media_type": "movie",
+      "matched_title": "Deadpool",
+      "matched_year": 2016,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     },
     "legacy_xmen_010": {
-      "status": "unmapped"
+      "status": "verified",
+      "tmdb_id": 383498,
+      "media_type": "movie",
+      "matched_title": "Deadpool 2",
+      "matched_year": 2018,
+      "method": "auto_exact",
+      "verified_on": "2026-11-20"
     }
   }
 }

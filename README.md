@@ -40,13 +40,13 @@ TMDB supplies posters, descriptions, cast, trailers and watch providers. The tok
 | `NUXT_TMDB_API_BASE_URL` | server only | `https://api.tmdb.org/3` | Only `api.tmdb.org` and `api.themoviedb.org` are accepted, because the token is sent there |
 | `NUXT_PUBLIC_TMDB_REGION` | public | `IN` | Default watch-provider region. Routes also accept `?region=XX` |
 
-`api.tmdb.org` is the default because `api.themoviedb.org` reset most new connections on the development network. If you see `network_error`, try the other host.
+`api.tmdb.org` is the default because `api.themoviedb.org` reset most new connections on the development network. Leave `NUXT_TMDB_API_BASE_URL` blank unless you need to change it: the value must include `/3` (for example `https://api.tmdb.org/3`), and a blank line in `.env` uses the default. If you see `network_error`, check this setting first.
 
 Never commit `.env`.
 
 ## Linking titles to TMDB
 
-Each title's TMDB identity is stored in `app/constant/tmdb_mapping.json`, separate from the editorial data. All titles start as `unmapped`; no ID is recorded until it has been confirmed against TMDB.
+Each title's TMDB identity is stored in `app/constant/tmdb_mapping.json`, separate from the editorial data. All 92 titles are currently verified. No ID is recorded until it has been confirmed against TMDB, and the commands below are for adding or correcting entries.
 
 ```bash
 pnpm tmdb:map --dry-run                       # search and show results, write nothing

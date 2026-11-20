@@ -3,7 +3,7 @@ import type { TmdbClient } from '../server/utils/tmdb/client.ts'
 import { ApiError } from '../server/utils/tmdb/errors.ts'
 import { mapTitles, verifyManually } from '../scripts/tmdb-map-lib.ts'
 import type { TmdbMappingEntry } from '../shared/types/tmdb-mapping.ts'
-import { loadMapping, loadRoadmap } from './helpers.ts'
+import { loadBlankMapping as loadMapping, loadRoadmap } from './helpers.ts'
 
 // All TMDB responses here are synthetic fixtures with made-up IDs.
 type Handler = (path: string, query: Record<string, unknown>) => unknown
