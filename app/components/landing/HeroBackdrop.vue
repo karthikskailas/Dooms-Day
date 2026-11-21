@@ -43,8 +43,8 @@ function createPlayer(yt: YtApi) {
 }
 
 onMounted(() => {
-  // Portrait (phones) shows the poster and our own countdown instead, so the video is never loaded there.
-  if (window.matchMedia('(orientation: portrait)').matches) return
+  // Phones (under 768px) show the poster and our own countdown instead, so the video is never loaded there.
+  if (!window.matchMedia('(min-width: 768px)').matches) return
   const w = window as YtWindow
   if (w.YT?.Player) return createPlayer(w.YT)
   w.onYouTubeIframeAPIReady = () => w.YT && createPlayer(w.YT)
@@ -122,11 +122,11 @@ const spokes = Array.from({ length: SIDES }, (_, k) => {
       :src="poster"
       alt=""
       fetchpriority="high"
-      class="absolute inset-0 size-full object-cover object-[60%_center] landscape:hidden"
+      class="absolute inset-0 size-full object-cover object-[60%_center] md:hidden"
     >
 
     <div
-      class="absolute left-1/2 top-1/2 h-[max(100dvh,56.25vw)] w-[max(100vw,177.78dvh)] -translate-x-1/2 -translate-y-1/2 transition-opacity duration-1000 [&_iframe]:size-full [&_iframe]:border-0"
+      class="absolute left-1/2 top-1/2 hidden h-[109.7vw] w-[195vw] -translate-x-1/2 -translate-y-1/2 transition-opacity duration-1000 [mask-image:linear-gradient(to_bottom,transparent,black_22%,black_78%,transparent)] md:block landscape:h-[max(100dvh,56.25vw)] landscape:w-[max(100vw,177.78dvh)] landscape:[mask-image:none] [&_iframe]:size-full [&_iframe]:border-0"
       :class="videoReady ? 'opacity-100' : 'opacity-0'"
     >
       <div ref="target" />
@@ -135,7 +135,7 @@ const spokes = Array.from({ length: SIDES }, (_, k) => {
     <!-- A very light overall dim over the poster or video. -->
     <div class="absolute inset-0 bg-void/20" />
 
-    <!-- Landscape: only the bottom is dimmed, for the buttons; the video's own countdown is untouched. Portrait: a band behind our countdown and buttons, clear of the poster's logo. -->
-    <div class="absolute inset-x-0 bottom-[22%] h-[42%] bg-linear-to-t from-transparent via-void/65 to-transparent landscape:inset-x-0 landscape:bottom-0 landscape:h-1/2 landscape:bg-linear-to-t landscape:from-void/80 landscape:via-transparent landscape:to-transparent" />
+    <!-- Tablet and up: only the bottom is dimmed, for the buttons; the video's own countdown is untouched. Phones: a band behind our countdown and buttons, clear of the poster's logo. -->
+    <div class="absolute inset-x-0 bottom-[22%] h-[42%] bg-linear-to-t from-transparent via-void/65 to-transparent md:bottom-0 md:h-1/2 md:from-void/80 md:via-transparent md:to-transparent" />
   </div>
 </template>
