@@ -13,6 +13,14 @@ The experience combines three visual references:
 
 The UI must be cinematic, immersive, highly legible, responsive, and functional. Preserve the project's own identity; do not copy third-party logos, exact layouts, or protected artwork.
 
+### 1.1 Owner Directives (latest — these override conflicting rules below)
+
+- **No-scroll website.** Every page/view fits exactly in the viewport (`100dvh`, `overflow: hidden` on the page shell) at 1440px, 768px and 390px. No page-level vertical or horizontal scroll. Content that does not fit is handled with in-place panels, drawers, tabs, paging, or map pan/zoom — never by scrolling the page. Internal scrolling is allowed only inside a bounded panel (e.g. a drawer list) when unavoidable.
+- **Not a generic website.** No stacked marketing sections, card grids or SaaS landing patterns. Each view is a single composed cinematic screen.
+- **Landing: timer and primary button centered.** The countdown and the main CTA sit in the optical center of the viewport (horizontally and vertically), stacked as one group, on desktop and mobile.
+- **Landing background must be alive, not flat.** Use the official trailer / official Marvel YouTube video (muted, looping, no autoplay audio, `prefers-reduced-motion` and failed-embed fallback to a still) or a Doomsday key-art image as the full-bleed background, with a dark overlay strong enough to keep the timer and button legible. Use only official embeds/links; do not download or re-host protected video. Video choice and still fallback must be defined in `ui-context.md` before implementation.
+- **Green is too dull — brighten it.** The current Doom green (`#456B50` / `#78966D`) reads muddy against the dark base. Raise its luminance and saturation for accents, selected paths, borders and CTA states while keeping it in the same hue family and still avoiding neon. Pick the new values, check contrast, and update the palette table in section 7 and `DESIGN.md` before rolling out. Until then, treat the section 7 green hexes as superseded.
+
 ## 2. Mandatory Skills
 
 Use both design skills for UI work. They have different jobs and must complement each other.

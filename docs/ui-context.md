@@ -25,8 +25,8 @@ Three visual references define the experience:
 | Secondary ink | `#B7BDB5` | Supporting text |
 | Tertiary ink | `#858E86` | Metadata; use carefully for contrast |
 | Line | `#354039` | Borders and separators |
-| Doom green | `#456B50` | Brand accent, selected paths |
-| Green highlight | `#78966D` | Active map accents |
+| Doom green | `#1F7A47` | Brand accent, selected paths (brightened 2026-11-21) |
+| Green highlight | `#4FD07F` | Active map accents (brightened 2026-11-21) |
 | Relic gold | `#C6A15B` | Rewards, key milestones, countdown emphasis |
 | Soft gold | `#E0C98E` | Achievement display type |
 | Success | `#83A98A` | Completed state |
@@ -123,6 +123,9 @@ Make the visitor understand the project and choose a journey immediately.
 - Countdown date reached: show a release-day/now-playing message only if product copy is approved.
 - Countdown date missing: hide the timer and show a safe fallback; never invent a date.
 - No saved progress: show the two journey choices without a continuation strip.
+
+### Landing, minimal (2026-11-21)
+The landing is only the official live countdown video (full-bleed) and the two journey buttons, in a no-scroll, chrome-free layout. Everything else in this section is superseded; see `DESIGN.md` §13.
 
 ## 5. Timeline Map — Doomsday Journey and Whole Universe
 

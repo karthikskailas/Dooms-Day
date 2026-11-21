@@ -1,6 +1,16 @@
-<!-- Placeholder route only. The landing page is built in a later phase per docs/ui-context.md §4. -->
+<script setup lang="ts">
+import { collectionMeta } from '../utils/collection.ts'
+
+useSeoMeta({
+  title: 'Marvel: Road to Doomsday',
+  description: `A fan-made watch roadmap to ${collectionMeta.target_title}: follow the curated Doomsday Journey or explore the wider Marvel universe.`,
+  ogTitle: 'Marvel: Road to Doomsday',
+  ogDescription: `A fan-made watch roadmap to ${collectionMeta.target_title}.`,
+})
+
+definePageMeta({ layout: 'bare' })
+</script>
+
 <template>
-  <div class="grid min-h-dvh place-items-center p-6">
-    <p class="text-ink-muted">Marvel: Road to Doomsday — foundation build.</p>
-  </div>
+  <LandingHero />
 </template>

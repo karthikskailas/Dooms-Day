@@ -28,8 +28,8 @@ All tokens are defined once in `app/assets/css/main.css` under `@theme`. Use the
 | `ink-subtle` | `#858E86` | Metadata. **Not on `surface-soft`** (4.2:1) | 5.7:1 on void, 4.8:1 on raised |
 | `line` | `#354039` | Decorative dividers only (1.8:1, not a control boundary) | — |
 | `line-strong` | `#667369` | **Added.** Control boundaries, inputs, unselected outlines (≥3:1) | 3.5 / 3.2 / 2.9 on void / surface / raised |
-| `doom-green` | `#456B50` | Primary button fill, essential badge, selected paths | ink 5.3:1 |
-| `doom-green-bright` | `#78966D` | Hover fill, watching state, active paths | void 5.9:1 |
+| `doom-green` | `#1F7A47` | Primary button fill, essential badge, selected paths. **Brightened 2026-11-21** (was `#456B50`, read as dull) | ink 4.7:1, void 3.6:1 |
+| `doom-green-bright` | `#4FD07F` | Hover fill, watching state, active paths, green text. **Brightened 2026-11-21** (was `#78966D`) | void 9.9:1, raised 8.2:1 |
 | `relic-gold` | `#C6A15B` | Current position, focus ring, achievement emphasis | 8.0:1 on void |
 | `gold-soft` | `#E0C98E` | Achievement and current-state text | 9.9:1 on raised |
 | `success` | `#83A98A` | Completed state | 7.4:1 on void |
@@ -85,7 +85,7 @@ Implemented:
 
 Specified, not yet built (built when the owning page is built):
 - **Links:** inline links use `doom-green-bright` text with a 2px underline offset; visited state unchanged.
-- **Navigation:** top bar, wordmark left, links right. Mobile collapses to a labelled menu button. **OPEN:** the mobile menu pattern (sheet vs. disclosure).
+- **Navigation:** top bar, wordmark left, links right. Mobile collapses to a labelled menu button that opens a disclosure panel under the bar (decided in Phase 04, see §13).
 - **Cards:** `surface` panel, `panel` radius, hairline border. No card inside a card. Hover lifts 2px only where the whole card is a link.
 - **Dialogs and modals:** `surface-raised`, `media` radius, focus trapped, Escape closes, focus returns to the trigger.
 - **Inputs:** `surface` fill, `line-strong` border, `gold` focus ring, visible labels (not placeholder-only).
@@ -99,7 +99,7 @@ Specified, not yet built (built when the owning page is built):
 
 Each page must satisfy `docs/ui-context.md` in full. The summaries below set the visual intent.
 
-**1. Landing (`/`).** Full-viewport backdrop artwork with layered dark treatment. Wordmark top left. Heading `ROAD TO DOOMSDAY` in hero display. Countdown in four units, relic-gold numerals, subordinate to the choices. Two primary actions side by side (desktop) or stacked full width (mobile). Fan-project note visible below the fold. Continue strip only when progress exists. Mobile: title, countdown and both actions within the first two screens.
+**1. Landing (`/`).** Built in Phase 04; see §13 for what shipped. Full-viewport backdrop artwork with layered dark treatment. Wordmark top left. Heading `ROAD TO DOOMSDAY` in hero display. Countdown in four units, relic-gold numerals, subordinate to the choices. Two primary actions side by side (desktop) or stacked full width (mobile). Fan-project note visible below the fold. Continue strip only when progress exists. Mobile: title, countdown and both actions within the first two screens.
 
 **2. Doomsday Journey map (`/journey/doomsday`).** Full viewport under a compact top bar. Map fills the viewport. Floating control group (zoom, fit, reset, search, filters, list toggle) that never covers the current node. Essential route in doom-green; current node gold with "You are here". Progress summary in the top bar. List view is a first-class alternative, not a fallback.
 
@@ -164,7 +164,20 @@ Each page must satisfy `docs/ui-context.md` in full. The summaries below set the
 |---|---|---|---|
 | 1 | Whether the map background shows the faint coordinate grid | Design | Journey map |
 | 2 | Map node shape for series vs. movie | Design | Journey map |
-| 3 | Mobile navigation pattern (sheet or disclosure) | Design | Navigation |
+| 3 | ~~Mobile navigation pattern~~ **Resolved (Phase 04): disclosure panel** | Design | — |
 | 4 | Route and spec for `/progress` | Product + design | Watchlist page |
 | 5 | DOOMSDAY READY route | Product | Final achievement |
 | 6 | Backdrop blur on the map control bar | Design | Map |
+
+## 13. Landing page
+
+**Minimal rewrite 2026-11-21 (owner directive; supersedes the Phase 04 landing and the earlier same-day rework).** The landing is the official live countdown video plus two buttons. Nothing else is visible: no navbar, no title text, no tagline, no own countdown, no footer notice, no sections.
+
+- **Shell:** `layouts/bare.vue` (`h-dvh overflow-hidden`, no header or footer), selected by `definePageMeta({ layout: 'bare' })` in `pages/index.vue`. Other pages keep `layouts/default.vue`. Verified no page scroll at 1440×900 and 390×844.
+- **Landscape (desktop, tablet landscape):** the official live countdown, YouTube `f17J3AXVK5w`, via the YouTube IFrame API on `youtube-nocookie.com`. Muted, no controls, always autoplays (the player calls `playVideo()` on ready; no reduced-motion exception, owner directive). Covers the viewport. The page shows no other text.
+- **Portrait (phones, tablet portrait):** no video is loaded. The poster `app/assets/images/jzPwsojjFStf5lR5Nm07w2hH56G.webp` (2000×3000, owner-supplied) fills the screen (`object-cover`, 60% horizontal anchor), with our own countdown (`DoomsdayCountdown.vue`, days/hours/minutes/seconds from `collection.target_release_date`) and the buttons stacked over the dark cloak area, clear of the poster's logo. A very light `void` 20% dim covers the poster (and the video), plus a soft dark band behind the countdown and buttons. All four countdown numbers, seconds included, are white (`ink`).
+- If the embed is blocked in landscape, only the original SVG artwork and the buttons remain.
+- **Buttons:** `Doomsday Journey` (primary, green) and `Whole Universe` (secondary), centered, 12dvh above the bottom edge, directly under the video's timer. Side by side from `sm`, stacked full width on mobile. A bottom-half dim keeps them legible; on mobile they sit lower (6dvh) so they clear the timer's unit labels.
+- **Accessibility:** a visually hidden `h1` names the page.
+- **Countdown component:** `DoomsdayCountdown.vue` exists again, rewritten as a compact four-unit clock used in portrait only.
+- **Trade-offs:** the unofficial fan-project notice is no longer on the landing (it is still required by `PRODUCT.md` §1 and §8; decide where it lives). In landscape the countdown's date comes from the video, in portrait from `collection.target_release_date`, so the two can drift.

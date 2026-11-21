@@ -82,6 +82,16 @@ A title is verified automatically only when exactly one TMDB result matches both
 
 `titles` have `watch_order` and `completion_status`; `supplemental_titles` do not, and are never merged into the main list. See `ARCHITECTURE.md` §11.
 
+## Pages
+
+| Route | Status |
+|---|---|
+| `/` | Landing page (Phase 04): hero, live countdown, journey selection, about |
+| `/journey/doomsday`, `/universe` | Holding pages that say the map is not built yet; replaced when the interactive roadmap lands |
+| `/design-system` | Internal style guide, not indexed |
+
+The countdown's date and target title come from `collection.target_release_date` and `collection.target_title` in the roadmap JSON, so changing the release date is a data edit (run `pnpm validate:data` after). The countdown targets midnight at the start of that date in the visitor's local time zone, and shows no clock once the date is reached.
+
 ## API
 
 | Route | Returns |
@@ -114,12 +124,15 @@ A title is verified automatically only when exactly one TMDB result matches both
 ```
 app/                    Nuxt 4 source directory (`~` alias)
   constant/             Editorial JSON and the TMDB mapping
-  composables/          useProgress (Vue wrapper over the progress store)
+  composables/          useProgress (progress store wrapper), useCountdown (live clock)
   plugins/              progress.client.ts hydrates saved progress after mount
-  utils/                progress-storage.ts (versioned localStorage, no Vue)
+  utils/                progress-storage, countdown (pure date logic), collection (release date), navigation
   components/ui/        UiButton, UiBadge
-  pages/                index (placeholder), design-system (style guide, noindex)
-  layouts/ assets/      Default layout; Tailwind tokens and global styles
+  components/layout/    SiteHeader, SiteFooter, BrandWordmark, PageContainer
+  components/landing/   Hero, HeroBackdrop, DoomsdayCountdown, JourneySelection, JourneyCard, JourneyGlyph, ProjectIntro
+  components/journey/   JourneyPending (holding state until the map is built)
+  pages/                index (landing), journey/doomsday and universe (holding routes), design-system (style guide, noindex)
+  layouts/ assets/      Default layout (skip link, header, footer); Tailwind tokens and global styles
 shared/                 Used by app, server, scripts and tests
   types/                Dataset, mapping, progress and TMDB types
   schemas/              Zod schemas and cross-checks

@@ -2,7 +2,7 @@
 
 /*
  * Design tokens — "Sanctum" direction (approved 2026-11-21, see docs/DESIGN.md).
- * Palette values come from docs/CLAUDE.md §7. Two tokens are added for contrast:
+ * Palette values come from CLAUDE.md §7; the greens were brightened (owner directive, CLAUDE.md §1.1). Two tokens are added for contrast:
  *   --color-danger-text  (text on dark surfaces; #C66B61 fails 4.5:1 on raised panels)
  *   --color-line-strong  (control boundaries; --color-line is 1.8:1 and decorative only)
  */
@@ -16,8 +16,8 @@
   --color-ink-subtle: #858E86;
   --color-line: #354039;
   --color-line-strong: #667369;
-  --color-doom-green: #456B50;
-  --color-doom-green-bright: #78966D;
+  --color-doom-green: #1F7A47;
+  --color-doom-green-bright: #4FD07F;
   --color-relic-gold: #C6A15B;
   --color-gold-soft: #E0C98E;
   --color-danger: #C66B61;
@@ -62,14 +62,59 @@
     @apply outline-2 outline-offset-2 outline-relic-gold;
   }
 
+  /* Browser surfaces themed from the palette, not left at defaults. */
+  ::selection {
+    background-color: var(--color-doom-green);
+    color: var(--color-ink);
+  }
+
+  html {
+    caret-color: var(--color-relic-gold);
+    scrollbar-color: var(--color-line-strong) var(--color-void);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
       scroll-behavior: auto !important;
     }
+  }
+}
+
+/*
+ * Page entrance, used once per page: content rises into place and the hero seams draw in.
+ * Both end in the element's normal state, so nothing depends on the animation to be visible
+ * (the `backwards` fill only applies before the animation starts).
+ */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+@layer components {
+  .enter {
+    animation: rise 700ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: var(--enter-delay, 0ms);
+  }
+
+  /* Needs pathLength="1" on the element. */
+  .seam-draw {
+    stroke-dasharray: 1;
+    animation: draw 1800ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: var(--draw-delay, 0ms);
   }
 }

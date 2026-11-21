@@ -1,6 +1,6 @@
 # Marvel: Road to Doomsday — Progress Tracker
 
-**Last Updated**: 2026-11-21
+**Last Updated**: 2026-11-21 (landing rework below)
 
 ## Current Phase
 **Phase 03 — Data architecture and TMDB integration: complete and verified against live TMDB** (after the token was added). Phases 01–03 are committed (`e53741c`, `04de6c7`, `5b9a378`, plus the live-mapping commit that follows it). Awaiting approval to start Phase 04.
@@ -234,3 +234,12 @@ Before Phase 04:
 1. Optionally spot-check the 19 manual mappings (list above) against themoviedb.org.
 2. Decide the open data questions in `ARCHITECTURE.md` §11.9, and the `DESIGN.md` §12 items the first page needs.
 Phase 04's scope is not defined in the source documents. `ai-workflow-rules.md` points to the landing page next; it needs the countdown date from `collection.target_release_date` (`2026-12-18`).
+
+## Landing, minimal (2026-11-21, owner directives)
+
+- **Done:** landing is the official live countdown (`f17J3AXVK5w`) full-bleed plus the two buttons, in a new `layouts/bare.vue` (no navbar or footer). Greens brightened to `#1F7A47` / `#4FD07F` (no official Doom hex; chosen by contrast). `DESIGN.md` §3 and §13, `docs/ui-context.md` updated. Deleted `DoomsdayCountdown.vue` and the four below-the-fold landing components.
+- **Verified (dev server, browser):** 1440×900 and 390×844 screenshots inspected; no page scroll, no horizontal overflow at either. `pnpm lint`, `typecheck`, `test` (118) and `build` pass (build ran before the minimal rewrite; re-run it).
+- **Not verified:** 768px screenshot for the final layout, reduced-motion render, keyboard focus, blocked-embed fallback, `/impeccable critique` and `audit`, Taste Skill inspector, other pages after the green and shell changes.
+- **Open:** where the fan-project notice lives now; countdown date comes from the video, not `collection.target_release_date`; portrait layout has empty space around the video strip.
+
+- **Update (same day):** portrait screens now show the poster from `app/assets/images/` with our own countdown (`DoomsdayCountdown.vue`, rewritten) and no video; landscape keeps the live video, now driven by the YouTube IFrame API so it calls `playVideo()` itself and has no reduced-motion exception. Checked at 390×844 (screenshot inspected; no page scroll). The user reported the video showing only YouTube icons in their own browser; cause unknown, not reproduced here (needs their browser's symptom). Landscape was not re-screenshotted after the scrim change.
