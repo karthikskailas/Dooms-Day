@@ -15,6 +15,10 @@ export interface CardLayers {
 }
 
 export interface CardExport {
+  /** Replaces the usual ACH-NNN-CODE serial (the Doomsday Ready card). */
+  serial?: string
+  /** Extra CSS filter on the frame, for the Doomsday Ready finishes. */
+  extraFilter?: string
   titleId: string
   title: string
   order: number
@@ -73,7 +77,7 @@ async function drawCard(c: CardExport, layers: CardLayers): Promise<{ canvas: HT
   const ctx = canvas.getContext('2d')!
   ctx.scale(SCALE, SCALE)
   const v = variationOf(c.collector, c.titleId)
-  const finish = cardFilter(c.hue, c.priority, v)
+  const finish = `${cardFilter(c.hue, c.priority, v)} ${c.extraFilter ?? ''}`.trim()
 
   ctx.save()
   ctx.filter = finish
@@ -119,7 +123,7 @@ async function drawCard(c: CardExport, layers: CardLayers): Promise<{ canvas: HT
   }
   text('Road to Doomsday', CARD_W / 2, CARD.header.y + CARD.header.size * 0.7, CARD.header.size, GOLD, 600, 0.18)
   text(c.title, CARD.titleSide.cx, CARD.titleSide.cy, titleSize(c.title), GOLD, 600, 0.14, -90, CARD.titleSide.w)
-  text(serialOf(c.order, c.collector), CARD.serialSide.cx, CARD.serialSide.cy, CARD.serialSide.size, GOLD, 600, 0.14, 90, CARD.serialSide.w)
+  text(c.serial ?? serialOf(c.order, c.collector), CARD.serialSide.cx, CARD.serialSide.cy, CARD.serialSide.size, GOLD, 600, 0.14, 90, CARD.serialSide.w)
   ctx.save()
   ctx.shadowColor = '#000'
   ctx.shadowBlur = 6

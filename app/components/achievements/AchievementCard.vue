@@ -14,6 +14,10 @@ const props = defineProps<{
   /** Step number on the route. */
   order: number
   year: number
+  /** Replaces the usual ACH-NNN-CODE serial (the Doomsday Ready card). */
+  serial?: string
+  /** Extra CSS filter on the frame, for the Doomsday Ready finishes. */
+  extraFilter?: string
   /** Roadmap id; with the collector code it seeds this copy's unique look. */
   titleId: string
   /** This player's collector code; makes the serial theirs. */
@@ -61,8 +65,8 @@ watch(
 )
 
 const variation = computed(() => variationOf(props.collector, props.titleId))
-const filter = computed(() => cardFilter(hue.value, props.priority, variation.value))
-const serial = computed(() => serialOf(props.order, props.collector))
+const filter = computed(() => `${cardFilter(hue.value, props.priority, variation.value)} ${props.extraFilter ?? ''}`.trim())
+const serialText = computed(() => props.serial ?? serialOf(props.order, props.collector))
 const fit = computed(() => taglineFit(props.tagline))
 const cast = computed(() => props.featuring.slice(0, 3).join(' · '))
 
@@ -111,7 +115,7 @@ const side = (s: { cx: number; cy: number; w: number }) => ({ left: px(s.cx, CAR
       {{ locked ? '— Locked —' : title }}
     </p>
     <p class="absolute origin-center rotate-90 whitespace-nowrap text-center font-display font-semibold uppercase tracking-[0.14em]" :style="{ ...side(CARD.serialSide), fontSize: cq(CARD.serialSide.size), color: GOLD }">
-      {{ serial }}
+      {{ serialText }}
     </p>
     <p
       class="absolute -translate-x-1/2 -translate-y-1/2 text-center font-display font-bold [text-shadow:0_2px_6px_#000]"

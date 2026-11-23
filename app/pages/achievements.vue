@@ -4,6 +4,8 @@ import type { TitleMetadata, TitleResponse } from '../../shared/types/tmdb.ts'
 import { roadmap } from '../utils/roadmap-data.ts'
 import { buildLayout } from '../utils/roadmap-map.ts'
 import { codenameOf } from '../utils/card-theme.ts'
+import { collectionMeta } from '../utils/collection.ts'
+import { SITE_URL } from '../utils/site.ts'
 import { taglineFor } from '../utils/card-taglines.ts'
 import { fileNameFor, renderCard, renderGallery, type CardExport, type CardFormat } from '../utils/card-export.ts'
 import frame from '../assets/cards/frame.webp'
@@ -31,7 +33,7 @@ const progress = useProgress()
 const cardState = useCardState()
 onMounted(() => cardState.hydrate())
 
-const view = ref<'card' | 'gallery'>('card')
+const view = ref<'card' | 'gallery' | 'ready'>('card')
 const index = ref(Math.max(0, sets[mode.value].findIndex((c) => c.id === wanted)))
 const hue = ref<number | null>(null)
 const busy = ref(false)
@@ -146,6 +148,64 @@ async function run(share: boolean, what: 'card' | 'gallery') {
   }
 }
 
+
+// ---------- Doomsday Ready: unlocks when every essential title is watched ----------
+const essentials = sets.all.filter((c) => c.item.priority === 'essential')
+const essentialsDone = computed(() => essentials.filter((c) => watched(c.id)).length)
+const ready = computed(() => essentials.length > 0 && essentialsDone.value === essentials.length)
+const readyId = 'doomsday_ready'
+const showDate = ref(true)
+const finish = ref<'emerald' | 'midnight' | 'silver'>('emerald')
+const finishes = {
+  emerald: { label: 'Emerald', filter: '' },
+  midnight: { label: 'Midnight', filter: 'hue-rotate(95deg)' },
+  silver: { label: 'Silver', filter: 'grayscale(0.85) brightness(1.1)' },
+} as const
+const readyReplay = ref(false)
+const readySealed = computed(() => cardState.ready.value && ready.value && (!cardState.isOpened(readyId) || readyReplay.value))
+const readyDate = computed(() => {
+  if (!showDate.value) return ''
+  const dates = essentials.map((c) => progress.progressFor(c.id)?.completedAt ?? '').sort()
+  const iso = dates[dates.length - 1]
+  return iso ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase() : ''
+})
+const releaseYear = new Date(`${collectionMeta.target_release_date}T00:00:00`).getFullYear()
+function readyOpened() {
+  cardState.open(readyId)
+  readyReplay.value = false
+}
+const readyExport = (): CardExport => ({
+  titleId: readyId,
+  serial: `READY-${collector.value}`,
+  extraFilter: finishes[finish.value].filter,
+  title: 'Doomsday Ready',
+  order: essentials.length,
+  year: releaseYear,
+  collector: collector.value,
+  type: 'Avengers: Doomsday',
+  priority: 'essential',
+  tagline: 'All essentials watched',
+  featuring: [`${essentials.length} of ${essentials.length} essential titles`],
+  player: player.value,
+  date: readyDate.value,
+  art: null,
+  hue: null,
+})
+async function runReady(share: boolean) {
+  busy.value = true
+  problem.value = null
+  note.value = null
+  try {
+    const blob = await renderCard(readyExport(), layers, format.value)
+    const file = new File([blob], `doomsday-ready-${collector.value}-${format.value}.png`, { type: 'image/png' })
+    await deliver(file, share, `I'm Doomsday Ready: all ${essentials.length} essential titles watched. ${SITE_URL}`)
+  } catch (e) {
+    if ((e as Error).name !== 'AbortError') problem.value = 'Could not make the image. Try again.'
+  } finally {
+    busy.value = false
+  }
+}
+
 const name = computed({ get: () => progress.state.value.preferences.displayName ?? '', set: (v: string) => progress.setDisplayName(v) })
 
 const seg = 'min-h-11 px-3 text-control font-semibold uppercase tracking-[0.06em] aria-pressed:bg-doom-green aria-pressed:text-ink'
@@ -174,6 +234,7 @@ const btn =
         <button type="button" :aria-pressed="view === 'gallery'" :class="[seg, view === 'gallery' ? '' : segOff]" @click="view = 'gallery'">
           <LayoutGrid :size="16" class="mr-1 inline align-[-3px]" aria-hidden="true" />Gallery
         </button>
+        <button type="button" :aria-pressed="view === 'ready'" :class="[seg, view === 'ready' ? '' : segOff, ready ? 'text-gold-soft' : '']" @click="view = 'ready'">Ready</button>
       </div>
       <div class="flex overflow-hidden rounded-control border border-line-strong max-md:hidden" role="group" aria-label="Which cards">
         <button v-for="m in (['all', 'doomsday'] as const)" :key="m" type="button" :aria-pressed="mode === m" :class="[seg, mode === m ? '' : segOff]" @click="mode = m">
@@ -243,7 +304,7 @@ const btn =
     </template>
 
     <!-- Gallery: every unlocked card, and one image of the collection to share -->
-    <template v-else>
+    <template v-else-if="view === 'gallery'">
       <p v-if="problem" class="shrink-0 text-center text-meta text-danger-text" role="alert">{{ problem }}</p>
       <p v-if="note" class="shrink-0 text-center text-meta text-gold-soft" role="status">{{ note }}</p>
       <div class="flex shrink-0 flex-wrap items-center gap-2 md:gap-3">
@@ -290,6 +351,66 @@ const btn =
           </button>
         </li>
       </ul>
+    </template>
+
+    <!-- Doomsday Ready: the final card -->
+    <template v-else>
+      <p v-if="problem" class="shrink-0 text-center text-meta text-danger-text" role="alert">{{ problem }}</p>
+      <p v-if="note" class="shrink-0 text-center text-meta text-gold-soft" role="status">{{ note }}</p>
+      <div class="flex min-h-0 flex-1 items-center justify-center">
+        <div class="h-full max-w-full" style="aspect-ratio: 627 / 1005">
+          <AchievementsAchievementDoors :closed="readySealed" :glow="ready" label="Doomsday Ready" @opened="readyOpened">
+            <AchievementsAchievementCard
+              class="h-full"
+              title="Doomsday Ready"
+              title-id="doomsday_ready"
+              :serial="`READY-${collector}`"
+              :extra-filter="finishes[finish].filter"
+              :order="essentials.length"
+              :year="releaseYear"
+              :collector="collector"
+              type="Avengers: Doomsday"
+              priority="essential"
+              tagline="All essentials watched"
+              :featuring="[`${essentials.length} of ${essentials.length} essential titles`]"
+              :player="player"
+              :date="readyDate"
+              :art="null"
+              :locked="!ready"
+            />
+          </AchievementsAchievementDoors>
+        </div>
+      </div>
+
+      <!-- Locked: how far along, and what is left -->
+      <div v-if="!ready" class="shrink-0 space-y-1 text-center">
+        <p class="text-body font-semibold">{{ essentialsDone }} of {{ essentials.length }} essential titles watched</p>
+        <p class="text-meta text-ink-muted">Left: {{ essentials.filter((c) => !watched(c.id)).map((c) => c.item.title).join(' · ') }}</p>
+      </div>
+
+      <!-- Unlocked: make it yours -->
+      <div v-else-if="!readySealed" class="flex shrink-0 flex-wrap items-center justify-center gap-2 md:gap-3">
+        <div class="flex overflow-hidden rounded-control border border-line-strong" role="group" aria-label="Finish">
+          <button v-for="(f, key) in finishes" :key="key" type="button" :aria-pressed="finish === key" :class="[seg, finish === key ? '' : segOff]" @click="finish = key">{{ f.label }}</button>
+        </div>
+        <label class="inline-flex min-h-11 items-center gap-2 text-control text-ink-muted">
+          <input v-model="showDate" type="checkbox" class="size-5 accent-doom-green">
+          Show date
+        </label>
+        <div class="flex overflow-hidden rounded-control border border-line-strong" role="group" aria-label="Image format">
+          <button v-for="f in (['story', 'card'] as const)" :key="f" type="button" :aria-pressed="format === f" :class="[seg, format === f ? '' : segOff]" @click="format = f">{{ f === 'story' ? '9:16' : '3:4' }}</button>
+        </div>
+        <UiButton :disabled="busy" @click="runReady(true)">
+          <Share2 :size="18" aria-hidden="true" />
+          {{ busy ? 'Preparing…' : 'Share' }}
+        </UiButton>
+        <UiButton variant="secondary" :disabled="busy" aria-label="Download" @click="runReady(false)">
+          <Download :size="18" aria-hidden="true" />
+        </UiButton>
+        <UiButton variant="secondary" aria-label="Replay the unlock" @click="readyReplay = true">
+          <RotateCcw :size="18" aria-hidden="true" />
+        </UiButton>
+      </div>
     </template>
   </section>
 </template>
