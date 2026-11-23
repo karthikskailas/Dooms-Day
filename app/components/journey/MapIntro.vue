@@ -61,6 +61,8 @@ function finish() {
 }
 
 onMounted(async () => {
+  // Reduced motion: no full-screen video, go straight to the map.
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return finish()
   src.value = window.matchMedia('(min-width: 768px)').matches ? '/media/intro-1080.mp4' : '/media/intro-720.mp4'
   await nextTick()
   skip.value?.focus({ preventScroll: true })

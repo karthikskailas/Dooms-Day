@@ -402,3 +402,11 @@ The procedural vector tree and the growth intro animation were built and then **
 - **Share:** the journey Share button makes a 1080x1920 story (progress, name, next title, QR code and address). Card and collection stories print `doomsday-tracker-app.pages.dev` (`app/utils/site.ts`). QR code not scanned by a phone here.
 - **Phase 10 done:** production build served locally: `/`, `/journey/doomsday`, `/universe`, `/achievements`, `/robots.txt`, `/og.jpg`, the videos all 200; unknown address 404 with a friendly page (`app/error.vue`); `robots.txt`; Open Graph and Twitter tags with `public/og.jpg`; long-lived cache headers for `/_nuxt` and `/media` (`public/_headers`).
 - **Phase 10 not done:** a full accessibility audit (keyboard path, contrast, screen reader), the Impeccable critique/audit, reduced-motion check, real-phone testing, a per-page title and description for every route, a sitemap, a favicon, and checking the live Cloudflare build.
+
+## Release items follow-up (2026-11-23)
+
+- Added Microsoft Clarity (project `zi5nwf1xao`) as a head script in `nuxt.config.ts`; `public/favicon.svg` (linked in head); `public/sitemap.xml` (4 pages) and a `Sitemap:` line in `robots.txt`.
+- Per-page titles already existed on every route (checked in the production build output).
+- Reduced motion: global CSS already shortens animation; `MapIntro.vue` now skips the intro video when `prefers-reduced-motion` is set. The landing YouTube backdrop still autoplays muted by owner directive (see `HeroBackdrop.vue`).
+- Code check of labels: icon buttons have `aria-label`, inputs have labels. No automated or screen-reader audit, no keyboard run, no contrast measurement, no real phone, QR code not scanned.
+- Verified: lint, `pnpm build`, built server returns 200 for `/sitemap.xml`, `/favicon.svg`; Clarity tag and favicon link in HTML. Not verified: Clarity receiving data, favicon in a browser tab.
