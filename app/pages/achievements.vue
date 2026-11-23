@@ -20,16 +20,18 @@ const toCards = (doomsdayOnly: boolean) =>
   buildLayout(roadmap, false, doomsdayOnly).nodes.flatMap((n) => (n.kind === 'main' ? [{ id: n.id, order: n.order, item: n.item }] : []))
 const sets = { all: toCards(false), doomsday: toCards(true) }
 // "All" numbers cards by watch order; "Doomsday" is the shorter route, numbered 1, 2, 3.
-const mode = ref<'all' | 'doomsday'>('all')
+const wanted = useRoute().query.card
+// Opened from a title's unlock notice: land on the mode that contains that card (the Fox X-Men films only exist in the
+// Doomsday route). Otherwise the Doomsday route is the default.
+const mode = ref<'all' | 'doomsday'>(sets.doomsday.some((c) => c.id === wanted) || !sets.all.some((c) => c.id === wanted) ? 'doomsday' : 'all')
 const cards = computed(() => sets[mode.value])
 
 const progress = useProgress()
 const cardState = useCardState()
 onMounted(() => cardState.hydrate())
-const route = useRoute()
 
 const view = ref<'card' | 'gallery'>('card')
-const index = ref(Math.max(0, sets.all.findIndex((c) => c.id === route.query.card)))
+const index = ref(Math.max(0, sets[mode.value].findIndex((c) => c.id === wanted)))
 const hue = ref<number | null>(null)
 const busy = ref(false)
 const problem = ref<string | null>(null)

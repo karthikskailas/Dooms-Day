@@ -1,6 +1,7 @@
 // Draws an achievement card to a PNG. It mirrors AchievementCard.vue layer by layer on a canvas, using the same
 // positions (card-layout.ts) and filter (card-theme.ts), so the saved image matches what is on screen.
 // Limit: ctx.filter is not supported by every Safari version; there the frame keeps its original colours.
+import { collectionMeta } from './collection.ts'
 import { cardFilter, dominantHue, type CardPriority } from './card-theme.ts'
 import { CARD, CARD_H, CARD_W, DIM, GOLD, PALE, VIEW, pad, serialOf, taglineFit, titleSize } from './card-layout.ts'
 
@@ -44,6 +45,12 @@ function cover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, 
   const dw = img.width * k
   const dh = img.height * k
   ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh)
+}
+
+/** The two lines under a shared image: what it counts down to, and a nudge to collect the rest. */
+function footerLines() {
+  const day = new Date(`${collectionMeta.target_release_date}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+  return [`COUNTDOWN TO ${collectionMeta.target_title.toUpperCase()}`, `${day.toUpperCase()}  ·  COLLECT THEM ALL`]
 }
 
 export type CardFormat = 'card' | 'story'
@@ -186,10 +193,10 @@ export async function renderCard(c: CardExport, layers: CardLayers, format: Card
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.fillStyle = GOLD
-  ctx.fillText('#ROADTODOOMSDAY', STORY_W / 2, y + h + 70)
+  ctx.fillText(footerLines()[0]!, STORY_W / 2, y + h + 70)
   ctx.font = '600 26px "Barlow Condensed", sans-serif'
   ctx.fillStyle = DIM
-  ctx.fillText('AN INDEPENDENT FAN PROJECT', STORY_W / 2, y + h + 112)
+  ctx.fillText(footerLines()[1]!, STORY_W / 2, y + h + 112)
   return toBlob(story)
 }
 
@@ -257,9 +264,9 @@ export async function renderGallery(cards: CardExport[], head: GalleryHead, laye
   ctx.fillStyle = GOLD
   ctx.font = '600 34px "Barlow Condensed", sans-serif'
   ctx.letterSpacing = '8px'
-  ctx.fillText('#ROADTODOOMSDAY', STORY_W / 2, y0 + blockH + 64)
+  ctx.fillText(footerLines()[0]!, STORY_W / 2, y0 + blockH + 64)
   ctx.fillStyle = DIM
   ctx.font = '600 26px "Barlow Condensed", sans-serif'
-  ctx.fillText('AN INDEPENDENT FAN PROJECT', STORY_W / 2, y0 + blockH + 104)
+  ctx.fillText(footerLines()[1]!, STORY_W / 2, y0 + blockH + 104)
   return toBlob(canvas)
 }

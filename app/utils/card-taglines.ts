@@ -83,6 +83,16 @@ const TAGLINES: Record<string, string> = {
   marvel_080: 'The final shot',
   marvel_081: 'A synthezoid\'s search',
   marvel_082: 'A fresh start for Spider-Man',
+  legacy_xmen_001: 'The mutants arrive',
+  legacy_xmen_002: 'Mutants under siege',
+  legacy_xmen_003: 'A cure that divides',
+  legacy_xmen_004: 'Where it all began',
+  legacy_xmen_005: 'A samurai in Japan',
+  legacy_xmen_006: 'Change the past, save the future',
+  legacy_xmen_007: 'The first mutant awakens',
+  legacy_xmen_008: 'The last ride of an old warrior',
+  legacy_xmen_009: 'The merc with the mouth',
+  legacy_xmen_010: 'Family, sort of',
 }
 
 export const taglineFor = (id: string, order: number) => TAGLINES[id] ?? `Chapter ${order} unlocked`
