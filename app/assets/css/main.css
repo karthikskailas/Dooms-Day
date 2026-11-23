@@ -342,19 +342,14 @@
 
 @layer components {
   .gate-in {
-    animation: gate-in 700ms ease-out backwards;
-    transition: opacity 700ms ease-in;
-  }
-
-  .gate-out {
-    opacity: 0;
+    animation: gate-in 1100ms ease-in-out backwards;
   }
 
   .gate-art {
-    animation: gate-art 3600ms cubic-bezier(0.16, 1, 0.3, 1) 200ms both;
+    animation: gate-art 4800ms cubic-bezier(0.22, 1, 0.36, 1) 600ms both;
   }
 
   .gate-line {
-    animation: gate-line 900ms cubic-bezier(0.16, 1, 0.3, 1) var(--gate-delay, 0ms) backwards;
+    animation: gate-line 1400ms cubic-bezier(0.22, 1, 0.36, 1) var(--gate-delay, 0ms) backwards;
   }
 }
