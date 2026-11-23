@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { Maximize, Minus, Plus, RotateCcw } from 'lucide-vue-next'
 import { centerOn, fitView, revealRect, zoomAt, type View } from '../../utils/map-viewport.ts'
-import { neighbour, type Direction, type MapLayout } from '../../utils/roadmap-map.ts'
+import { TREE, neighbour, type Direction, type MapLayout } from '../../utils/roadmap-map.ts'
 
 // The pan/zoom surface. Nodes are real buttons inside one transformed layer; edges are one SVG behind them.
 // Mouse drag, wheel, trackpad pinch and touch pinch all feed the same View.
@@ -10,6 +10,10 @@ const props = defineProps<{
   layout: MapLayout
   isWatched: (id: string) => boolean
   currentId: string | null
+  /** The title after the current one. */
+  nextId: string | null
+  /** Start framed like the intro video's last shot, until diveIn() is called. */
+  alignIntro: boolean
   markerText: string
   selectedId: string | null
   /** Ids that match the search and filters; null when none are active. */
@@ -28,6 +32,7 @@ const el = ref<HTMLElement | null>(null)
 const size = reactive({ w: 0, h: 0 })
 const view = ref<View>({ x: 0, y: 0, k: 1 })
 const animating = ref(false)
+const duration = ref(350)
 const ready = ref(false)
 let moved = false // the user has moved the camera; stop auto-centering on the current title
 const tabbableId = ref<string | null>(null)
@@ -47,8 +52,9 @@ const freeRect = () => {
 
 const nodeById = (id: string) => props.layout.nodes.find((n) => n.id === id)
 
-function go(next: View, animate = true) {
+function go(next: View, animate = true, ms = 350) {
   animating.value = animate
+  duration.value = ms
   view.value = next
 }
 
@@ -91,7 +97,30 @@ function focusOn(id: string) {
   const f = freeRect()
   go(centerOn(n.x + n.w / 2, n.y + n.h / 2, Math.max(view.value.k, 0.85), f.x + f.w / 2, f.y + f.h / 2))
 }
-defineExpose({ focusOn })
+
+/**
+ * Frames the tree where it stands in the intro video's final shot (letterbox cropped, 1920 x 864, shown like
+ * object-fit: cover): trunk foot at the horizontal centre and 81% down, canopy as wide as in the frame about 1.75 s before the end
+ * (the middle of the dissolve; the video camera is still pulling back).
+ */
+function alignToIntro() {
+  const c = Math.max(size.w / 1920, size.h / 864)
+  const k = (1.05 * c) / (TREE.imgW / 966)
+  const footX = ((500 - 483) * TREE.imgW) / 966
+  const footY = (1075 * TREE.imgW) / 966
+  moved = true
+  go({ x: size.w / 2 - footX * k, y: (size.h - 864 * c) / 2 + 0.81 * 864 * c - footY * k, k }, false)
+}
+
+/** After the intro: glide from the tree overview into the start of the route. */
+function diveIn() {
+  moved = false
+  const n = nodeById(props.currentId ?? '') ?? props.layout.nodes[0]
+  if (!n) return
+  const f = freeRect()
+  go(centerOn(n.x + n.w / 2, n.y + n.h / 2, wide() ? 0.9 : 0.8, f.x + f.w / 2, f.y + f.h / 2), true, 1400)
+}
+defineExpose({ focusOn, diveIn })
 
 // ---------- Size and first view ----------
 onMounted(() => {
@@ -103,7 +132,8 @@ onMounted(() => {
     // A hidden canvas (list view) measures 0; keep the camera until it is shown again.
     if (size.w > 0 && !ready.value) {
       ready.value = true
-      resetView()
+      if (props.alignIntro) alignToIntro()
+      else resetView()
       animating.value = false
     }
   }
@@ -270,8 +300,8 @@ const controlClass =
   >
     <div
       class="absolute left-0 top-0 origin-top-left will-change-transform"
-      :class="[animating ? 'transition-transform duration-350 ease-out' : '', ready ? '' : 'invisible']"
-      :style="{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.k})` }"
+      :class="[animating ? 'transition-transform ease-out' : '', ready ? '' : 'invisible']"
+      :style="{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.k})`, transitionDuration: `${duration}ms` }"
     >
       <div
         v-if="layout.supplementalFrame"
@@ -291,6 +321,14 @@ const controlClass =
       <JourneyTreeBackdrop />
 
       <svg class="pointer-events-none absolute left-0 top-0 overflow-visible" width="1" height="1" aria-hidden="true">
+        <defs>
+          <marker id="route-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M0 0 L10 5 L0 10 z" class="fill-ink/70" />
+          </marker>
+          <marker id="route-arrow-done" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M0 0 L10 5 L0 10 z" class="fill-doom-green-bright" />
+          </marker>
+        </defs>
         <path
           v-for="edge in layout.edges"
           :key="edge.to"
@@ -299,6 +337,7 @@ const controlClass =
           fill="none"
           stroke-width="3"
           stroke-linecap="round"
+          :marker-end="`url(#${isWatched(edge.from) && isWatched(edge.to) ? 'route-arrow-done' : 'route-arrow'})`"
         />
       </svg>
 
@@ -308,6 +347,7 @@ const controlClass =
         :node="node"
         :watched="isWatched(node.id)"
         :marker="node.id === currentId ? markerText : null"
+        :next="node.id === nextId"
         :selected="node.id === selectedId"
         :dimmed="visibleIds !== null && !visibleIds.has(node.id)"
         :tabbable="node.id === tabbable"

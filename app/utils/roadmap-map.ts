@@ -13,17 +13,78 @@ const SUPP_STEP_Y = 150
 const FRAME_PAD = 40
 
 /**
- * Where things sit on the tree artwork (app/assets/images/yggdrasil-tree.webp, shown 2400 px wide, 4034 tall),
- * in map coordinates: the canopy's centre and half-axes, and the trunk's height range.
+ * The tree artwork (app/assets/images/yggdrasil-tree.webp, 966 x 1628 source px) is shown IMG_W map units wide.
+ * BRANCHES below are traced by eye over that picture, in source pixels.
  */
+const SRC_W = 966
+const SRC_H = 1628
+const IMG_W = 3400
 export const TREE = {
-  imgW: 2400,
-  imgH: 4034,
-  canopy: { cx: 0, cy: 1250, rx: 1100, ry: 880 },
-  /** Route nodes climb the trunk at this spacing before the canopy spiral. */
-  stepY: 165,
-  /** Space between the lowest route node and the supplemental grove. */
-  groveGap: 520,
+  imgW: IMG_W,
+  imgH: Math.round((IMG_W * SRC_H) / SRC_W),
+  /** Space between the lowest route node and the supplemental grove (under the roots). */
+  groveGap: 260,
+}
+const SCALE = IMG_W / SRC_W
+
+type P = readonly [number, number]
+interface Branch {
+  name: string
+  /** Source-pixel polyline, outward from its junction on the trunk. */
+  pts: readonly P[]
+}
+
+/** In route order: up the trunk, out along the left boughs low to high, across the crown, then back down the right. */
+const BRANCHES: readonly Branch[] = [
+  { name: 'trunk', pts: [[500, 1075], [498, 990], [500, 900], [503, 810], [505, 720], [505, 645]] },
+  { name: 'left-low', pts: [[503, 800], [446, 782], [357, 789], [275, 804], [208, 811], [149, 856], [111, 886]] },
+  { name: 'left-mid', pts: [[505, 750], [461, 744], [386, 700], [297, 670], [223, 655], [149, 625], [74, 603], [22, 596]] },
+  { name: 'left-high', pts: [[505, 665], [431, 640], [371, 573], [312, 529], [245, 484], [178, 455], [111, 462]] },
+  { name: 'crown-left', pts: [[505, 645], [453, 626], [416, 566], [405, 506], [416, 462], [446, 432], [461, 395]] },
+  { name: 'crown-right', pts: [[508, 645], [520, 626], [520, 566], [512, 499], [505, 447], [520, 402], [512, 372]] },
+  { name: 'right-high', pts: [[508, 665], [535, 626], [594, 596], [654, 552], [713, 507], [773, 463], [817, 432]] },
+  { name: 'right-mid', pts: [[505, 745], [550, 737], [624, 700], [698, 685], [773, 670], [847, 655], [921, 625], [958, 603]] },
+  { name: 'right-low', pts: [[505, 800], [542, 782], [602, 789], [661, 804], [706, 837], [758, 874], [817, 889], [884, 889], [936, 878]] },
+]
+
+interface Pt {
+  x: number
+  y: number
+}
+interface Line {
+  pts: Pt[]
+  /** Distance along the line at each point. */
+  at: number[]
+  length: number
+}
+
+/** Map-space polylines with cumulative lengths, one per branch. */
+const LINES: readonly Line[] = BRANCHES.map((b) => {
+  const pts = b.pts.map(([x, y]) => ({ x: (x - SRC_W / 2) * SCALE, y: y * SCALE }))
+  const at = [0]
+  for (let i = 1; i < pts.length; i++) at.push(at[i - 1]! + Math.hypot(pts[i]!.x - pts[i - 1]!.x, pts[i]!.y - pts[i - 1]!.y))
+  return { pts, at, length: at[at.length - 1]! }
+})
+
+/** The point at a distance along a line, and its unit tangent. */
+function pointAt(line: Line, d: number): Pt & { tx: number; ty: number } {
+  const dd = Math.min(Math.max(d, 0), line.length)
+  let i = 1
+  while (i < line.pts.length - 1 && line.at[i]! < dd) i++
+  const a = line.pts[i - 1]!
+  const b = line.pts[i]!
+  const seg = line.at[i]! - line.at[i - 1]! || 1
+  const f = (dd - line.at[i - 1]!) / seg
+  return { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f, tx: (b.x - a.x) / seg, ty: (b.y - a.y) / seg }
+}
+
+/** The line's points between two distances, inclusive, in travel order (works backwards too). */
+function walk(line: Line, from: number, to: number): Pt[] {
+  const out: Pt[] = [pointAt(line, from)]
+  const inner = line.pts.map((p, i) => ({ p, d: line.at[i]! })).filter(({ d }) => d > Math.min(from, to) && d < Math.max(from, to))
+  if (to < from) inner.reverse()
+  out.push(...inner.map(({ p }) => p), pointAt(line, to))
+  return out
 }
 
 export interface Rect {
@@ -39,6 +100,8 @@ interface NodeBase extends Rect {
 export interface MainNode extends NodeBase {
   kind: 'main'
   item: RoadmapTitle
+  /** 1-based position on this map. Equals watch_order on the Universe map; counts 1, 2, 3 on the Doomsday map. */
+  order: number
 }
 export interface SupplementalNode extends NodeBase {
   kind: 'supplemental'
@@ -64,17 +127,31 @@ export interface MapLayout {
 }
 
 /**
- * Lays main titles on the tree artwork: the route climbs the trunk, then spirals outward through the canopy, so
- * each title sits beside its neighbours in watch order and every line stays short. Position comes from
- * watch_order only; the dataset defines no branches or realms, so none are drawn or implied.
- * `doomsdayOnly` keeps just the titles flagged is_doomsday_relevant, still in watch order.
+ * Lays main titles along the branches of the tree artwork: the route climbs the trunk, then follows each bough
+ * out in turn. Which branch a title lands on comes from watch_order and branch length only; the dataset defines no
+ * branches or realms, so none are implied.
+ * `doomsdayOnly` keeps just the titles flagged is_doomsday_relevant, still in watch order, after the two Fox X-Men films.
  */
+/**
+ * Disney+'s official "Countdown to Avengers: Doomsday" list opens with the two Fox films X-Men (2000) and
+ * X2: X-Men United (2003). They live in the supplemental collection (no watch order), so the Doomsday route
+ * borrows them as its first two steps. Source: https://thedirect.com/article/disney-plus-adds-mcu-project-avengers-doomsday-movies-list
+ */
+export const DOOMSDAY_FOX_IDS = ['legacy_xmen_001', 'legacy_xmen_002'] as const
+
 export function buildLayout(data: RoadmapDataset, includeSupplemental: boolean, doomsdayOnly = false): MapLayout {
   const main = data.titles.filter((t) => !doomsdayOnly || t.is_doomsday_relevant).sort((a, b) => a.watch_order - b.watch_order)
-  const nodes: MapNode[] = treePoints(main.length).map((p, i) => ({
+  if (doomsdayOnly) {
+    const fox = DOOMSDAY_FOX_IDS.flatMap((id) => data.supplemental_titles.find((s) => s.id === id) ?? [])
+    // watch_order 0: they sit before the dataset's order; the map's own `order` numbers them 1 and 2.
+    main.unshift(...fox.map((s): RoadmapTitle => ({ ...s, watch_order: 0, is_doomsday_relevant: true, completion_status: 'not_started' })))
+  }
+  const spots = branchSpots(main.length)
+  const nodes: MapNode[] = spots.map((p, i) => ({
     kind: 'main',
     id: main[i]!.id,
     item: main[i]!,
+    order: i + 1,
     x: Math.round(p.x - NODE_W / 2),
     y: Math.round(p.y - ORB / 2),
     w: NODE_W,
@@ -82,7 +159,7 @@ export function buildLayout(data: RoadmapDataset, includeSupplemental: boolean, 
   }))
 
   const edges: MapEdge[] = []
-  for (let i = 1; i < nodes.length; i++) edges.push(edgeBetween(nodes[i - 1]!, nodes[i]!, i))
+  for (let i = 1; i < nodes.length; i++) edges.push(edgeBetween(nodes[i - 1]!, nodes[i]!, spots[i - 1]!, spots[i]!))
 
   const mainBounds = boundsOf(nodes)
   let frame: Rect | null = null
@@ -107,51 +184,108 @@ export function buildLayout(data: RoadmapDataset, includeSupplemental: boolean, 
   return { nodes, edges, bounds: unionBounds(boundsOf(nodes), frame), supplementalFrame: frame }
 }
 
-interface Point {
-  x: number
-  y: number
+interface Spot extends Pt {
+  branch: number
+  /** Distance along the branch line (the orb itself may sit slightly to one side of it). */
+  d: number
 }
 
-/** Orb centres: a wavy stem up the trunk, then an elliptical spiral outward from the canopy's centre. */
-export function treePoints(n: number): Point[] {
-  const { cx, cy, rx, ry } = TREE.canopy
-  const stemN = n <= 4 ? n : Math.min(10, Math.ceil(n * 0.35))
-  const pts: Point[] = []
-  for (let i = 0; i < stemN; i++) {
-    const up = stemN - 1 - i // 0 at the stem's top
-    pts.push({ x: cx + Math.round(Math.sin(i * 1.4) * 26), y: cy + TREE.stepY + up * TREE.stepY })
-  }
+/** Below this spacing along a branch, orbs alternate to either side of it so their labels clear each other. */
+const TIGHT = 220
+const SIDE = 52
 
-  const rest = n - stemN
-  if (rest <= 0) return pts
-  const avg = (rx + ry) / 2
-  // Arc spacing that fills the canopy, but never so tight that labels collide or so loose the route falls apart.
-  const arc = Math.min(300, Math.max(186, Math.sqrt((Math.PI * rx * ry) / rest)))
-  let theta = -Math.PI / 2
-  let rho = (arc * 0.8) / avg
-  while (pts.length < n) {
-    const x = cx + rx * rho * Math.cos(theta)
-    const y = cy - ry * rho * Math.sin(theta)
-    const r = Math.hypot(rx * rho * Math.cos(theta), ry * rho * Math.sin(theta))
-    // Skip spots on the stem; the next point carries the route on.
-    if (!(Math.abs(x - cx) < NODE_W + 40 && y > cy + 60)) pts.push({ x, y })
-    const dTheta = arc / Math.max(r, 140)
-    theta += dTheta
-    rho += (arc / (2 * Math.PI * avg)) * dTheta
-  }
-  return pts
+/**
+ * Orb centres along the branches, in route order: each branch gets a share of the titles in proportion to its
+ * length (largest remainder), spaced evenly along it.
+ */
+export function branchSpots(n: number): Spot[] {
+  const total = LINES.reduce((sum, l) => sum + l.length, 0)
+  const exact = LINES.map((l) => (n * l.length) / total)
+  const counts = exact.map(Math.floor)
+  let left = n - counts.reduce((a, b) => a + b, 0)
+  exact
+    .map((e, i) => ({ i, r: e - Math.floor(e) }))
+    .sort((a, b) => b.r - a.r)
+    .forEach(({ i }) => {
+      if (left-- > 0) counts[i]!++
+    })
+
+  const spots: Spot[] = []
+  LINES.forEach((line, branch) => {
+    const m = counts[branch]!
+    const tight = line.length / m < TIGHT
+    for (let k = 0; k < m; k++) {
+      const d = (line.length * (k + 0.5)) / m
+      const p = pointAt(line, d)
+      const side = tight ? (k % 2 === 0 ? SIDE : -SIDE) : 0
+      spots.push({ x: p.x - p.ty * side, y: p.y + p.tx * side, branch, d })
+    }
+  })
+  separate(spots)
+  return spots
 }
 
-/** A gently bent line between orb centres, like a path on a game map. */
-function edgeBetween(a: MapNode, b: MapNode, i: number): MapEdge {
-  const x1 = a.x + a.w / 2
-  const y1 = a.y + ORB / 2
-  const x2 = b.x + b.w / 2
-  const y2 = b.y + ORB / 2
-  const bend = (i % 2 === 0 ? 1 : -1) * 0.1
-  const cxm = (x1 + x2) / 2 - (y2 - y1) * bend
-  const cym = (y1 + y2) / 2 + (x2 - x1) * bend
-  return { from: a.id, to: b.id, d: `M${x1} ${y1} Q${cxm} ${cym} ${x2} ${y2}` }
+/** Nudges apart any two label boxes that still overlap (mostly near the trunk, where boughs meet). */
+function separate(spots: Spot[]) {
+  const gap = 6
+  for (let pass = 0; pass < 60; pass++) {
+    let moved = false
+    for (let i = 0; i < spots.length; i++) {
+      for (let j = i + 1; j < spots.length; j++) {
+        const a = spots[i]!
+        const b = spots[j]!
+        const ox = NODE_W + gap - Math.abs(a.x - b.x)
+        const oy = NODE_H + gap - Math.abs(a.y - b.y)
+        if (ox <= 0 || oy <= 0) continue
+        moved = true
+        if (ox < oy) {
+          const s = (a.x <= b.x ? -1 : 1) * (ox / 2)
+          a.x += s
+          b.x -= s
+        } else {
+          const s = (a.y <= b.y ? -1 : 1) * (oy / 2)
+          a.y += s
+          b.y -= s
+        }
+      }
+    }
+    if (!moved) return
+  }
+}
+
+/**
+ * The route line between two consecutive orbs, drawn along the wood: straight down the branch when both sit on it,
+ * otherwise back to the first branch's root, across to the next one and out along it.
+ */
+function edgeBetween(a: MapNode, b: MapNode, sa: Spot, sb: Spot): MapEdge {
+  const via: Pt[] =
+    sa.branch === sb.branch
+      ? walk(LINES[sa.branch]!, sa.d, sb.d)
+      : [...walk(LINES[sa.branch]!, sa.d, 0), ...walk(LINES[sb.branch]!, 0, sb.d)]
+  const ends = (n: MapNode) => ({ x: n.x + n.w / 2, y: n.y + ORB / 2 })
+  const pts = trimEnd([ends(a), ...via, ends(b)], ORB / 2 + 10)
+  const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${Math.round(p.x)} ${Math.round(p.y)}`).join(' ')
+  return { from: a.id, to: b.id, d }
+}
+
+/** Shortens a polyline's end by `r`, so a closing arrowhead lands on the orb's rim instead of under it. */
+function trimEnd(pts: Pt[], r: number): Pt[] {
+  const out = [...pts]
+  let left = r
+  while (out.length > 2) {
+    const a = out[out.length - 2]!
+    const b = out[out.length - 1]!
+    const len = Math.hypot(b.x - a.x, b.y - a.y)
+    if (len > left) break
+    left -= len
+    out.pop()
+  }
+  const a = out[out.length - 2]!
+  const b = out[out.length - 1]!
+  const len = Math.hypot(b.x - a.x, b.y - a.y) || 1
+  const f = Math.max(0, len - left) / len
+  out[out.length - 1] = { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f }
+  return out
 }
 
 function boundsOf(nodes: readonly Rect[]): Rect {

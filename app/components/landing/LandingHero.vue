@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-vue-next'
 import { collectionMeta } from '../../utils/collection.ts'
 
 // The release date and target title come from the roadmap JSON, never from this component.
+const playIntro = useState('playIntro', () => false)
 const { target_title: targetTitle, target_release_date: targetDate } = collectionMeta
 // The section is deliberately not positioned: the backdrop anchors to the layout shell.
 </script>
@@ -22,11 +23,11 @@ const { target_title: targetTitle, target_release_date: targetDate } = collectio
     </div>
 
     <div class="enter flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row" style="--enter-delay: 240ms">
-      <UiButton to="/journey/doomsday" size="lg">
+      <UiButton to="/journey/doomsday" size="lg" @click="playIntro = true">
         Doomsday Journey
         <ArrowRight :size="18" aria-hidden="true" />
       </UiButton>
-      <UiButton to="/universe" variant="secondary" size="lg">Whole Universe</UiButton>
+      <UiButton to="/universe" variant="secondary" size="lg" @click="playIntro = true">Whole Universe</UiButton>
     </div>
   </section>
 </template>

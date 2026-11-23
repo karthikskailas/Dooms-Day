@@ -118,3 +118,16 @@
     animation-delay: var(--draw-delay, 0ms);
   }
 }
+
+/* The tree map fades up as the intro video fades out, so the two trees blend. Ends in the normal state. */
+@keyframes map-reveal {
+  from {
+    opacity: 0;
+  }
+}
+
+@layer components {
+  .map-reveal {
+    animation: map-reveal 1500ms ease-in-out backwards;
+  }
+}

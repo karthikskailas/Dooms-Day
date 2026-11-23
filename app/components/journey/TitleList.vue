@@ -28,7 +28,7 @@ const row =
       <ol>
         <li v-for="n in main" :key="n.id">
           <button type="button" :aria-pressed="n.id === selectedId" :class="[row, n.id === selectedId ? 'bg-surface-soft' : '']" @click="$emit('select', n.id)">
-            <span class="w-8 shrink-0 text-right font-display text-xl font-bold text-ink-muted">{{ n.kind === 'main' ? n.item.watch_order : '' }}</span>
+            <span class="w-8 shrink-0 text-right font-display text-xl font-bold text-ink-muted">{{ n.kind === 'main' ? n.order : '' }}</span>
             <span class="min-w-0 flex-1">
               <span class="block truncate font-semibold">{{ n.item.title }}</span>
               <span class="block text-meta capitalize text-ink-muted">{{ n.item.type }} · {{ n.item.release_year }} · {{ n.item.priority }}</span>

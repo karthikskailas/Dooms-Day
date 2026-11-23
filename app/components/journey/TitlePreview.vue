@@ -38,7 +38,7 @@ watch(
         <p class="flex items-center gap-1.5 text-meta uppercase tracking-wider text-ink-muted">
           <component :is="typeIcon[item.type]" :size="14" aria-hidden="true" />
           {{ typeLabel[item.type] }} · {{ item.release_year }}
-          <template v-if="node.kind === 'main'"> · Watch order {{ node.item.watch_order }}</template>
+          <template v-if="node.kind === 'main'"> · Step {{ node.order }}</template>
         </p>
         <h2 ref="heading" tabindex="-1" class="mt-1 font-display text-heading font-bold leading-none outline-none">
           {{ item.title }}

@@ -13,6 +13,8 @@ const props = defineProps<{
   /** Does not match the search or filters. Still visible and clickable, just quieter. */
   dimmed: boolean
   tabbable: boolean
+  /** The title to watch after the current one. */
+  next?: boolean
 }>()
 defineEmits<{ select: [id: string] }>()
 
@@ -27,13 +29,14 @@ const label = computed(() => {
   const i = item.value
   const parts = [i.title, String(i.release_year), typeLabel[i.type], `${priorityLabel[i.priority]} priority`]
   if (props.node.kind === 'main') {
-    parts.push(`watch order ${props.node.item.watch_order}`)
+    parts.push(`step ${props.node.order}`)
     parts.push(doomsday.value ? 'Doomsday relevant' : 'not marked Doomsday relevant')
   } else {
     parts.push('supplemental title, no watch order')
   }
   parts.push(props.watched ? 'completed' : 'not started')
   if (props.marker) parts.push(props.marker)
+  else if (props.next) parts.push('next to watch')
   return parts.join(', ')
 })
 
@@ -56,6 +59,12 @@ const ringClass = computed(
     >
       {{ marker }}
     </span>
+    <span
+      v-else-if="next"
+      class="pointer-events-none absolute -top-7 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-control border border-relic-gold bg-void/90 px-2 py-0.5 text-meta font-bold uppercase tracking-wider text-gold-soft"
+    >
+      Next
+    </span>
     <button
       type="button"
       :data-node-id="node.id"
@@ -74,7 +83,7 @@ const ringClass = computed(
       @click="$emit('select', node.id)"
     >
       <Check v-if="watched" :size="28" aria-hidden="true" />
-      <span v-else-if="node.kind === 'main'" aria-hidden="true">{{ node.item.watch_order }}</span>
+      <span v-else-if="node.kind === 'main'" aria-hidden="true">{{ node.order }}</span>
       <component :is="typeIcon[item.type]" v-else :size="26" aria-hidden="true" />
       <Zap
         v-if="doomsday"

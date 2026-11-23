@@ -302,3 +302,26 @@ The procedural vector tree and the growth intro animation were built and then **
 - **Poster:** one WebP frame per size for first paint and reduced-motion.
 - **Delivery:** `<video muted playsinline loop autoplay preload="metadata">` with `<source media>` per breakpoint, no 4K to phones, pause off-screen or when the tab is hidden.
 - Example: `ffmpeg -i in.mp4 -ss 0 -t 12 -an -vf "scale=1920:-2,fps=30" -c:v libx264 -crf 26 -preset slow -movflags +faststart tree-1080.mp4`; mobile: change to `scale=720:-2`, `-crf 28`, add `-profile:v main`; poster: `ffmpeg -i tree-1080.mp4 -frames:v 1 -c:v libwebp poster.webp`.
+
+## Phase 05 revision 4 — intro video and branch-mapped titles (2026-11-23, owner request, not committed)
+
+- **Intro:** clicking Doomsday Journey or Whole Universe on the landing sets `useState('playIntro')`; the map page then plays `MapIntro.vue` full screen (sound on, muted fallback if the browser refuses; Skip button, Esc, or end of video), and the map fades up behind it. Direct URLs and tab switches inside the map do not play it. Files: `public/media/intro-1080.mp4` (4.4 MB, tablet and up), `intro-720.mp4` (2.9 MB, phones), both re-encoded from the owner's 10.8 MB `intro.mp4`.
+- **Tree image:** `yggdrasil-tree.webp` replaced by the owner's sharper picture (966x1628 source, Lanczos 2x with light sharpening, WebP q82, 539 KB). Lossless source kept at `C:\Users\Workstation X\Downloads\yggdrasil-tree-source.png`, not in the repo.
+- **Branch mapping:** `BRANCHES` in `roadmap-map.ts` holds nine polylines traced by eye over the image (trunk, 3 left, 2 crown, 3 right). Titles are split across them by branch length in watch order (trunk first, then left low to high, crown, right high to low), and route lines run along the wood, going back to a bough's root to reach the next. Tree now 3400 map units wide. Nodes whose boxes still overlap are nudged apart. Branch tracing is approximate; retune the points if the artwork changes.
+- **Verified:** lint, typecheck, 143 tests, build pass. Browser: landing click played the 720 intro (unmuted), Skip revealed the tree at `/journey/doomsday`; `/universe` fit view shows titles on the branches; no page scroll at 800x600 viewport.
+- **Not verified:** 1440 and 390 screenshots of the new layout, intro on a real phone, reduced motion, intro end-of-video path (only Skip tested), production build in a browser.
+- **Rights, open:** intro is Marvel/Disney footage self-hosted in `public/media/`. `CLAUDE.md` §1.1 says not to re-host protected video. Owner's call; consider keeping the files out of git.
+
+### Phase 05 revision 5 — blend, numbering, order cues (2026-11-23, owner request, not committed)
+
+- **Intro blend:** videos re-cropped (the source has baked-in letterbox bars, now removed so it fills the screen) and re-encoded at higher quality (1080: CRF 24, 8.3 MB; 720: CRF 26, 3.8 MB). When the intro ends or is skipped, the map is already framed so the tree sits where it does in the video's last shot (`alignToIntro` in `MapCanvas.vue`: trunk foot centred and 80% down, scale 0.84 of the frame, tuned by eye against screenshots at 800x600), crossfades in, then glides 2.2 s into the first title (`diveIn`).
+- **Numbering:** map nodes now carry `order` (1-based on the visible map). Doomsday shows 1..23; Universe still shows 1..82 (= watch_order). Orbs, list and preview use it; the editorial `watch_order` is untouched.
+- **Order cues:** route lines end in arrowheads pointing to the next title; the title after the current one is tagged NEXT; START HERE / YOU ARE HERE unchanged.
+- **Not verified:** other viewport sizes, a real end-of-video run (seek to the end tested), mobile.
+- **Revision 5b (same day):** dissolve now starts 3 s before the video ends and lasts 2.5 s (ease-in-out, overlay and map together); the camera holds 2 s, then glides to the first title. Alignment retuned against the frame 1.75 s before the end at 1918x890 (scale 1.05 of the frame, trunk foot 81% down). Checked by screenshot at 1918x890 only.
+
+### Revision 6 — shorter intro, Doomsday list checked against Disney+ (2026-11-23)
+
+- **Timing cut:** dissolve starts 1.8 s before the end and lasts 1.5 s; hold 1 s; dive 1.4 s.
+- **Doomsday list audit:** compared with Disney+'s official "Countdown to Avengers: Doomsday" (15 titles: X-Men, X2, Cap: First Avenger, Avengers, Infinity War, Endgame, Loki, Shang-Chi, No Way Home, Multiverse of Madness, Wakanda Forever, Deadpool & Wolverine, Brave New World, Thunderbolts*, Fantastic Four: First Steps; VisionQuest reportedly added later, unconfirmed). All except X-Men and X2 were already Doomsday-relevant. Those two were only in the supplemental grove, so the Doomsday route now starts with them (`DOOMSDAY_FOX_IDS` in `roadmap-map.ts`): 25 steps. Dataset JSON untouched. X-Men '97 is not on any official or major required list; left out. Sources: thedirect.com and slashfilm.com articles on the collection.
+- **Not changed:** the dataset's `is_doomsday_relevant` flags beyond that; VisionQuest (flagged `recommended`, not relevant) pending confirmation.

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import roadmapJson from '../app/constant/marvel_doomsday_watchlist.json'
 import type { RoadmapDataset } from '../shared/types/roadmap.ts'
 import {
-  NODE_H, NODE_W, buildLayout, currentTitleId, defaultFilters, hasActiveFilters, matchesFilters, neighbour,
+  NODE_H, NODE_W, TREE, buildLayout, currentTitleId, defaultFilters, hasActiveFilters, matchesFilters, neighbour,
 } from '../app/utils/roadmap-map.ts'
 import { centerOn, clampK, fitView, revealRect, zoomAt, MAX_K, MIN_K } from '../app/utils/map-viewport.ts'
 
@@ -35,11 +35,12 @@ describe('layout: collections and order', () => {
     }
   })
 
-  it('the journey view has only Doomsday-relevant main titles, in watch order, and no supplemental frame', () => {
+  it('the journey view has the two Fox X-Men films then the Doomsday-relevant main titles, in watch order, and no supplemental frame', () => {
     const relevant = data.titles.filter((t) => t.is_doomsday_relevant)
-    expect(journey.nodes).toHaveLength(23)
-    expect(journey.nodes.map((n) => n.id)).toEqual(relevant.map((t) => t.id))
-    expect(journey.edges).toHaveLength(22)
+    expect(journey.nodes).toHaveLength(25)
+    expect(journey.nodes.map((n) => n.id)).toEqual(['legacy_xmen_001', 'legacy_xmen_002', ...relevant.map((t) => t.id)])
+    expect(journey.nodes.map((n) => n.kind === 'main' && n.order)).toEqual(Array.from({ length: 25 }, (_, i) => i + 1))
+    expect(journey.edges).toHaveLength(24)
     expect(journey.supplementalFrame).toBeNull()
     expect(full.supplementalFrame).not.toBeNull()
   })
@@ -73,12 +74,21 @@ describe('layout: collections and order', () => {
     expect(main[0]!.y).toBe(Math.max(...main.map((n) => n.y)))
   })
 
-  it('keeps every route line short (the longest hops the trunk where the spiral passes it)', () => {
+  it('keeps every hop bounded (the longest crosses from one bough tip to the next bough start)', () => {
     const byId = new Map(full.nodes.map((n) => [n.id, n]))
     for (const e of full.edges) {
       const a = byId.get(e.from)!
       const b = byId.get(e.to)!
-      expect(Math.hypot(a.x - b.x, a.y - b.y), `${e.from}→${e.to}`).toBeLessThan(800)
+      expect(Math.hypot(a.x - b.x, a.y - b.y), `${e.from}→${e.to}`).toBeLessThan(1700)
+    }
+  })
+
+  it('puts every node on or beside a traced branch, inside the artwork', () => {
+    const w = TREE.imgW / 2
+    for (const n of full.nodes.filter((m) => m.kind === 'main')) {
+      expect(Math.abs(n.x + n.w / 2), n.id).toBeLessThan(w)
+      expect(n.y, n.id).toBeGreaterThan(0)
+      expect(n.y, n.id).toBeLessThan(TREE.imgH)
     }
   })
 

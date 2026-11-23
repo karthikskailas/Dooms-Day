@@ -2,8 +2,8 @@
 import tree from '../../assets/images/yggdrasil-tree.webp'
 import { TREE } from '../../utils/roadmap-map.ts'
 
-// Temporary still backdrop (owner-supplied reference image) until the Yggdrasil video replaces it.
-// Decorative; node position comes from the layout alone.
+// The Yggdrasil artwork. The route lines and orbs are placed over its branches by BRANCHES in roadmap-map.ts, so size and
+// position here must match TREE. Decorative.
 const style = {
   left: `${-TREE.imgW / 2}px`,
   top: '0px',

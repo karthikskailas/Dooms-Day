@@ -18,6 +18,19 @@ const props = defineProps<{ title: string; includeSupplemental: boolean; doomsda
 const layout = buildLayout(roadmap, props.includeSupplemental, props.doomsdayOnly)
 const mainIds = layout.nodes.filter((n) => n.kind === 'main').map((n) => n.id)
 
+// Set by the landing buttons; the intro plays once per click and is not repeated when switching tabs.
+const introRequested = useState('playIntro', () => false)
+const showIntro = ref(introRequested.value)
+// The tree fades up as the intro fades out.
+const revealed = ref(!introRequested.value)
+function introDone() {
+  showIntro.value = false
+  introRequested.value = false
+  // The tree holds still for a second, then glides in to the first title.
+  setTimeout(() => canvas.value?.diveIn(), 1000)
+}
+const alignIntro = introRequested.value
+
 const progress = useProgress()
 const isWatched = (id: string) => progress.isWatched(id)
 
@@ -25,7 +38,7 @@ const filters = ref<MapFilters>(defaultFilters())
 const filtersOpen = ref(false)
 const mode = ref<'map' | 'list'>('map')
 const selectedId = ref<string | null>(null)
-const canvas = ref<{ focusOn: (id: string) => void } | null>(null)
+const canvas = ref<{ focusOn: (id: string) => void; diveIn: () => void } | null>(null)
 const root = ref<HTMLElement | null>(null)
 const bar = ref<HTMLElement | null>(null)
 // Height of the toolbar's first row; the canvas, list and preview keep clear of it.
@@ -38,6 +51,11 @@ onMounted(() => {
 })
 
 const currentId = computed(() => currentTitleId(layout, isWatched))
+const nextId = computed(() => {
+  const i = layout.nodes.findIndex((n) => n.id === currentId.value)
+  const n = i >= 0 ? layout.nodes[i + 1] : undefined
+  return n?.kind === 'main' ? n.id : null
+})
 const watchedCount = computed(() => progress.watchedCount(mainIds))
 const percent = computed(() => Math.round((watchedCount.value / mainIds.length) * 100))
 const markerText = computed(() => (watchedCount.value > 0 ? 'You are here' : 'Start here'))
@@ -91,14 +109,20 @@ const toolButton =
 
 <template>
   <div ref="root" class="relative size-full overflow-hidden" @keydown.esc="selected ? closePreview() : (filtersOpen = false)">
+    <ClientOnly>
+      <JourneyMapIntro v-if="showIntro" @leave="revealed = true" @done="introDone" />
+    </ClientOnly>
+
     <!-- Map stays mounted while the list is shown, so pan and zoom survive switching views. -->
     <ClientOnly>
-      <div v-show="mode === 'map'" class="absolute inset-0">
+      <div v-show="mode === 'map'" class="absolute inset-0" :class="revealed ? 'map-reveal' : 'opacity-0'">
         <JourneyMapCanvas
           ref="canvas"
           :layout="layout"
           :is-watched="isWatched"
           :current-id="currentId"
+          :next-id="nextId"
+          :align-intro="alignIntro"
           :marker-text="markerText"
           :selected-id="selectedId"
           :visible-ids="visibleIds"
