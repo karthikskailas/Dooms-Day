@@ -161,6 +161,16 @@ const finishes = {
   midnight: { label: 'Midnight', filter: 'hue-rotate(95deg)' },
   silver: { label: 'Silver', filter: 'grayscale(0.85) brightness(1.1)' },
 } as const
+// The film's own poster from TMDB goes in the card's window; the knight shows until it arrives (or if TMDB has none).
+const readyArt = ref<string | null>(null)
+watch(view, async (v) => {
+  if (v !== 'ready' || readyArt.value) return
+  try {
+    readyArt.value = (await $fetch<{ posterUrl: string | null }>('/api/doomsday')).posterUrl
+  } catch {
+    readyArt.value = null
+  }
+})
 const readyReplay = ref(false)
 const readySealed = computed(() => cardState.ready.value && ready.value && (!cardState.isOpened(readyId) || readyReplay.value))
 const readyDate = computed(() => {
@@ -188,7 +198,7 @@ const readyExport = (): CardExport => ({
   featuring: [`${essentials.length} of ${essentials.length} essential titles`],
   player: player.value,
   date: readyDate.value,
-  art: null,
+  art: readyArt.value,
   hue: null,
 })
 async function runReady(share: boolean) {
@@ -375,7 +385,7 @@ const btn =
               :featuring="[`${essentials.length} of ${essentials.length} essential titles`]"
               :player="player"
               :date="readyDate"
-              :art="null"
+              :art="readyArt"
               :locked="!ready"
             />
           </AchievementsAchievementDoors>
