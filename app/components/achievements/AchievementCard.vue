@@ -3,7 +3,7 @@ import frame from '../../assets/cards/frame.webp'
 import ring from '../../assets/cards/ring.webp'
 import knight from '../../assets/cards/knight.webp'
 import { cardFilter, dominantHue, type CardPriority } from '../../utils/card-theme.ts'
-import { CARD, CARD_H, CARD_W, DIM, GOLD, PALE, VIEW, pad, serialOf, titleSize } from '../../utils/card-layout.ts'
+import { CARD, CARD_H, CARD_W, DIM, GOLD, PALE, VIEW, pad, serialOf, taglineFit, titleSize } from '../../utils/card-layout.ts'
 
 // One collectible, built for one title. Everything is laid out in the 810 x 1080 space of the owner's card design
 // (Canva export): positions are percentages of that space and text sizes use container units, so the card scales as
@@ -14,6 +14,8 @@ const props = defineProps<{
   /** Step number on the route. */
   order: number
   year: number
+  /** This player's collector code; makes the serial theirs. */
+  collector: string
   type: string
   priority: CardPriority
   /** The one line under the name and date. */
@@ -28,6 +30,8 @@ const props = defineProps<{
   locked?: boolean
   /** Plays the unlock animation; change the value to play it again. */
   reveal?: number
+  /** With `reveal`: only the flash and light sweep, no swing (used after the doors open). */
+  flashOnly?: boolean
 }>()
 const emit = defineEmits<{ hue: [hue: number | null] }>()
 
@@ -55,7 +59,8 @@ watch(
 )
 
 const filter = computed(() => cardFilter(hue.value, props.priority))
-const serial = computed(() => serialOf(props.order, props.year))
+const serial = computed(() => serialOf(props.order, props.collector))
+const fit = computed(() => taglineFit(props.tagline))
 const cast = computed(() => props.featuring.slice(0, 3).join(' · '))
 
 const px = (v: number, of: number) => `${(v / of) * 100}%`
@@ -68,7 +73,7 @@ const side = (s: { cx: number; cy: number; w: number }) => ({ left: px(s.cx, CAR
   <figure
     class="relative isolate w-full select-none overflow-hidden text-ink"
     :style="{ aspectRatio: `${VIEW.w} / ${VIEW.h}` }"
-    :class="reveal ? 'card-unlock' : ''"
+    :class="reveal && !flashOnly ? 'card-unlock' : ''"
     :aria-label="`Achievement card: ${title}, step ${order}${locked ? ', locked' : ''}`"
   >
     <!-- The design is laid out in 810 x 1080 units; this crops it to the card's own outline. -->
@@ -115,7 +120,8 @@ const side = (s: { cx: number; cy: number; w: number }) => ({ left: px(s.cx, CAR
       <span class="truncate px-[3cqw]">{{ locked ? '—' : date }}</span>
     </div>
     <p class="absolute flex items-center justify-center font-display font-semibold uppercase tracking-[0.2em]" :style="{ ...box(CARD.label), fontSize: cq(CARD.label.size), color: GOLD }">
-      <span class="max-w-full">{{ locked ? 'Unlock to reveal' : tagline }}</span>
+      <span v-if="locked">Unlock to reveal</span>
+      <span v-for="(l, i) in fit.lines" v-else :key="i" class="block whitespace-nowrap" :style="{ fontSize: cq(fit.size) }">{{ l }}</span>
     </p>
     <p class="absolute flex flex-col items-center justify-center text-center font-display uppercase leading-snug tracking-[0.16em]" :style="{ ...box(CARD.foot), fontSize: cq(CARD.foot.size), color: DIM }">
       <template v-if="locked">Mark this title watched to unlock</template>

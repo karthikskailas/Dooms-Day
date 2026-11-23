@@ -30,4 +30,29 @@ export const DIM = '#a27f3f'
 
 export const titleSize = (title: string) => (title.length > 24 ? 17 : title.length > 16 ? 21 : 25)
 export const pad = (n: number, w: number) => String(n).padStart(w, '0')
-export const serialOf = (order: number, year: number) => `ACH-${pad(order, 3)}-${year}`
+/** Serial printed on a card. The collector code makes it unique to whoever earned it. */
+export const serialOf = (order: number, collector: string) => `ACH-${pad(order, 3)}-${collector || 'XXXXX'}`
+
+/**
+ * Fits the tagline into the plate: one line at full size, then a smaller one line, then two lines. Character width is
+ * estimated (condensed caps plus letter spacing), erring wide so text never reaches the plate's ornaments.
+ */
+export function taglineFit(text: string): { size: number; lines: string[] } {
+  const max = CARD.label.w - 90
+  const wide = (s: string, size: number) => s.length * size * 0.7
+  for (let size = CARD.label.size; size >= 14; size--) if (wide(text, size) <= max) return { size, lines: [text] }
+  const words = text.split(' ')
+  let best = { size: 14, lines: [text] }
+  let gap = Infinity
+  for (let i = 1; i < words.length; i++) {
+    const a = words.slice(0, i).join(' ')
+    const b = words.slice(i).join(' ')
+    const d = Math.abs(a.length - b.length)
+    if (d < gap) {
+      gap = d
+      best = { size: 14, lines: [a, b] }
+    }
+  }
+  for (let size = 17; size >= 12; size--) if (best.lines.every((l) => wide(l, size) <= max)) return { size, lines: best.lines }
+  return { size: 12, lines: best.lines }
+}

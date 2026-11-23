@@ -241,3 +241,80 @@
     animation: card-sweep 1500ms ease-out both;
   }
 }
+
+/* Achievement doors: two metal leaves with a gold seam slide apart; the card behind then glows. */
+@layer components {
+  .door {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50.5%;
+    background:
+      linear-gradient(90deg, rgb(255 255 255 / 0.04) 0 1px, transparent 1px 100%),
+      linear-gradient(180deg, #1b231e, #0b0e0c 60%, #131916);
+    border: 1px solid rgb(198 161 91 / 0.55);
+    transition: transform 1000ms cubic-bezier(0.7, 0, 0.2, 1);
+  }
+
+  .door-left {
+    left: 0;
+    border-right-width: 2px;
+    box-shadow: inset -14px 0 26px -14px rgb(198 161 91 / 0.45);
+  }
+
+  .door-right {
+    right: 0;
+    border-left-width: 2px;
+    box-shadow: inset 14px 0 26px -14px rgb(198 161 91 / 0.45);
+  }
+
+  .door-open-left {
+    transform: translateX(-102%);
+  }
+
+  .door-open-right {
+    transform: translateX(102%);
+  }
+
+  .door-light {
+    background: linear-gradient(90deg, transparent, rgb(255 226 150 / 0.9), transparent);
+    opacity: 0.35;
+    filter: blur(10px);
+    transition: opacity 600ms ease-out, transform 1000ms ease-out;
+  }
+
+  .door-light-on {
+    opacity: 1;
+    transform: translateX(-50%) scaleX(2.4);
+  }
+
+  .door-badge {
+    text-shadow: 0 0 18px rgb(224 201 142 / 0.55);
+    animation: door-pulse 2200ms ease-in-out infinite;
+  }
+
+  /* Glow after opening: three pulses, then a steady soft halo. */
+  .card-glow {
+    animation: card-glow 2400ms ease-out both;
+    filter: drop-shadow(0 0 14px rgb(224 201 142 / 0.35));
+  }
+}
+
+@keyframes door-pulse {
+  50% {
+    opacity: 0.65;
+  }
+}
+
+@keyframes card-glow {
+  0%,
+  40%,
+  80% {
+    filter: drop-shadow(0 0 34px rgb(255 226 150 / 0.95));
+  }
+  20%,
+  60%,
+  100% {
+    filter: drop-shadow(0 0 14px rgb(224 201 142 / 0.35));
+  }
+}

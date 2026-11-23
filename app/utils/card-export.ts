@@ -1,8 +1,8 @@
 // Draws an achievement card to a PNG. It mirrors AchievementCard.vue layer by layer on a canvas, using the same
 // positions (card-layout.ts) and filter (card-theme.ts), so the saved image matches what is on screen.
 // Limit: ctx.filter is not supported by every Safari version; there the frame keeps its original colours.
-import { cardFilter, type CardPriority } from './card-theme.ts'
-import { CARD, CARD_H, CARD_W, DIM, GOLD, PALE, VIEW, pad, serialOf, titleSize } from './card-layout.ts'
+import { cardFilter, dominantHue, type CardPriority } from './card-theme.ts'
+import { CARD, CARD_H, CARD_W, DIM, GOLD, PALE, VIEW, pad, serialOf, taglineFit, titleSize } from './card-layout.ts'
 
 /** URLs of the four card layers, imported where the bundler can resolve them. */
 export interface CardLayers {
@@ -16,6 +16,7 @@ export interface CardExport {
   title: string
   order: number
   year: number
+  collector: string
   type: string
   priority: CardPriority
   tagline: string
@@ -108,7 +109,7 @@ async function drawCard(c: CardExport, layers: CardLayers): Promise<{ canvas: HT
   }
   text('Road to Doomsday', CARD_W / 2, CARD.header.y + CARD.header.size * 0.7, CARD.header.size, GOLD, 600, 0.18)
   text(c.title, CARD.titleSide.cx, CARD.titleSide.cy, titleSize(c.title), GOLD, 600, 0.14, -90, CARD.titleSide.w)
-  text(serialOf(c.order, c.year), CARD.serialSide.cx, CARD.serialSide.cy, CARD.serialSide.size, GOLD, 600, 0.14, 90, CARD.serialSide.w)
+  text(serialOf(c.order, c.collector), CARD.serialSide.cx, CARD.serialSide.cy, CARD.serialSide.size, GOLD, 600, 0.14, 90, CARD.serialSide.w)
   ctx.save()
   ctx.shadowColor = '#000'
   ctx.shadowBlur = 6
@@ -118,18 +119,10 @@ async function drawCard(c: CardExport, layers: CardLayers): Promise<{ canvas: HT
   const nd = CARD.nameDate
   text(c.player, nd.x + nd.w / 4, nd.y + nd.h / 2, nd.size, PALE, 600, 0.12, 0, nd.w / 2 - 40)
   text(c.date, nd.x + (nd.w * 3) / 4, nd.y + nd.h / 2, nd.size, PALE, 600, 0.12, 0, nd.w / 2 - 40)
-  // The tagline wraps to at most two lines inside the plate.
-  const words = c.tagline.split(' ')
-  ctx.font = `600 ${CARD.label.size}px "Barlow Condensed", sans-serif`
-  ctx.letterSpacing = `${CARD.label.size * 0.16}px`
-  const lines: string[] = []
-  for (const w of words) {
-    const last = lines[lines.length - 1]
-    if (last !== undefined && ctx.measureText(`${last} ${w}`.toUpperCase()).width < CARD.label.w - 70) lines[lines.length - 1] = `${last} ${w}`
-    else lines.push(w)
-  }
-  const lh = CARD.label.size * 1.2
-  lines.slice(0, 2).forEach((l, i, a) => text(l, CARD.label.x + CARD.label.w / 2, CARD.label.y + CARD.label.h / 2 + (i - (a.length - 1) / 2) * lh, CARD.label.size, GOLD, 600, 0.16))
+  // The tagline shrinks, then wraps to two lines, so it never reaches the plate's ornaments.
+  const fit = taglineFit(c.tagline)
+  const lh = fit.size * 1.2
+  fit.lines.forEach((l, i, all) => text(l, CARD.label.x + CARD.label.w / 2, CARD.label.y + CARD.label.h / 2 + (i - (all.length - 1) / 2) * lh, fit.size, GOLD, 600, 0.16))
   const f = CARD.foot
   text(c.featuring.slice(0, 3).join(' · '), f.x + f.w / 2, f.y + f.h * 0.34, f.size, GOLD, 600, 0.16, 0, f.w)
   text(`${c.type} · ${c.year}`, f.x + f.w / 2, f.y + f.h * 0.68, f.size, DIM, 600, 0.16, 0, f.w)
@@ -202,3 +195,71 @@ export async function renderCard(c: CardExport, layers: CardLayers, format: Card
 
 export const fileNameFor = (order: number, title: string, format: CardFormat = 'card') =>
   `road-to-doomsday-${format}-${pad(order, 2)}-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}.png`
+
+export interface GalleryHead {
+  player: string
+  collector: string
+  count: number
+  total: number
+}
+
+async function hueOf(url: string | null): Promise<number | null> {
+  if (!url) return null
+  try {
+    return dominantHue(await load(url, true))
+  } catch {
+    return null
+  }
+}
+
+// Collection image: up to nine cards on one 1080 x 1920 story, newest first, with the player's name and collector code.
+export async function renderGallery(cards: CardExport[], head: GalleryHead, layers: CardLayers): Promise<Blob> {
+  const shown = cards.slice(0, 9)
+  const drawn = await Promise.all(shown.map(async (c) => drawCard({ ...c, hue: c.hue ?? (await hueOf(c.art)) }, layers)))
+
+  const canvas = document.createElement('canvas')
+  canvas.width = STORY_W
+  canvas.height = STORY_H
+  const ctx = canvas.getContext('2d')!
+  const g = ctx.createLinearGradient(0, 0, 0, STORY_H)
+  g.addColorStop(0, '#16201a')
+  g.addColorStop(0.5, '#0b0e0c')
+  g.addColorStop(1, '#131916')
+  ctx.fillStyle = g
+  ctx.fillRect(0, 0, STORY_W, STORY_H)
+
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillStyle = GOLD
+  ctx.font = '700 64px "Barlow Condensed", sans-serif'
+  ctx.letterSpacing = '8px'
+  // The group (title, cards, footer) is centred between Instagram's top and bottom controls.
+  const rows = Math.max(1, Math.ceil(drawn.length / 3))
+  const cw = rows === 1 ? 300 : 250
+  const ch = (cw * VIEW.h) / VIEW.w
+  const gap = 24
+  const blockH = rows * ch + (rows - 1) * gap
+  const y0 = 330 + (1250 - blockH) / 2 + 60
+  ctx.fillText(`${head.player}'s collection`.toUpperCase(), STORY_W / 2, y0 - 120, STORY_W - 120)
+  ctx.fillStyle = PALE
+  ctx.font = '600 34px "Barlow Condensed", sans-serif'
+  ctx.letterSpacing = '6px'
+  ctx.fillText(`${head.count} OF ${head.total} UNLOCKED  ·  COLLECTOR ${head.collector}`, STORY_W / 2, y0 - 58)
+
+  drawn.forEach((d, i) => {
+    const inRow = Math.min(3, drawn.length - Math.floor(i / 3) * 3)
+    const rowX0 = (STORY_W - (inRow * cw + (inRow - 1) * gap)) / 2
+    const x = rowX0 + (i % 3) * (cw + gap)
+    const y = y0 + Math.floor(i / 3) * (ch + gap)
+    ctx.drawImage(d.canvas, x, y, cw, ch)
+  })
+
+  ctx.fillStyle = GOLD
+  ctx.font = '600 34px "Barlow Condensed", sans-serif'
+  ctx.letterSpacing = '8px'
+  ctx.fillText('#ROADTODOOMSDAY', STORY_W / 2, y0 + blockH + 64)
+  ctx.fillStyle = DIM
+  ctx.font = '600 26px "Barlow Condensed", sans-serif'
+  ctx.fillText('AN INDEPENDENT FAN PROJECT', STORY_W / 2, y0 + blockH + 104)
+  return toBlob(canvas)
+}
