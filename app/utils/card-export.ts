@@ -45,7 +45,9 @@ function cover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, 
   ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh)
 }
 
-export async function renderCard(c: CardExport, layers: CardLayers): Promise<Blob> {
+export type CardFormat = 'card' | 'story'
+
+async function drawCard(c: CardExport, layers: CardLayers): Promise<{ canvas: HTMLCanvasElement; art: HTMLImageElement | null; bg: HTMLImageElement }> {
   await Promise.all([document.fonts.load('600 40px "Barlow Condensed"'), document.fonts.load('700 40px "Barlow Condensed"')])
   const [frame, bg, ring, knight, art] = await Promise.all([
     load(layers.frame),
@@ -123,14 +125,66 @@ export async function renderCard(c: CardExport, layers: CardLayers): Promise<Blo
   text(c.featuring.slice(0, 3).join(' · '), f.x + f.w / 2, f.y + f.h * 0.34, f.size, GOLD, 600, 0.16, 0, f.w)
   text(`${c.type} · ${c.year}`, f.x + f.w / 2, f.y + f.h * 0.68, f.size, DIM, 600, 0.16, 0, f.w)
 
-  return new Promise((resolve, reject) => {
+  return { canvas, art, bg }
+}
+
+const toBlob = (canvas: HTMLCanvasElement) =>
+  new Promise<Blob>((resolve, reject) => {
     try {
       canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Could not create the image.'))), 'image/png')
     } catch (e) {
       reject(e as Error)
     }
   })
+
+// Story: 1080 x 1920. Instagram covers roughly the top 250 px and bottom 340 px with its own controls, so the card
+// sits between them. The backdrop is the title's poster, blurred and dimmed (the card's scene without a poster).
+const STORY_W = 1080
+const STORY_H = 1920
+const STORY_CARD_W = 900
+
+export async function renderCard(c: CardExport, layers: CardLayers, format: CardFormat = 'card'): Promise<Blob> {
+  const { canvas, art, bg } = await drawCard(c, layers)
+  if (format === 'card') return toBlob(canvas)
+
+  const story = document.createElement('canvas')
+  story.width = STORY_W
+  story.height = STORY_H
+  const ctx = story.getContext('2d')!
+  ctx.fillStyle = '#0b0e0c'
+  ctx.fillRect(0, 0, STORY_W, STORY_H)
+  ctx.save()
+  ctx.filter = `${cardFilter(c.hue, c.priority)} blur(28px) brightness(0.55)`
+  cover(ctx, art ?? bg, -60, -60, STORY_W + 120, STORY_H + 120)
+  ctx.restore()
+  const vignette = ctx.createLinearGradient(0, 0, 0, STORY_H)
+  vignette.addColorStop(0, 'rgba(11,14,12,0.7)')
+  vignette.addColorStop(0.5, 'rgba(11,14,12,0.1)')
+  vignette.addColorStop(1, 'rgba(11,14,12,0.8)')
+  ctx.fillStyle = vignette
+  ctx.fillRect(0, 0, STORY_W, STORY_H)
+
+  const h = (STORY_CARD_W * CARD_H) / CARD_W
+  const x = (STORY_W - STORY_CARD_W) / 2
+  const y = 290
+  ctx.save()
+  ctx.shadowColor = 'rgba(0,0,0,0.7)'
+  ctx.shadowBlur = 60
+  ctx.shadowOffsetY = 24
+  ctx.drawImage(canvas, x, y, STORY_CARD_W, h)
+  ctx.restore()
+
+  ctx.font = '600 34px "Barlow Condensed", sans-serif'
+  ctx.letterSpacing = '8px'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillStyle = GOLD
+  ctx.fillText('#ROADTODOOMSDAY', STORY_W / 2, y + h + 70)
+  ctx.font = '600 26px "Barlow Condensed", sans-serif'
+  ctx.fillStyle = DIM
+  ctx.fillText('AN INDEPENDENT FAN PROJECT', STORY_W / 2, y + h + 112)
+  return toBlob(story)
 }
 
-export const fileNameFor = (order: number, title: string) =>
-  `road-to-doomsday-${pad(order, 2)}-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}.png`
+export const fileNameFor = (order: number, title: string, format: CardFormat = 'card') =>
+  `road-to-doomsday-${format}-${pad(order, 2)}-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}.png`

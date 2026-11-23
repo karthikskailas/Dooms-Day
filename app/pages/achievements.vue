@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Download, ChevronLeft, ChevronRight, Map as MapIcon, Sparkles } from 'lucide-vue-next'
+import { Download, ChevronLeft, ChevronRight, Map as MapIcon, Share2, Sparkles } from 'lucide-vue-next'
 import type { TitleMetadata, TitleResponse } from '../../shared/types/tmdb.ts'
 import { roadmap } from '../utils/roadmap-data.ts'
 import { buildLayout } from '../utils/roadmap-map.ts'
-import { fileNameFor, renderCard } from '../utils/card-export.ts'
+import { fileNameFor, renderCard, type CardFormat } from '../utils/card-export.ts'
 import frame from '../assets/cards/frame.webp'
 import bg from '../assets/cards/bg.webp'
 import ring from '../assets/cards/ring.webp'
@@ -61,12 +61,13 @@ const go = (step: number) => {
   reveal.value = 0
 }
 
-async function download() {
+const format = ref<CardFormat>('story')
+const note = ref<string | null>(null)
+
+async function makeFile() {
   const c = card.value
-  busy.value = true
-  problem.value = null
-  try {
-    const blob = await renderCard({
+  const blob = await renderCard(
+    {
       title: c.item.title,
       order: c.order,
       year: c.item.release_year,
@@ -77,15 +78,37 @@ async function download() {
       date: date.value,
       art: arts[c.id] ?? null,
       hue: hue.value,
-    }, { frame, bg, ring, knight })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = fileNameFor(c.order, c.item.title)
-    a.click()
-    setTimeout(() => URL.revokeObjectURL(url), 1000)
-  } catch {
-    problem.value = 'Could not save the card. Check your connection and try again.'
+    },
+    { frame, bg, ring, knight },
+    format.value,
+  )
+  return new File([blob], fileNameFor(c.order, c.item.title, format.value), { type: 'image/png' })
+}
+
+function save(file: File) {
+  const url = URL.createObjectURL(file)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = file.name
+  a.click()
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+
+async function run(share: boolean) {
+  busy.value = true
+  problem.value = null
+  note.value = null
+  try {
+    const file = await makeFile()
+    // Phones open their share sheet (Instagram Stories is in it). Elsewhere the image is saved instead.
+    if (share && navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'Road to Doomsday', text: `I unlocked ${card.value.item.title} on the road to Avengers: Doomsday.` })
+    } else {
+      save(file)
+      if (share) note.value = 'Saved. Open Instagram and add the image to your story.'
+    }
+  } catch (e) {
+    if ((e as Error).name !== 'AbortError') problem.value = 'Could not make the image. Check your connection and try again.'
   } finally {
     busy.value = false
   }
@@ -145,10 +168,28 @@ const btn =
     </div>
 
     <p v-if="problem" class="shrink-0 text-center text-meta text-danger-text" role="alert">{{ problem }}</p>
-    <div v-if="progress.isWatched(card.id)" class="flex shrink-0 items-center justify-center gap-3">
-      <UiButton :disabled="busy" @click="download">
+    <p v-if="note" class="shrink-0 text-center text-meta text-gold-soft" role="status">{{ note }}</p>
+    <div v-if="progress.isWatched(card.id)" class="flex shrink-0 flex-wrap items-center justify-center gap-3">
+      <div class="flex overflow-hidden rounded-control border border-line-strong" role="group" aria-label="Image format">
+        <button
+          v-for="f in (['story', 'card'] as const)"
+          :key="f"
+          type="button"
+          :aria-pressed="format === f"
+          class="min-h-11 px-3 text-control font-semibold uppercase tracking-[0.06em] aria-pressed:bg-doom-green aria-pressed:text-ink"
+          :class="format === f ? '' : 'bg-surface-raised text-ink-muted hover:text-ink'"
+          @click="format = f"
+        >
+          {{ f === 'story' ? 'Story 9:16' : 'Card 3:4' }}
+        </button>
+      </div>
+      <UiButton :disabled="busy" @click="run(true)">
+        <Share2 :size="18" aria-hidden="true" />
+        {{ busy ? 'Preparing…' : 'Share' }}
+      </UiButton>
+      <UiButton variant="secondary" :disabled="busy" @click="run(false)">
         <Download :size="18" aria-hidden="true" />
-        {{ busy ? 'Saving…' : 'Download PNG' }}
+        Download
       </UiButton>
       <UiButton variant="secondary" @click="reveal++">
         <Sparkles :size="18" aria-hidden="true" />
