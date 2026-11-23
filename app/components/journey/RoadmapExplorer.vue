@@ -48,10 +48,6 @@ const root = ref<HTMLElement | null>(null)
 const bar = ref<HTMLElement | null>(null)
 // Height of the toolbar's first row; the canvas, list and preview keep clear of it.
 const topInset = ref(72)
-// Phones open on the list: it reads top to bottom with no map to learn. After the intro they still get the tree.
-onMounted(() => {
-  if (!introRequested.value && window.matchMedia('(max-width: 767px)').matches) mode.value = 'list'
-})
 onMounted(() => {
   if (!bar.value) return
   const ro = new ResizeObserver(() => (topInset.value = (bar.value?.offsetHeight ?? 60) + 12))
