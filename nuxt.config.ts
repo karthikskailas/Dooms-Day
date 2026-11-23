@@ -29,9 +29,12 @@ export default defineNuxtConfig({
   },
   // TMDB responses are cached in process memory: cleared on restart, not shared between instances.
   nitro: {
-    // Collector codes must outlive a restart, so they are written to disk (.data/collectors, git-ignored). On a host
-    // without a writable disk (Cloudflare), point this at its key-value store instead.
-    storage: { cache: { driver: 'memory' }, collectors: { driver: 'fs', base: './.data/collectors' } },
+    // Collector codes must outlive a restart: Cloudflare KV when deployed (binding COLLECTORS, see wrangler.jsonc), a
+    // folder on disk (.data/collectors, git-ignored) when developing or running the Node build.
+    storage: {
+      cache: { driver: 'memory' },
+      collectors: process.env.NITRO_PRESET === 'cloudflare_module' ? { driver: 'cloudflare-kv-binding', binding: 'COLLECTORS' } : { driver: 'fs', base: './.data/collectors' },
+    },
   },
   app: {
     head: {

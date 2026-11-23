@@ -152,3 +152,27 @@ docs/                   Product, UI and workflow notes (data model sections supe
 - **Environment variables:** read through `useRuntimeConfig()`, never `process.env` in app or server code.
 - **Data:** do not edit the editorial JSON from code. See `STANDARDS.md` §14.
 - Never commit `.env`.
+
+## Deploy to Cloudflare Workers
+
+One-time setup (needs your Cloudflare account; an agent cannot log in for you):
+
+```powershell
+npx wrangler login
+npx wrangler kv namespace create COLLECTORS
+```
+
+Paste the printed `id` into `wrangler.jsonc` (replace `REPLACE_WITH_KV_NAMESPACE_ID`), then store the TMDB token as a secret, never in a file:
+
+```powershell
+npx wrangler secret put NUXT_TMDB_API_TOKEN
+```
+
+Every deploy:
+
+```powershell
+pnpm build:cf
+npx wrangler deploy
+```
+
+`pnpm build:cf` builds with the Cloudflare preset; collector codes then live in the `COLLECTORS` KV namespace (locally they stay in `.data/collectors`). `public/media/` holds the intro videos (12 MB, Marvel/Disney footage; publishing them was the owner's decision).
