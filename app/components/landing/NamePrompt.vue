@@ -4,12 +4,10 @@ import { codenameOf } from '../../utils/card-theme.ts'
 
 // Asked after "Doomsday Journey" or "Whole Universe" is chosen, before the intro plays. The name goes on every
 // achievement card. Leaving it blank is allowed: the player gets a codename made from their collector code.
-const props = defineProps<{ target: string }>()
-const emit = defineEmits<{ cancel: [] }>()
+const emit = defineEmits<{ cancel: []; enter: [name: string] }>()
 
 const progress = useProgress()
 const cardState = useCardState()
-const playIntro = useState('playIntro', () => false)
 
 const name = ref('')
 const input = ref<HTMLInputElement | null>(null)
@@ -23,9 +21,9 @@ onMounted(() => {
 })
 
 function enter() {
-  progress.setDisplayName(name.value.trim() || null)
-  playIntro.value = true
-  navigateTo(props.target)
+  const typed = name.value.trim()
+  progress.setDisplayName(typed || null)
+  emit('enter', typed || codename.value)
 }
 </script>
 

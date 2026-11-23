@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Download, ChevronLeft, ChevronRight, LayoutGrid, Map as MapIcon, RotateCcw, Share2 } from 'lucide-vue-next'
+import { Download, ChevronLeft, ChevronRight, LayoutGrid, Lock, Map as MapIcon, RotateCcw, Share2 } from 'lucide-vue-next'
 import type { TitleMetadata, TitleResponse } from '../../shared/types/tmdb.ts'
 import { roadmap } from '../utils/roadmap-data.ts'
 import { buildLayout } from '../utils/roadmap-map.ts'
@@ -136,7 +136,7 @@ async function run(share: boolean, what: 'card' | 'gallery') {
       const latest = [...unlockedCards.value]
         .sort((a, b) => (progress.progressFor(b.id)?.completedAt ?? '').localeCompare(progress.progressFor(a.id)?.completedAt ?? ''))
         .slice(0, 9)
-      const blob = await renderGallery(latest.map(exportOf), { player: player.value, collector: collector.value, count: unlockedCards.value.length, total: cards.value.length }, layers)
+      const blob = await renderGallery(latest.map(exportOf), { player: player.value, collector: collector.value, number: cardState.number.value, count: unlockedCards.value.length, total: cards.value.length }, layers)
       await deliver(new File([blob], `road-to-doomsday-collection-${collector.value}.png`, { type: 'image/png' }), share, `My Road to Doomsday collection: ${unlockedCards.value.length} of ${cards.value.length} unlocked.`)
     }
   } catch (e) {
@@ -247,7 +247,10 @@ const btn =
       <p v-if="problem" class="shrink-0 text-center text-meta text-danger-text" role="alert">{{ problem }}</p>
       <p v-if="note" class="shrink-0 text-center text-meta text-gold-soft" role="status">{{ note }}</p>
       <div class="flex shrink-0 flex-wrap items-center gap-2 md:gap-3">
-        <p class="text-body text-ink-muted">Collector <span class="font-semibold tabular-nums text-gold-soft">{{ collector }}</span> · {{ player }}</p>
+        <p class="text-body text-ink-muted">
+          <span class="font-semibold tabular-nums text-gold-soft">{{ unlockedCards.length }} of {{ cards.length }}</span> unlocked · {{ player }} ·
+          Collector <span class="font-semibold tabular-nums text-gold-soft">{{ cardState.number.value === null ? '' : `#${String(cardState.number.value).padStart(4, '0')} · ` }}{{ collector }}</span>
+        </p>
         <div v-if="unlockedCards.length" class="ml-auto flex gap-2">
           <UiButton :disabled="busy" @click="run(true, 'gallery')">
             <Share2 :size="18" aria-hidden="true" />
@@ -258,10 +261,18 @@ const btn =
           </UiButton>
         </div>
       </div>
-      <p v-if="!unlockedCards.length" class="m-auto max-w-sm text-center text-body text-ink-muted">No cards yet. Mark a title watched on the timeline and its card unlocks here.</p>
-      <ul v-else class="grid min-h-0 flex-1 grid-cols-3 content-start gap-2 overflow-y-auto sm:grid-cols-4 md:grid-cols-6 md:gap-3">
-        <li v-for="c in unlockedCards" :key="c.id">
-          <button type="button" class="block w-full transition-transform duration-150 hover:-translate-y-0.5" :aria-label="`Open the ${c.item.title} card`" @click="openFromGallery(c.id)">
+      <ul class="grid min-h-0 flex-1 grid-cols-3 content-start gap-2 overflow-y-auto sm:grid-cols-4 md:grid-cols-6 md:gap-3">
+        <li v-for="c in cards" :key="c.id">
+          <div
+            v-if="!watched(c.id)"
+            class="relative flex w-full flex-col items-center justify-center gap-1 border border-line bg-surface/60 text-ink-subtle"
+            style="aspect-ratio: 627 / 1005"
+            :aria-label="`Card ${c.order}, locked`"
+          >
+            <Lock :size="16" aria-hidden="true" />
+            <span class="font-display text-2xl font-bold tabular-nums">{{ String(c.order).padStart(2, '0') }}</span>
+          </div>
+          <button v-else type="button" class="block w-full transition-transform duration-150 hover:-translate-y-0.5" :aria-label="`Open the ${c.item.title} card`" @click="openFromGallery(c.id)">
             <AchievementsAchievementCard
               :title="c.item.title"
               :order="c.order"

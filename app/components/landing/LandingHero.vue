@@ -5,6 +5,7 @@ import { collectionMeta } from '../../utils/collection.ts'
 // The release date and target title come from the roadmap JSON, never from this component.
 // The name is asked first; the intro and the map follow it (see NamePrompt).
 const asking = ref<{ to: string } | null>(null)
+const entering = ref<{ to: string; name: string } | null>(null)
 const { target_title: targetTitle, target_release_date: targetDate } = collectionMeta
 // The section is deliberately not positioned: the backdrop anchors to the layout shell.
 </script>
@@ -32,5 +33,6 @@ const { target_title: targetTitle, target_release_date: targetDate } = collectio
     </div>
   </section>
 
-  <LandingNamePrompt v-if="asking" :target="asking.to" @cancel="asking = null" />
+  <LandingNamePrompt v-if="asking && !entering" @cancel="asking = null" @enter="entering = { to: asking.to, name: $event }" />
+  <LandingLokiGate v-if="entering" :target="entering.to" :name="entering.name" />
 </template>

@@ -208,6 +208,8 @@ export const fileNameFor = (order: number, title: string, format: CardFormat = '
 export interface GalleryHead {
   player: string
   collector: string
+  /** Running collector number from the server, when known. */
+  number: number | null
   count: number
   total: number
 }
@@ -253,7 +255,7 @@ export async function renderGallery(cards: CardExport[], head: GalleryHead, laye
   ctx.fillStyle = PALE
   ctx.font = '600 34px "Barlow Condensed", sans-serif'
   ctx.letterSpacing = '6px'
-  ctx.fillText(`${head.count} OF ${head.total} UNLOCKED  ·  COLLECTOR ${head.collector}`, STORY_W / 2, y0 - 58)
+  ctx.fillText(`${head.count} OF ${head.total} UNLOCKED  ·  COLLECTOR ${head.number === null ? '' : `#${String(head.number).padStart(4, '0')} · `}${head.collector}`, STORY_W / 2, y0 - 58)
 
   drawn.forEach((d, i) => {
     const inRow = Math.min(3, drawn.length - Math.floor(i / 3) * 3)
