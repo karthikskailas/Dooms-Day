@@ -33,7 +33,7 @@ export default defineNuxtConfig({
     // folder on disk (.data/collectors, git-ignored) when developing or running the Node build.
     storage: {
       cache: { driver: 'memory' },
-      collectors: process.env.NITRO_PRESET === 'cloudflare_module' ? { driver: 'cloudflare-kv-binding', binding: 'COLLECTORS' } : { driver: 'fs', base: './.data/collectors' },
+      collectors: process.env.NITRO_PRESET?.startsWith('cloudflare') ? { driver: 'cloudflare-kv-binding', binding: 'COLLECTORS' } : { driver: 'fs', base: './.data/collectors' },
     },
   },
   app: {

@@ -1,12 +1,9 @@
 {
-  // Cloudflare Workers deployment. Build with `pnpm build:cf`, then `wrangler deploy`.
-  "name": "road-to-doomsday",
+  // Cloudflare Pages deployment (https://doomsday-tracker.pages.dev). Build with `pnpm build:cf`, then
+  // `npx wrangler pages deploy`.
+  "name": "doomsday-tracker",
   "compatibility_date": "2026-11-21",
   "compatibility_flags": ["nodejs_compat"],
-  "main": "./.output/server/index.mjs",
-  "assets": { "binding": "ASSETS", "directory": "./.output/public" },
-  "kv_namespaces": [
-    // Create it once with `wrangler kv namespace create COLLECTORS` and paste the id it prints.
-    { "binding": "COLLECTORS", "id": "be17ece92a2f4554bb5e7769602d4b31" }
-  ]
+  "pages_build_output_dir": "./dist",
+  "kv_namespaces": [{ "binding": "COLLECTORS", "id": "be17ece92a2f4554bb5e7769602d4b31" }]
 }

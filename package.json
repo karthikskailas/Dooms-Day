@@ -13,7 +13,7 @@
     "test": "vitest run",
     "validate:data": "node scripts/validate-data.ts",
     "tmdb:map": "node --env-file-if-exists=.env scripts/tmdb-map.ts",
-    "build:cf": "pnpm validate:data && cross-env NITRO_PRESET=cloudflare_module nuxt build"
+    "build:cf": "pnpm validate:data && cross-env NITRO_PRESET=cloudflare_pages nuxt build"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.3.0",

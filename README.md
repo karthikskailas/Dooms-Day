@@ -153,26 +153,26 @@ docs/                   Product, UI and workflow notes (data model sections supe
 - **Data:** do not edit the editorial JSON from code. See `STANDARDS.md` §14.
 - Never commit `.env`.
 
-## Deploy to Cloudflare Workers
+## Deploy to Cloudflare Pages
 
-One-time setup (needs your Cloudflare account; an agent cannot log in for you):
+Live at `https://doomsday-tracker.pages.dev`. One-time setup (needs your Cloudflare account; an agent cannot log in for you): `npx wrangler login`, `npx wrangler kv namespace create COLLECTORS` (its id is in `wrangler.jsonc`), then create the Pages project and store the TMDB token as a secret, never in a file:
 
 ```powershell
-npx wrangler login
-npx wrangler kv namespace create COLLECTORS
+npx wrangler pages project create doomsday-tracker --production-branch main
 ```
 
-Paste the printed `id` into `wrangler.jsonc` (replace `REPLACE_WITH_KV_NAMESPACE_ID`), then store the TMDB token as a secret, never in a file:
-
 ```powershell
-npx wrangler secret put NUXT_TMDB_API_TOKEN
+npx wrangler pages secret put NUXT_TMDB_API_TOKEN --project-name doomsday-tracker
 ```
 
 Every deploy:
 
 ```powershell
 pnpm build:cf
-npx wrangler deploy
 ```
 
-`pnpm build:cf` builds with the Cloudflare preset; collector codes then live in the `COLLECTORS` KV namespace (locally they stay in `.data/collectors`). `public/media/` holds the intro videos (12 MB, Marvel/Disney footage; publishing them was the owner's decision).
+```powershell
+npx wrangler pages deploy
+```
+
+`pnpm build:cf` builds with the Cloudflare Pages preset into `dist/`; collector codes then live in the `COLLECTORS` KV namespace (locally they stay in `.data/collectors`). `public/media/` holds the intro videos (12 MB, Marvel/Disney footage; publishing them was the owner's decision).
