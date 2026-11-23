@@ -18,3 +18,4 @@ logs
 # Vendored design skills (reinstall: see docs/skill-installation.md and skills-lock.json)
 .claude/skills/
 .claude/agents/
+.wrangler

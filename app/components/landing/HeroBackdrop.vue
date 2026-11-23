@@ -17,6 +17,7 @@ interface YtApi {
 type YtWindow = Window & { YT?: YtApi; onYouTubeIframeAPIReady?: () => void }
 
 const target = ref<HTMLElement | null>(null)
+const emit = defineEmits<{ ready: [] }>()
 const videoReady = ref(false)
 
 // The player script starts playback itself (muted, which browsers allow) instead of relying on the embed URL's
@@ -32,6 +33,7 @@ function createPlayer(yt: YtApi) {
         player.mute()
         player.playVideo()
         videoReady.value = true
+        emit('ready')
       },
       // -1 unstarted / 5 cued: autoplay was ignored, so ask again.
       onStateChange: (e: { data: number }) => {
@@ -123,6 +125,7 @@ const spokes = Array.from({ length: SIDES }, (_, k) => {
       alt=""
       fetchpriority="high"
       class="absolute inset-0 size-full object-cover object-[60%_center] md:hidden"
+      @load="emit('ready')"
     >
 
     <div
