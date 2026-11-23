@@ -1,21 +1,42 @@
 <script setup lang="ts">
-import { ChevronLeft, ChevronRight, Map as MapIcon } from 'lucide-vue-next'
+import { Download, ChevronLeft, ChevronRight, Map as MapIcon, Sparkles } from 'lucide-vue-next'
 import type { TitleMetadata, TitleResponse } from '../../shared/types/tmdb.ts'
 import { roadmap } from '../utils/roadmap-data.ts'
 import { buildLayout } from '../utils/roadmap-map.ts'
+import { fileNameFor, renderCard } from '../utils/card-export.ts'
+import frame from '../assets/cards/frame.webp'
+import bg from '../assets/cards/bg.webp'
+import ring from '../assets/cards/ring.webp'
+import knight from '../assets/cards/knight.webp'
 
 definePageMeta({ layout: 'bare' })
 useSeoMeta({ title: 'Achievements — Marvel: Road to Doomsday', description: 'Collectible cards for every title on the road to Avengers: Doomsday. An independent fan project.' })
 
-// One card per step of the Doomsday route. Watched titles unlock; the rest stay as locked outlines.
-const cards = buildLayout(roadmap, false, true).nodes.flatMap((n) => (n.kind === 'main' ? [{ id: n.id, order: n.order, item: n.item }] : []))
+// One card per title. Watched titles unlock; the rest stay as locked outlines.
+const toCards = (doomsdayOnly: boolean) =>
+  buildLayout(roadmap, false, doomsdayOnly).nodes.flatMap((n) => (n.kind === 'main' ? [{ id: n.id, order: n.order, item: n.item }] : []))
+const sets = { all: toCards(false), doomsday: toCards(true) }
+// Every title has a card. "All" numbers them by watch order; "Doomsday" is the shorter route, numbered 1, 2, 3.
+const mode = ref<'all' | 'doomsday'>('all')
+const cards = computed(() => sets[mode.value])
 
 const progress = useProgress()
-const index = ref(0)
+const route = useRoute()
+const start = sets.all.findIndex((c) => c.id === route.query.card)
+const index = ref(Math.max(0, start))
+// Opening a card from its unlock notice plays the unlock animation; the button replays it.
+const reveal = ref(start >= 0 ? 1 : 0)
+const hue = ref<number | null>(null)
+const busy = ref(false)
+const problem = ref<string | null>(null)
 const arts = reactive<Record<string, string | null>>({})
 
-const card = computed(() => cards[index.value]!)
-const unlocked = computed(() => cards.filter((c) => progress.isWatched(c.id)).length)
+const card = computed(() => cards.value[index.value]!)
+watch(mode, () => {
+  index.value = 0
+  reveal.value = 0
+})
+const unlocked = computed(() => cards.value.filter((c) => progress.isWatched(c.id)).length)
 const entry = computed(() => progress.progressFor(card.value.id))
 const date = computed(() => {
   const iso = entry.value?.completedAt
@@ -35,7 +56,40 @@ async function loadArt(id: string) {
 }
 watch(index, () => loadArt(card.value.id), { immediate: true })
 
-const go = (step: number) => (index.value = (index.value + step + cards.length) % cards.length)
+const go = (step: number) => {
+  index.value = (index.value + step + cards.value.length) % cards.value.length
+  reveal.value = 0
+}
+
+async function download() {
+  const c = card.value
+  busy.value = true
+  problem.value = null
+  try {
+    const blob = await renderCard({
+      title: c.item.title,
+      order: c.order,
+      year: c.item.release_year,
+      type: c.item.type,
+      priority: c.item.priority,
+      featuring: c.item.characters,
+      player: player.value,
+      date: date.value,
+      art: arts[c.id] ?? null,
+      hue: hue.value,
+    }, { frame, bg, ring, knight })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = fileNameFor(c.order, c.item.title)
+    a.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  } catch {
+    problem.value = 'Could not save the card. Check your connection and try again.'
+  } finally {
+    busy.value = false
+  }
+}
 const name = computed({ get: () => progress.state.value.preferences.displayName ?? '', set: (v: string) => progress.setDisplayName(v) })
 
 const btn =
@@ -50,6 +104,19 @@ const btn =
         Timeline
       </NuxtLink>
       <h1 class="font-display text-xl font-bold uppercase tracking-[0.08em]">Achievements <span class="text-gold-soft tabular-nums">{{ unlocked }}/{{ cards.length }}</span></h1>
+      <div class="flex overflow-hidden rounded-control border border-line-strong" role="group" aria-label="Which cards">
+        <button
+          v-for="m in (['all', 'doomsday'] as const)"
+          :key="m"
+          type="button"
+          :aria-pressed="mode === m"
+          class="min-h-11 px-3 text-control font-semibold uppercase tracking-[0.06em] transition-colors duration-150 aria-pressed:bg-doom-green aria-pressed:text-ink"
+          :class="mode === m ? '' : 'bg-surface-raised text-ink-muted hover:text-ink'"
+          @click="mode = m"
+        >
+          {{ m === 'all' ? 'All titles' : 'Doomsday route' }}
+        </button>
+      </div>
       <label class="ml-auto flex items-center gap-2 text-meta text-ink-muted">
         <span>Name on cards</span>
         <input v-model="name" type="text" maxlength="30" placeholder="Anonymous Avenger" class="min-h-11 w-44 rounded-control border border-line-strong bg-surface px-3 text-body text-ink placeholder:text-ink-subtle">
@@ -59,20 +126,35 @@ const btn =
     <div class="flex min-h-0 flex-1 items-center justify-center">
       <div class="h-full max-w-full aspect-[3/4]">
         <AchievementsAchievementCard
-          :key="card.id"
+          :key="`${card.id}-${reveal}`"
           class="h-full shadow-[0_24px_60px_-20px_rgb(0_0_0/0.8)]"
           :title="card.item.title"
           :order="card.order"
           :year="card.item.release_year"
+          :type="card.item.type"
           :priority="card.item.priority"
+          :featuring="card.item.characters"
+          :reveal="reveal"
           :player="player"
           :date="date"
           :art="arts[card.id]"
           :locked="!progress.isWatched(card.id)"
+          @hue="hue = $event"
         />
       </div>
     </div>
 
+    <p v-if="problem" class="shrink-0 text-center text-meta text-danger-text" role="alert">{{ problem }}</p>
+    <div v-if="progress.isWatched(card.id)" class="flex shrink-0 items-center justify-center gap-3">
+      <UiButton :disabled="busy" @click="download">
+        <Download :size="18" aria-hidden="true" />
+        {{ busy ? 'Saving…' : 'Download PNG' }}
+      </UiButton>
+      <UiButton variant="secondary" @click="reveal++">
+        <Sparkles :size="18" aria-hidden="true" />
+        Replay unlock
+      </UiButton>
+    </div>
     <div class="flex shrink-0 items-center justify-center gap-4">
       <button type="button" :class="btn" aria-label="Previous card" @click="go(-1)"><ChevronLeft :size="22" aria-hidden="true" /></button>
       <p class="min-w-24 text-center text-body font-semibold tabular-nums">{{ index + 1 }} <span class="text-ink-subtle">of {{ cards.length }}</span></p>

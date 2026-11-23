@@ -3,54 +3,80 @@ import frame from '../../assets/cards/frame.webp'
 import bg from '../../assets/cards/bg.webp'
 import ring from '../../assets/cards/ring.webp'
 import knight from '../../assets/cards/knight.webp'
+import { cardFilter, dominantHue, type CardPriority } from '../../utils/card-theme.ts'
+import { CARD, CARD_H, CARD_W, DIM, GOLD, PALE, pad, serialOf, titleSize } from '../../utils/card-layout.ts'
 
-// One collectible. Everything is laid out in the 810 x 1080 space of the owner's card design (Canva export), so
-// positions below are percentages of that space and text sizes use container units: the card scales as one piece.
-// The frame, background and ring are layers; the character window shows the title's own artwork (or the knight).
-// Priority sets the finish: essential keeps the gold and green, recommended is steel, optional is bronze.
+// One collectible, built for one title. Everything is laid out in the 810 x 1080 space of the owner's card design
+// (Canva export): positions are percentages of that space and text sizes use container units, so the card scales as
+// one piece. The frame turns toward the title's own artwork (dominant hue of its poster); priority sets how rich
+// the finish is. A card's look is therefore different for every title, from the same frame.
 const props = defineProps<{
   title: string
   /** Step number on the route. */
   order: number
   year: number
-  priority: 'essential' | 'recommended' | 'optional'
+  type: string
+  priority: CardPriority
+  /** Main characters, from the roadmap data. */
+  featuring: string[]
   player: string
   /** Already formatted, e.g. "27 NOV 2026". */
   date: string
   /** TMDB poster URL; the knight is used without one. */
   art?: string | null
   locked?: boolean
+  /** Plays the unlock animation; change the value to play it again. */
+  reveal?: number
 }>()
+const emit = defineEmits<{ hue: [hue: number | null] }>()
 
-const finish = {
-  essential: 'none',
-  recommended: 'grayscale(0.85) brightness(1.1)',
-  optional: 'sepia(0.75) saturate(0.9) hue-rotate(-12deg)',
-} as const
 const label = { essential: 'Essential', recommended: 'Recommended', optional: 'Optional' } as const
 
-const pad = (n: number, w: number) => String(n).padStart(w, '0')
-const serial = computed(() => `ACH-${pad(props.order, 3)}-${props.year}`)
-const filter = computed(() => finish[props.priority])
+// Sample the poster's dominant hue once it loads (needs CORS; falls back to the original gold and green).
+const hue = ref<number | null>(null)
+watch(
+  () => props.art,
+  (url) => {
+    hue.value = null
+    emit('hue', null)
+    if (!url || !import.meta.client) return
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      try {
+        hue.value = dominantHue(img)
+      } catch {
+        hue.value = null
+      }
+      emit('hue', hue.value)
+    }
+    img.src = url
+  },
+  { immediate: true },
+)
 
-// Long titles shrink to fit the vertical panel.
-const titleSize = computed(() => (props.title.length > 24 ? 2.1 : props.title.length > 16 ? 2.6 : 3.1))
+const filter = computed(() => cardFilter(hue.value, props.priority))
+const serial = computed(() => serialOf(props.order, props.year))
+const cast = computed(() => props.featuring.slice(0, 3).join(' · '))
 
 const px = (v: number, of: number) => `${(v / of) * 100}%`
-const box = (x: number, y: number, w: number, h: number) => ({ left: px(x, 810), top: px(y, 1080), width: px(w, 810), height: px(h, 1080) })
+const box = (b: { x: number; y: number; w: number; h: number }) => ({ left: px(b.x, CARD_W), top: px(b.y, CARD_H), width: px(b.w, CARD_W), height: px(b.h, CARD_H) })
+const cq = (units: number) => `${(units / CARD_W) * 100}cqw`
+const side = (s: { cx: number; cy: number; w: number }) => ({ left: px(s.cx, CARD_W), top: px(s.cy, CARD_H), width: px(s.w, CARD_W), marginLeft: px(-s.w / 2, CARD_W) })
 </script>
 
 <template>
   <figure
     class="relative isolate aspect-[3/4] w-full select-none overflow-hidden bg-void text-ink [container-type:inline-size]"
+    :class="reveal ? 'card-unlock' : ''"
     :aria-label="`Achievement card: ${title}, step ${order}${locked ? ', locked' : ''}`"
   >
     <div class="absolute inset-0" :class="locked ? 'grayscale brightness-50' : ''" :style="{ filter: locked ? undefined : filter }">
       <img :src="bg" alt="" class="absolute inset-0 size-full object-cover" draggable="false">
 
       <!-- Character window -->
-      <div class="absolute overflow-hidden bg-black" :style="box(212, 151, 385, 524)">
-        <img :src="knight" alt="" class="absolute max-w-none" :style="{ left: px(-212, 385), top: px(-151, 524), width: px(810, 385), height: px(1080, 524) }" draggable="false">
+      <div class="absolute overflow-hidden bg-black" :style="box(CARD.window)">
+        <img :src="knight" alt="" class="absolute max-w-none" :style="{ left: px(-CARD.window.x, CARD.window.w), top: px(-CARD.window.y, CARD.window.h), width: px(CARD_W, CARD.window.w), height: px(CARD_H, CARD.window.h) }" draggable="false">
         <img
           v-if="art && !locked"
           :src="art"
@@ -66,53 +92,38 @@ const box = (x: number, y: number, w: number, h: number) => ({ left: px(x, 810),
     </div>
 
     <!-- Text, drawn live so it stays sharp -->
-    <p
-      class="absolute inset-x-0 text-center font-display font-semibold uppercase tracking-[0.18em] text-[#c9a45a]"
-      :style="{ top: px(103, 1080), fontSize: '3cqw' }"
-    >
+    <p class="absolute inset-x-0 text-center font-display font-semibold uppercase tracking-[0.18em]" :style="{ top: px(CARD.header.y, CARD_H), fontSize: cq(CARD.header.size), color: GOLD }">
       Road to Doomsday
     </p>
-
-    <p
-      class="absolute origin-center -rotate-90 whitespace-nowrap text-center font-display font-semibold uppercase tracking-[0.14em] text-[#c9a45a]"
-      :style="{ left: px(165, 810), top: px(405, 1080), width: px(420, 810), marginLeft: px(-210, 810), fontSize: `${titleSize}cqw` }"
-    >
+    <p class="absolute origin-center -rotate-90 whitespace-nowrap text-center font-display font-semibold uppercase tracking-[0.14em]" :style="{ ...side(CARD.titleSide), fontSize: cq(titleSize(title)), color: GOLD }">
       {{ locked ? '— Locked —' : title }}
     </p>
-    <p
-      class="absolute origin-center rotate-90 whitespace-nowrap text-center font-display font-semibold uppercase tracking-[0.14em] text-[#c9a45a]"
-      :style="{ left: px(645, 810), top: px(405, 1080), width: px(420, 810), marginLeft: px(-210, 810), fontSize: '2.8cqw' }"
-    >
+    <p class="absolute origin-center rotate-90 whitespace-nowrap text-center font-display font-semibold uppercase tracking-[0.14em]" :style="{ ...side(CARD.serialSide), fontSize: cq(CARD.serialSide.size), color: GOLD }">
       {{ serial }}
     </p>
-
     <p
-      class="absolute -translate-x-1/2 -translate-y-1/2 text-center font-display font-bold text-[#d8c7b0] [text-shadow:0_2px_6px_#000]"
-      :style="{ left: px(405, 810), top: px(667, 1080), fontSize: '9cqw' }"
+      class="absolute -translate-x-1/2 -translate-y-1/2 text-center font-display font-bold [text-shadow:0_2px_6px_#000]"
+      :style="{ left: px(CARD.step.cx, CARD_W), top: px(CARD.step.cy, CARD_H), fontSize: cq(CARD.step.size), color: PALE }"
     >
       {{ pad(order, 2) }}
     </p>
-
-    <div
-      class="absolute grid grid-cols-2 items-center text-center font-display font-semibold uppercase tracking-[0.12em] text-[#d8c7b0]"
-      :style="{ ...box(120, 752, 570, 56), fontSize: '3.1cqw' }"
-    >
+    <div class="absolute grid grid-cols-2 items-center text-center font-display font-semibold uppercase tracking-[0.12em]" :style="{ ...box(CARD.nameDate), fontSize: cq(CARD.nameDate.size), color: PALE }">
       <span class="truncate px-[3cqw]">{{ locked ? '—' : player }}</span>
       <span class="truncate px-[3cqw]">{{ locked ? '—' : date }}</span>
     </div>
-
-    <p
-      class="absolute flex items-center justify-center font-display font-semibold uppercase tracking-[0.2em] text-[#c9a45a]"
-      :style="{ ...box(240, 820, 330, 64), fontSize: '2.7cqw' }"
-    >
+    <p class="absolute flex items-center justify-center font-display font-semibold uppercase tracking-[0.2em]" :style="{ ...box(CARD.label), fontSize: cq(CARD.label.size), color: GOLD }">
       {{ label[priority] }}
     </p>
-
-    <p
-      class="absolute text-center font-display uppercase leading-snug tracking-[0.16em] text-[#a27f3f]"
-      :style="{ ...box(180, 905, 450, 70), fontSize: '2.2cqw' }"
-    >
-      {{ locked ? 'Mark this title watched to unlock' : 'The journey is complete. The next legend awaits.' }}
+    <p class="absolute flex flex-col items-center justify-center text-center font-display uppercase leading-snug tracking-[0.16em]" :style="{ ...box(CARD.foot), fontSize: cq(CARD.foot.size), color: DIM }">
+      <template v-if="locked">Mark this title watched to unlock</template>
+      <template v-else>
+        <span class="max-w-full truncate" style="color: #c9a45a">{{ cast }}</span>
+        <span>{{ type }} · {{ year }}</span>
+      </template>
     </p>
+
+    <!-- Unlock flash and light sweep -->
+    <div v-if="reveal" class="card-flash pointer-events-none absolute inset-0" aria-hidden="true" />
+    <div v-if="reveal" class="card-sweep pointer-events-none absolute inset-0" aria-hidden="true" />
   </figure>
 </template>
