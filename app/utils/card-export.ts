@@ -2,6 +2,7 @@
 // positions (card-layout.ts) and filter (card-theme.ts), so the saved image matches what is on screen.
 // Limit: ctx.filter is not supported by every Safari version; there the frame keeps its original colours.
 import { collectionMeta } from './collection.ts'
+import { SITE_HOST } from './site.ts'
 import { cardFilter, dominantHue, variationOf, type CardPriority } from './card-theme.ts'
 import { CARD, CARD_H, CARD_W, DIM, GOLD, PALE, VIEW, pad, serialOf, taglineFit, titleSize } from './card-layout.ts'
 
@@ -48,10 +49,10 @@ function cover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, 
   ctx.drawImage(img, x + (w - dw) * fx, y + (h - dh) * fy, dw, dh)
 }
 
-/** The two lines under a shared image: what it counts down to, and a nudge to collect the rest. */
+/** The lines under a shared image: what it counts down to, the date, and where to go. */
 function footerLines() {
   const day = new Date(`${collectionMeta.target_release_date}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-  return [`COUNTDOWN TO ${collectionMeta.target_title.toUpperCase()}`, `${day.toUpperCase()}  ·  COLLECT THEM ALL`]
+  return [`COUNTDOWN TO ${collectionMeta.target_title.toUpperCase()}`, `${day.toUpperCase()}  ·  COLLECT THEM ALL`, `GO TO ${SITE_HOST.toUpperCase()}`]
 }
 
 export type CardFormat = 'card' | 'story'
@@ -199,6 +200,9 @@ export async function renderCard(c: CardExport, layers: CardLayers, format: Card
   ctx.font = '600 26px "Barlow Condensed", sans-serif'
   ctx.fillStyle = DIM
   ctx.fillText(footerLines()[1]!, STORY_W / 2, y + h + 112)
+  ctx.font = '700 30px "Barlow Condensed", sans-serif'
+  ctx.fillStyle = PALE
+  ctx.fillText(footerLines()[2]!, STORY_W / 2, y + h + 168)
   return toBlob(story)
 }
 
@@ -272,5 +276,8 @@ export async function renderGallery(cards: CardExport[], head: GalleryHead, laye
   ctx.fillStyle = DIM
   ctx.font = '600 26px "Barlow Condensed", sans-serif'
   ctx.fillText(footerLines()[1]!, STORY_W / 2, y0 + blockH + 104)
+  ctx.font = '700 30px "Barlow Condensed", sans-serif'
+  ctx.fillStyle = PALE
+  ctx.fillText(footerLines()[2]!, STORY_W / 2, y0 + blockH + 160)
   return toBlob(canvas)
 }

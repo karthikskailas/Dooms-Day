@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ArrowRight, RotateCcw, Share2 } from 'lucide-vue-next'
 import type { Pace } from '../../utils/pace.ts'
+import tree from '../../assets/images/yggdrasil-tree.webp'
+import { codenameOf } from '../../utils/card-theme.ts'
+import { renderProgressStory } from '../../utils/share-story.ts'
+import { SITE_URL } from '../../utils/site.ts'
 
 // The "what next" bar: the next title to watch, how fast to go, and Share / Reset.
 const props = defineProps<{ nextTitle: string | null; order: number | null; watched: number; total: number; pace: Pace; shareLabel: string; /** True over the map, which keeps its zoom controls at the left. */ overMap: boolean }>()
@@ -16,16 +20,41 @@ function flash(text: string) {
   timer = setTimeout(() => (note.value = ''), 2500)
 }
 
+const progress = useProgress()
+const cardState = useCardState()
+const busy = ref(false)
+
+/** Shares a story image (progress, name, QR code and address). Without file sharing it saves the image and copies the link. */
 async function share() {
-  const text = `${props.shareLabel} Road to Doomsday: ${props.watched} of ${props.total} watched.`
+  busy.value = true
+  const text = `${props.shareLabel} Road to Doomsday: ${props.watched} of ${props.total} watched. ${SITE_URL}`
   try {
-    if (navigator.share) await navigator.share({ title: 'Road to Doomsday', text, url: location.origin })
-    else {
-      await navigator.clipboard.writeText(`${text} ${location.origin}`)
-      flash('Copied')
+    await cardState.hydrate()
+    const blob = await renderProgressStory({
+      player: progress.state.value.preferences.displayName ?? codenameOf(cardState.collector.value),
+      watched: props.watched,
+      total: props.total,
+      journey: props.shareLabel.replace(/:$/, ''),
+      next: props.nextTitle,
+      backdrop: tree,
+    })
+    const file = new File([blob], 'road-to-doomsday-progress.png', { type: 'image/png' })
+    if (navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'Road to Doomsday', text })
+    } else {
+      const url = URL.createObjectURL(file)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = file.name
+      a.click()
+      setTimeout(() => URL.revokeObjectURL(url), 1000)
+      await navigator.clipboard?.writeText(text).catch(() => undefined)
+      flash('Image saved, link copied')
     }
-  } catch {
-    // The user closed the share sheet, or the browser blocked clipboard access.
+  } catch (e) {
+    if ((e as Error).name !== 'AbortError') flash('Could not make the image')
+  } finally {
+    busy.value = false
   }
 }
 
@@ -68,7 +97,7 @@ const small =
       </button>
     </div>
     <div class="pointer-events-auto flex items-center gap-2 max-sm:hidden">
-      <button type="button" :class="small" @click="share">
+      <button type="button" :class="small" :disabled="busy" @click="share">
         <Share2 :size="16" aria-hidden="true" />
         <span class="hidden sm:inline">Share</span>
         <span class="sr-only sm:hidden">Share progress</span>
