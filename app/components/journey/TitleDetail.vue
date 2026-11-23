@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowLeft, Check, ChevronLeft, ChevronRight, ChevronUp, ExternalLink, Film, Play, Sparkles, Tv, X } from 'lucide-vue-next'
+import { ArrowLeft, Check, ChevronLeft, ChevronRight, ExternalLink, Film, ListVideo, Play, Sparkles, Tv, X } from 'lucide-vue-next'
 import type {
   ProviderOffer,
   TitleEpisodes,
@@ -183,6 +183,9 @@ watch(() => props.node.id, () => (showReveal.value = false))
 const back = ref<HTMLButtonElement | null>(null)
 onMounted(() => back.value?.focus({ preventScroll: true }))
 
+// Phones: previous / next as two small arrows beside the route label (the wide buttons are for md and up).
+const arrow =
+  'inline-flex size-11 shrink-0 items-center justify-center rounded-control border border-line-strong bg-void/70 text-ink disabled:opacity-30 md:hidden'
 const step =
   'flex min-h-14 min-w-0 items-center gap-2 border border-line-strong bg-void/70 px-3 text-control font-semibold uppercase tracking-[0.04em] text-ink transition-colors duration-150 hover:border-relic-gold hover:bg-surface-soft disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-line-strong disabled:hover:bg-void/70'
 const bar =
@@ -211,7 +214,7 @@ const bar =
     <div class="absolute inset-0 bg-linear-to-r from-void/95 via-void/50 to-transparent" />
     <div class="absolute inset-0 bg-linear-to-t from-void via-transparent to-void/50" />
 
-    <div class="relative flex size-full flex-col gap-4 p-4 md:gap-3 md:p-6">
+    <div class="relative flex size-full flex-col gap-5 p-4 md:gap-3 md:p-6">
       <!-- Top bar -->
       <div class="flex shrink-0 flex-wrap items-center gap-2">
         <button ref="back" type="button" :class="bar" @click="emit('timeline')">
@@ -238,21 +241,21 @@ const bar =
               <component :is="typeIcon[item.type]" :size="14" aria-hidden="true" />
               {{ item.type }}
             </span>
-            <UiBadge v-if="current" tone="current" />
+            <UiBadge v-if="current" tone="current" class="max-md:hidden" />
             <UiBadge v-if="watched" tone="completed" />
           </div>
           <h2 class="max-w-3xl text-balance font-display text-[clamp(2.25rem,6.5vw,5.5rem)] max-md:text-[2.5rem] font-bold uppercase leading-[0.9] tracking-[0.01em]">{{ item.title }}</h2>
           <p class="flex flex-wrap gap-x-4 text-body font-semibold tabular-nums text-ink">
             <template v-for="(m, i) in meta" :key="i"><span v-if="m">{{ m }}</span></template>
           </p>
-          <p class="line-clamp-3 max-w-2xl text-body text-ink-muted md:line-clamp-5 [@media(max-height:680px)]:max-md:hidden">{{ overview }}</p>
+          <p class="line-clamp-2 max-w-2xl text-body md:line-clamp-3 text-ink-muted md:line-clamp-5 [@media(max-height:680px)]:max-md:hidden">{{ overview }}</p>
           <p class="hidden max-w-2xl text-meta text-ink-subtle md:line-clamp-2 md:block">
             <span class="font-semibold text-gold-soft">Why it matters:</span> {{ item.doomsday_connection }}
           </p>
           <p v-if="detailsError" class="w-fit rounded-control bg-void/80 px-2 py-1 text-meta text-danger-text" role="status">
             Artwork and details unavailable: {{ detailsError }}
           </p>
-          <div class="grid grid-cols-2 gap-3 pt-1 md:flex md:flex-wrap">
+          <div class="grid gap-2 pt-2 md:flex md:flex-wrap md:gap-3 md:pt-1" :class="trailerUrl ? 'grid-cols-[1fr_1fr_auto]' : 'grid-cols-[1fr_auto]'">
             <UiButton v-if="trailerUrl" size="lg" class="max-md:w-full max-md:px-2" @click="trailerOpen = true">
               <Play :size="18" aria-hidden="true" />
               Trailer
@@ -262,19 +265,20 @@ const bar =
               <span class="md:hidden">{{ watched ? 'Watched' : 'Mark watched' }}</span>
               <span class="hidden md:inline">{{ watched ? 'Watched' : isTv ? 'Mark season watched' : 'Mark as watched' }}</span>
             </UiButton>
+            <!-- Phones: where to watch / episodes is one square button in the same row, not a bar of its own. -->
+            <button
+              type="button"
+              class="inline-flex size-12 items-center justify-center rounded-control border border-line-strong bg-void/70 text-gold-soft transition-colors duration-150 hover:border-relic-gold md:hidden"
+              :aria-expanded="panelOpen"
+              :aria-label="isTv ? 'Episodes' : `Where to watch in ${region}`"
+              @click="panelOpen = !panelOpen"
+            >
+              <component :is="isTv ? ListVideo : Tv" :size="20" aria-hidden="true" />
+            </button>
           </div>
         </div>
 
         <!-- Right: where to watch (movie) or episodes (series), in a cut-corner plate with a gold hairline edge. -->
-        <button
-          type="button"
-          class="flex min-h-12 shrink-0 items-center justify-between gap-3 border border-line-strong bg-surface/90 px-4 text-control font-semibold uppercase tracking-[0.06em] text-ink md:hidden"
-          :aria-expanded="panelOpen"
-          @click="panelOpen = !panelOpen"
-        >
-          <span>{{ isTv ? 'Episodes' : 'Where to watch' }}<template v-if="!isTv"> · <span class="text-gold-soft">{{ region }}</span></template></span>
-          <ChevronUp :size="18" class="transition-transform duration-200" :class="panelOpen ? 'rotate-180' : ''" aria-hidden="true" />
-        </button>
         <div
           v-if="panelOpen"
           class="absolute inset-0 z-10 bg-void/70 md:hidden"
@@ -405,7 +409,7 @@ const bar =
       </div>
 
       <!-- Previous / next sit at the bottom, in thumb reach; the arrow keys do the same on a keyboard. -->
-      <div class="grid shrink-0 grid-cols-2 gap-3">
+      <div class="grid shrink-0 grid-cols-2 gap-3 max-md:hidden">
         <button type="button" :class="step" :disabled="!prevId" @click="prevId && emit('go', prevId)">
           <ChevronLeft :size="20" class="shrink-0" aria-hidden="true" />
           <span class="min-w-0 text-left">
@@ -424,10 +428,16 @@ const bar =
 
       <!-- Tracker: the whole route at a glance. Tap a segment to jump to that title. -->
       <nav v-if="route.length" class="shrink-0" aria-label="Route progress">
-        <p class="mb-1.5 flex items-baseline justify-between text-meta font-semibold uppercase tracking-wider text-ink-muted">
-          <span>Route</span>
+        <div class="mb-2 flex items-center justify-between gap-2 text-meta font-semibold uppercase tracking-wider text-ink-muted">
+          <button type="button" :class="arrow" :disabled="!prevId" :aria-label="`Previous: ${prevTitle ?? 'none'}`" @click="prevId && emit('go', prevId)">
+            <ChevronLeft :size="20" aria-hidden="true" />
+          </button>
+          <span class="max-md:mr-auto">Route</span>
           <span class="tabular-nums text-ink">{{ watchedOnRoute }} <span class="text-ink-subtle">of {{ route.length }} watched</span></span>
-        </p>
+          <button type="button" :class="arrow" :disabled="!nextId" :aria-label="`Next: ${nextTitle ?? 'none'}`" @click="nextId && emit('go', nextId)">
+            <ChevronRight :size="20" aria-hidden="true" />
+          </button>
+        </div>
         <ol class="flex items-end gap-0.5 md:gap-1">
           <li v-for="r in route" :key="r.id" class="min-w-0 flex-1">
             <button
