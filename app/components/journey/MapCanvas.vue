@@ -357,7 +357,7 @@ const controlClass =
 
     <!-- Controls stay clear of the toolbar and the preview. -->
     <div
-      class="absolute bottom-3 left-3 z-20 flex flex-col divide-y divide-line-strong overflow-hidden rounded-panel border border-line-strong"
+      class="absolute bottom-3 left-3 z-20 flex flex-col divide-y divide-line-strong overflow-hidden rounded-panel border border-line-strong max-md:hidden"
       role="group"
       aria-label="Map view controls"
       @pointerdown.stop

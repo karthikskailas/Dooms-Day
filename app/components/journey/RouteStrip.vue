@@ -48,7 +48,7 @@ const small =
 <template>
   <div
     class="pointer-events-none absolute z-20 flex items-center justify-end gap-2"
-    :class="overMap ? 'bottom-3 left-16 right-3 md:left-20' : 'inset-x-0 bottom-0 bg-linear-to-t from-void via-void/90 to-transparent px-3 pb-3 pt-8'"
+    :class="overMap ? 'bottom-3 left-3 right-3 md:left-20' : 'inset-x-0 bottom-0 bg-linear-to-t from-void via-void/90 to-transparent px-3 pb-3 pt-8'"
   >
     <div class="pointer-events-auto flex min-w-0 flex-1 items-center gap-3 rounded-panel border border-line-strong bg-surface/95 py-1.5 pl-3 pr-1.5 md:max-w-xl">
       <div class="min-w-0 flex-1">
@@ -67,7 +67,7 @@ const small =
         <ArrowRight :size="16" aria-hidden="true" />
       </button>
     </div>
-    <div class="pointer-events-auto flex items-center gap-2">
+    <div class="pointer-events-auto flex items-center gap-2 max-sm:hidden">
       <button type="button" :class="small" @click="share">
         <Share2 :size="16" aria-hidden="true" />
         <span class="hidden sm:inline">Share</span>

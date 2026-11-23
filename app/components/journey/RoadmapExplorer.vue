@@ -39,6 +39,8 @@ const isWatched = (id: string) => progress.isWatched(id)
 
 const filters = ref<MapFilters>(defaultFilters())
 const filtersOpen = ref(false)
+// Phones keep search behind an icon; md and up always show it.
+const searchOpen = ref(false)
 const mode = ref<'map' | 'list'>('map')
 const selectedId = ref<string | null>(null)
 const canvas = ref<{ focusOn: (id: string) => void; diveIn: () => void } | null>(null)
@@ -122,8 +124,8 @@ async function showMap() {
 }
 
 const tabs = [
-  { to: '/journey/doomsday', label: 'Doomsday', short: 'Doomsday' },
-  { to: '/universe', label: 'Whole Universe', short: 'Universe' },
+  { to: '/journey/doomsday', label: 'Doomsday', short: 'Doomsday', phone: 'Doomsday' },
+  { to: '/universe', label: 'Whole Universe', short: 'Universe', phone: 'All' },
 ]
 
 const toolButton =
@@ -175,8 +177,8 @@ const toolButton =
     <div class="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col gap-2 bg-linear-to-b from-void/90 to-transparent p-3">
       <div ref="bar" class="flex flex-wrap items-center gap-2 md:flex-nowrap md:gap-3">
         <!-- Left: where you are -->
-        <div class="order-1 flex items-center gap-2">
-          <NuxtLink to="/" :class="[toolButton, 'pointer-events-auto max-sm:min-w-11 max-sm:px-0']" aria-label="Back to home">
+        <div class="order-1 flex items-center gap-1 sm:gap-2">
+          <NuxtLink to="/" :class="[toolButton, 'pointer-events-auto max-md:min-w-11 max-md:border-transparent max-md:bg-transparent max-md:px-0']" aria-label="Back to home">
             <ChevronLeft :size="18" aria-hidden="true" />
             <span class="hidden sm:inline">Back</span>
           </NuxtLink>
@@ -189,9 +191,26 @@ const toolButton =
               exact-active-class=""
               class="inline-flex min-h-11 items-center px-2.5 text-control font-semibold uppercase tracking-[0.06em] text-ink-muted transition-colors duration-150 hover:text-ink aria-[current=page]:bg-doom-green aria-[current=page]:text-ink sm:px-3"
             >
-              <span class="xl:hidden">{{ tab.short }}</span><span class="hidden xl:inline">{{ tab.label }}</span>
+              <span class="sm:hidden">{{ tab.phone }}</span><span class="max-sm:hidden xl:hidden">{{ tab.short }}</span><span class="hidden xl:inline">{{ tab.label }}</span>
             </NuxtLink>
           </nav>
+        </div>
+
+        <!-- Phones: three quiet icons instead of a second row of boxes. Search opens its own row on demand. -->
+        <div class="pointer-events-auto order-3 ml-auto flex items-center gap-1 md:hidden">
+          <button type="button" class="inline-flex size-11 items-center justify-center rounded-control text-ink-muted transition-colors duration-150 hover:bg-surface-soft hover:text-ink" :class="searchOpen || active ? 'text-gold-soft' : ''" :aria-expanded="searchOpen" aria-label="Search and filter" @click="searchOpen = !searchOpen">
+            <Search :size="20" aria-hidden="true" />
+          </button>
+          <button v-if="mode === 'map'" type="button" class="inline-flex size-11 items-center justify-center rounded-control text-ink-muted transition-colors duration-150 hover:bg-surface-soft hover:text-ink" aria-label="List view" @click="mode = 'list'">
+            <List :size="20" aria-hidden="true" />
+          </button>
+          <button v-else type="button" class="inline-flex size-11 items-center justify-center rounded-control text-ink-muted transition-colors duration-150 hover:bg-surface-soft hover:text-ink" aria-label="Map view" @click="showMap">
+            <MapIcon :size="20" aria-hidden="true" />
+          </button>
+          <NuxtLink to="/achievements" class="inline-flex size-11 items-center justify-center rounded-control text-ink-muted transition-colors duration-150 hover:bg-surface-soft hover:text-ink relative text-gold-soft" :aria-label="`Achievement cards, ${watchedCount} unlocked`">
+            <Trophy :size="20" aria-hidden="true" />
+            <span class="absolute right-0.5 top-0.5 min-w-4 rounded-full bg-relic-gold px-1 text-center text-[0.625rem] font-bold leading-4 tabular-nums text-void">{{ watchedCount }}</span>
+          </NuxtLink>
         </div>
 
         <!-- Middle: progress (phones read it in the bar at the bottom) -->
@@ -205,7 +224,7 @@ const toolButton =
         <h1 class="sr-only">{{ title }}</h1>
 
         <!-- Right: find things, change the view, open your cards. One row on phones; separate items of the bar from md up. -->
-        <div class="order-5 flex basis-full items-center gap-2 md:contents">
+        <div class="order-5 flex basis-full items-center gap-2 md:contents" :class="searchOpen ? '' : 'max-md:hidden'">
         <div class="flex min-w-0 flex-1 items-center gap-2 md:order-3 md:flex-none">
           <label class="pointer-events-auto relative min-w-0 flex-1 md:w-44 md:flex-none xl:w-64">
             <span class="sr-only">Search titles</span>
@@ -231,7 +250,7 @@ const toolButton =
             <span class="hidden xl:inline">Filters</span>
           </button>
         </div>
-        <div class="flex items-center gap-2 md:order-4">
+        <div class="flex items-center gap-2 max-md:hidden md:order-4">
           <button v-if="mode === 'map'" type="button" :class="[toolButton, 'pointer-events-auto max-sm:min-w-11 max-sm:px-0']" aria-label="List view" @click="mode = 'list'">
             <List :size="18" aria-hidden="true" />
             <span class="hidden xl:inline">List</span>
