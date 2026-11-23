@@ -174,18 +174,18 @@ const toolButton =
       <div ref="bar" class="flex flex-wrap items-center gap-2 md:flex-nowrap md:gap-3">
         <!-- Left: where you are -->
         <div class="order-1 flex items-center gap-1 sm:gap-2">
-          <NuxtLink to="/" :class="[toolButton, 'pointer-events-auto max-md:min-w-11 max-md:border-transparent max-md:bg-transparent max-md:px-0']" aria-label="Back to home">
+          <NuxtLink to="/" :class="[toolButton, 'pointer-events-auto max-md:size-11 max-md:justify-center max-md:px-0']" aria-label="Back to home">
             <ChevronLeft :size="18" aria-hidden="true" />
             <span class="hidden sm:inline">Back</span>
           </NuxtLink>
 
-          <nav class="pointer-events-auto flex overflow-hidden rounded-control border border-line-strong bg-surface-raised" aria-label="Journey">
+          <nav class="pointer-events-auto grid grid-cols-2 overflow-hidden rounded-control border border-line-strong bg-surface-raised" aria-label="Journey">
             <NuxtLink
               v-for="tab in tabs"
               :key="tab.to"
               :to="tab.to"
               exact-active-class=""
-              class="inline-flex min-h-11 items-center px-2.5 text-control font-semibold uppercase tracking-[0.06em] text-ink-muted transition-colors duration-150 hover:text-ink aria-[current=page]:bg-doom-green aria-[current=page]:text-ink sm:px-3"
+              class="inline-flex min-h-[2.625rem] items-center justify-center px-2.5 text-control font-semibold uppercase tracking-[0.06em] text-ink-muted transition-colors duration-150 hover:text-ink aria-[current=page]:bg-doom-green aria-[current=page]:text-ink sm:px-3"
             >
               <span class="sm:hidden">{{ tab.phone }}</span><span class="max-sm:hidden xl:hidden">{{ tab.short }}</span><span class="hidden xl:inline">{{ tab.label }}</span>
             </NuxtLink>
