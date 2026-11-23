@@ -19,6 +19,7 @@ type YtWindow = Window & { YT?: YtApi; onYouTubeIframeAPIReady?: () => void }
 const target = ref<HTMLElement | null>(null)
 const emit = defineEmits<{ ready: [] }>()
 const videoReady = ref(false)
+const posterEl = ref<HTMLImageElement | null>(null)
 
 // The player script starts playback itself (muted, which browsers allow) instead of relying on the embed URL's
 // autoplay flag alone, which some browser settings ignore. Always autoplays: owner directive, no reduced-motion exception.
@@ -49,7 +50,11 @@ function createPlayer(yt: YtApi) {
 
 onMounted(() => {
   // Phones (under 768px) show the poster and our own countdown instead, so the video is never loaded there.
-  if (!window.matchMedia('(min-width: 768px)').matches) return
+  // The poster may finish loading before the page wakes up, which skips its load event, so check it here too.
+  if (!window.matchMedia('(min-width: 768px)').matches) {
+    if (posterEl.value?.complete && posterEl.value.naturalWidth) emit('ready')
+    return
+  }
   const w = window as YtWindow
   if (w.YT?.Player) return createPlayer(w.YT)
   w.onYouTubeIframeAPIReady = () => w.YT && createPlayer(w.YT)
@@ -57,73 +62,13 @@ onMounted(() => {
   script.src = 'https://www.youtube.com/iframe_api'
   document.head.append(script)
 })
-
-const FOCUS = { x: 800, y: 450 }
-const SIDES = 8
-
-const point = (radius: number, degrees: number) => {
-  const a = (degrees * Math.PI) / 180
-  return [FOCUS.x + radius * Math.cos(a), FOCUS.y + radius * Math.sin(a)] as const
-}
-const fmt = (n: number) => n.toFixed(1)
-
-// Rings widen outward and alternate their rotation, so facets never line up from one ring to the next.
-const rings = Array.from({ length: 7 }, (_, i) => {
-  const radius = 96 + i * 104
-  const rotation = (i % 2 === 0 ? 0 : 22.5) + i * 2.5
-  const d = Array.from({ length: SIDES }, (_, k) => point(radius, rotation + (360 / SIDES) * k))
-    .map(([x, y], k) => `${k === 0 ? 'M' : 'L'}${fmt(x)} ${fmt(y)}`)
-    .join(' ')
-  return { d: `${d} Z`, strong: i < 3, opacity: Math.max(0.28, 0.95 - i * 0.12), delay: i * 130 }
-})
-
-// Spokes run along the first ring's vertices and are broken into segments, like plate seams.
-const spokes = Array.from({ length: SIDES }, (_, k) => {
-  const angle = (360 / SIDES) * k
-  const segment = (from: number, to: number) => {
-    const [x1, y1] = point(from, angle)
-    const [x2, y2] = point(to, angle)
-    return `M${fmt(x1)} ${fmt(y1)} L${fmt(x2)} ${fmt(y2)}`
-  }
-  return { d: `${segment(40, 188)} ${segment(260, 500)} ${segment(560, 760)}`, delay: 600 + k * 70 }
-})
 </script>
 
 <template>
   <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
-    <svg
-      class="absolute inset-0 size-full"
-      viewBox="0 0 1600 900"
-      preserveAspectRatio="xMaxYMid slice"
-      fill="none"
-      focusable="false"
-    >
-      <g stroke-width="1" stroke-linejoin="round" vector-effect="non-scaling-stroke">
-        <path
-          v-for="(ring, i) in rings"
-          :key="`ring-${i}`"
-          :d="ring.d"
-          pathLength="1"
-          class="seam-draw"
-          :style="{ '--draw-delay': `${ring.delay}ms`, strokeOpacity: ring.opacity }"
-          :stroke="ring.strong ? 'var(--color-line-strong)' : 'var(--color-line)'"
-        />
-        <path
-          v-for="(spoke, i) in spokes"
-          :key="`spoke-${i}`"
-          :d="spoke.d"
-          pathLength="1"
-          class="seam-draw"
-          :style="{ '--draw-delay': `${spoke.delay}ms` }"
-          stroke="var(--color-line)"
-        />
-      </g>
-      <!-- The one gold point the whole composition converges on. -->
-      <circle :cx="FOCUS.x" :cy="FOCUS.y" r="5" fill="var(--color-relic-gold)" />
-      <circle :cx="FOCUS.x" :cy="FOCUS.y" r="15" stroke="var(--color-relic-gold)" stroke-opacity="0.55" stroke-width="1" />
-    </svg>
 
         <img
+      ref="posterEl"
       :src="poster"
       alt=""
       fetchpriority="high"

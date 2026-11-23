@@ -6,8 +6,8 @@ import { collectionMeta } from '../../utils/collection.ts'
 // The name is asked first; the intro and the map follow it (see NamePrompt).
 const asking = ref<{ to: string } | null>(null)
 const entering = ref<{ to: string; name: string } | null>(null)
-// The two choices stay hidden until the backdrop (video or poster) is on screen, so the first thing seen is the
-// countdown, not buttons over a blank page. A timer shows them anyway if the backdrop is slow.
+// Nothing but black shows until the backdrop (video or poster) is playing; then the countdown and the two choices
+// fade in with it. A timer shows them anyway if the backdrop never arrives (YouTube blocked, slow network).
 const ready = ref(false)
 onMounted(() => setTimeout(() => (ready.value = true), 9000))
 const { target_title: targetTitle, target_release_date: targetDate } = collectionMeta
@@ -24,7 +24,7 @@ const { target_title: targetTitle, target_release_date: targetDate } = collectio
     <h1 id="hero-title" class="sr-only">Marvel: Road to Doomsday, countdown to {{ targetTitle }}</h1>
 
     <!-- Phones: our own countdown over the poster. Tablet and up: the video is the countdown. -->
-    <div class="enter w-full max-w-sm md:hidden" style="--enter-delay: 120ms">
+    <div class="w-full max-w-sm transition-opacity duration-1000 ease-out md:hidden" :class="ready ? 'opacity-100' : 'opacity-0'">
       <LandingDoomsdayCountdown :target-date="targetDate" :target-title="targetTitle" />
     </div>
 
@@ -36,14 +36,6 @@ const { target_title: targetTitle, target_release_date: targetDate } = collectio
       <UiButton variant="secondary" size="lg" @click="asking = { to: '/universe' }">Whole Universe</UiButton>
     </div>
   </section>
-
-  <!-- Loader: covers the whole page, buttons included, until the backdrop is playing. -->
-  <Transition leave-active-class="transition-opacity duration-1000 ease-out" leave-to-class="opacity-0">
-    <div v-if="!ready" class="fixed inset-0 z-40 flex flex-col items-center justify-center gap-4 bg-black" role="status" aria-label="Loading">
-      <span class="size-10 animate-spin rounded-full border-2 border-line-strong border-t-relic-gold" aria-hidden="true" />
-      <span class="text-meta font-semibold uppercase tracking-[0.4em] text-ink-subtle">Loading</span>
-    </div>
-  </Transition>
 
   <LandingNamePrompt v-if="asking && !entering" @cancel="asking = null" @enter="entering = { to: asking.to, name: $event }" />
   <LandingLokiGate v-if="entering" :target="entering.to" :name="entering.name" />
