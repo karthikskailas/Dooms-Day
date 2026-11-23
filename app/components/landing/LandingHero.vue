@@ -9,7 +9,7 @@ const entering = ref<{ to: string; name: string } | null>(null)
 // The two choices stay hidden until the backdrop (video or poster) is on screen, so the first thing seen is the
 // countdown, not buttons over a blank page. A timer shows them anyway if the backdrop is slow.
 const ready = ref(false)
-onMounted(() => setTimeout(() => (ready.value = true), 5000))
+onMounted(() => setTimeout(() => (ready.value = true), 9000))
 const { target_title: targetTitle, target_release_date: targetDate } = collectionMeta
 // The section is deliberately not positioned: the backdrop anchors to the layout shell.
 </script>
@@ -36,6 +36,14 @@ const { target_title: targetTitle, target_release_date: targetDate } = collectio
       <UiButton variant="secondary" size="lg" @click="asking = { to: '/universe' }">Whole Universe</UiButton>
     </div>
   </section>
+
+  <!-- Loader: covers the whole page, buttons included, until the backdrop is playing. -->
+  <Transition leave-active-class="transition-opacity duration-1000 ease-out" leave-to-class="opacity-0">
+    <div v-if="!ready" class="fixed inset-0 z-40 flex flex-col items-center justify-center gap-4 bg-black" role="status" aria-label="Loading">
+      <span class="size-10 animate-spin rounded-full border-2 border-line-strong border-t-relic-gold" aria-hidden="true" />
+      <span class="text-meta font-semibold uppercase tracking-[0.4em] text-ink-subtle">Loading</span>
+    </div>
+  </Transition>
 
   <LandingNamePrompt v-if="asking && !entering" @cancel="asking = null" @enter="entering = { to: asking.to, name: $event }" />
   <LandingLokiGate v-if="entering" :target="entering.to" :name="entering.name" />

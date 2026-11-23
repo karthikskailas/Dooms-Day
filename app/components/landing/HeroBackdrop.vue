@@ -32,12 +32,15 @@ function createPlayer(yt: YtApi) {
       onReady: () => {
         player.mute()
         player.playVideo()
-        videoReady.value = true
-        emit('ready')
       },
       // -1 unstarted / 5 cued: autoplay was ignored, so ask again.
       onStateChange: (e: { data: number }) => {
         if (e.data === -1 || e.data === 5) player.playVideo()
+        // 1 = playing: only now is the video (not YouTube's own spinner) what is on screen.
+        if (e.data === 1 && !videoReady.value) {
+          videoReady.value = true
+          emit('ready')
+        }
       },
       onError: (e: { data: number }) => console.warn('[landing] YouTube player error', e.data),
     },
