@@ -43,6 +43,12 @@ export default defineNuxtConfig({
       meta: [
         { name: 'description', content: 'A fan-made cinematic watch journey to Avengers: Doomsday.' },
         { name: 'theme-color', content: '#0B0E0C' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:site_name', content: 'Doomsday Tracker' },
+        { property: 'og:title', content: 'Doomsday Tracker: what to watch before Avengers: Doomsday' },
+        { property: 'og:description', content: 'Walk the road to Avengers: Doomsday in order, track what you have watched and collect an achievement card for every title.' },
+        { property: 'og:image', content: 'https://doomsday-tracker-app.pages.dev/og.jpg' },
+        { name: 'twitter:card', content: 'summary_large_image' },
       ],
     },
   },
