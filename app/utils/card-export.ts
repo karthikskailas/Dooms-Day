@@ -2,7 +2,7 @@
 // positions (card-layout.ts) and filter (card-theme.ts), so the saved image matches what is on screen.
 // Limit: ctx.filter is not supported by every Safari version; there the frame keeps its original colours.
 import { collectionMeta } from './collection.ts'
-import { cardFilter, dominantHue, type CardPriority } from './card-theme.ts'
+import { cardFilter, dominantHue, variationOf, type CardPriority } from './card-theme.ts'
 import { CARD, CARD_H, CARD_W, DIM, GOLD, PALE, VIEW, pad, serialOf, taglineFit, titleSize } from './card-layout.ts'
 
 /** URLs of the four card layers, imported where the bundler can resolve them. */
@@ -14,6 +14,7 @@ export interface CardLayers {
 }
 
 export interface CardExport {
+  titleId: string
   title: string
   order: number
   year: number
@@ -40,11 +41,11 @@ function load(src: string, cors = false): Promise<HTMLImageElement> {
   })
 }
 
-function cover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number) {
+function cover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number, fx = 0.5, fy = 0.5) {
   const k = Math.max(w / img.width, h / img.height)
   const dw = img.width * k
   const dh = img.height * k
-  ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh)
+  ctx.drawImage(img, x + (w - dw) * fx, y + (h - dh) * fy, dw, dh)
 }
 
 /** The two lines under a shared image: what it counts down to, and a nudge to collect the rest. */
@@ -70,7 +71,8 @@ async function drawCard(c: CardExport, layers: CardLayers): Promise<{ canvas: HT
   canvas.height = Math.round(CARD_H * SCALE)
   const ctx = canvas.getContext('2d')!
   ctx.scale(SCALE, SCALE)
-  const finish = cardFilter(c.hue, c.priority)
+  const v = variationOf(c.collector, c.titleId)
+  const finish = cardFilter(c.hue, c.priority, v)
 
   ctx.save()
   ctx.filter = finish
@@ -82,7 +84,7 @@ async function drawCard(c: CardExport, layers: CardLayers): Promise<{ canvas: HT
   ctx.drawImage(knight, 0, 0, CARD_W, CARD_H)
   if (art) {
     ctx.filter = `${finish} saturate(0.85) contrast(1.05) sepia(0.25)`
-    cover(ctx, art, w.x, w.y, w.w, w.h)
+    cover(ctx, art, w.x, w.y, w.w, w.h, v.focusX / 100, v.focusY / 100)
     ctx.filter = finish
   }
   const shade = ctx.createLinearGradient(0, w.y + w.h, 0, w.y)

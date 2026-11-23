@@ -293,10 +293,9 @@
     animation: door-pulse 2200ms ease-in-out infinite;
   }
 
-  /* Glow after opening: three pulses, then a steady soft halo. */
+  /* A calm glow that slowly breathes in and out. No pop. */
   .card-glow {
-    animation: card-glow 2400ms ease-out both;
-    filter: drop-shadow(0 0 14px rgb(224 201 142 / 0.35));
+    animation: card-breathe 4200ms ease-in-out infinite;
   }
 }
 
@@ -306,15 +305,12 @@
   }
 }
 
-@keyframes card-glow {
+@keyframes card-breathe {
   0%,
-  40%,
-  80% {
-    filter: drop-shadow(0 0 34px rgb(255 226 150 / 0.95));
-  }
-  20%,
-  60%,
   100% {
-    filter: drop-shadow(0 0 14px rgb(224 201 142 / 0.35));
+    filter: drop-shadow(0 0 10px rgb(224 201 142 / 0.22));
+  }
+  50% {
+    filter: drop-shadow(0 0 26px rgb(224 201 142 / 0.5));
   }
 }

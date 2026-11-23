@@ -2,7 +2,7 @@
 import frame from '../../assets/cards/frame.webp'
 import ring from '../../assets/cards/ring.webp'
 import knight from '../../assets/cards/knight.webp'
-import { cardFilter, dominantHue, type CardPriority } from '../../utils/card-theme.ts'
+import { cardFilter, dominantHue, variationOf, type CardPriority } from '../../utils/card-theme.ts'
 import { CARD, CARD_H, CARD_W, DIM, GOLD, PALE, VIEW, pad, serialOf, taglineFit, titleSize } from '../../utils/card-layout.ts'
 
 // One collectible, built for one title. Everything is laid out in the 810 x 1080 space of the owner's card design
@@ -14,6 +14,8 @@ const props = defineProps<{
   /** Step number on the route. */
   order: number
   year: number
+  /** Roadmap id; with the collector code it seeds this copy's unique look. */
+  titleId: string
   /** This player's collector code; makes the serial theirs. */
   collector: string
   type: string
@@ -30,7 +32,7 @@ const props = defineProps<{
   locked?: boolean
   /** Plays the unlock animation; change the value to play it again. */
   reveal?: number
-  /** With `reveal`: only the flash and light sweep, no swing (used after the doors open). */
+  /** With `reveal`: no swing, flash or sweep at all (the doors do the revealing). */
   flashOnly?: boolean
 }>()
 const emit = defineEmits<{ hue: [hue: number | null] }>()
@@ -58,7 +60,8 @@ watch(
   { immediate: true },
 )
 
-const filter = computed(() => cardFilter(hue.value, props.priority))
+const variation = computed(() => variationOf(props.collector, props.titleId))
+const filter = computed(() => cardFilter(hue.value, props.priority, variation.value))
 const serial = computed(() => serialOf(props.order, props.collector))
 const fit = computed(() => taglineFit(props.tagline))
 const cast = computed(() => props.featuring.slice(0, 3).join(' · '))
@@ -90,6 +93,7 @@ const side = (s: { cx: number; cy: number; w: number }) => ({ left: px(s.cx, CAR
           :src="art"
           alt=""
           class="absolute inset-0 size-full object-cover [filter:saturate(0.85)_contrast(1.05)_sepia(0.25)]"
+          :style="{ objectPosition: `${variation.focusX}% ${variation.focusY}%` }"
           draggable="false"
           crossorigin="anonymous"
         >
@@ -132,8 +136,8 @@ const side = (s: { cx: number; cy: number; w: number }) => ({ left: px(s.cx, CAR
     </p>
 
     <!-- Unlock flash and light sweep -->
-    <div v-if="reveal" class="card-flash pointer-events-none absolute inset-0" aria-hidden="true" />
-    <div v-if="reveal" class="card-sweep pointer-events-none absolute inset-0" aria-hidden="true" />
+    <div v-if="reveal && !flashOnly" class="card-flash pointer-events-none absolute inset-0" aria-hidden="true" />
+    <div v-if="reveal && !flashOnly" class="card-sweep pointer-events-none absolute inset-0" aria-hidden="true" />
     </div>
   </figure>
 </template>

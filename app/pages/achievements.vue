@@ -3,6 +3,7 @@ import { Download, ChevronLeft, ChevronRight, LayoutGrid, Map as MapIcon, Rotate
 import type { TitleMetadata, TitleResponse } from '../../shared/types/tmdb.ts'
 import { roadmap } from '../utils/roadmap-data.ts'
 import { buildLayout } from '../utils/roadmap-map.ts'
+import { codenameOf } from '../utils/card-theme.ts'
 import { taglineFor } from '../utils/card-taglines.ts'
 import { fileNameFor, renderCard, renderGallery, type CardExport, type CardFormat } from '../utils/card-export.ts'
 import frame from '../assets/cards/frame.webp'
@@ -46,7 +47,7 @@ const dateOf = (id: string) => {
   const iso = progress.progressFor(id)?.completedAt
   return iso ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase() : ''
 }
-const player = computed(() => progress.state.value.preferences.displayName ?? 'Anonymous Avenger')
+const player = computed(() => progress.state.value.preferences.displayName ?? codenameOf(cardState.collector.value))
 const collector = computed(() => cardState.collector.value)
 
 // ---------- Doors: an earned card stays sealed until it is tapped once ----------
@@ -87,6 +88,7 @@ function openFromGallery(id: string) {
 
 // ---------- Making images ----------
 const exportOf = (c: (typeof sets.all)[number]): CardExport => ({
+  titleId: c.id,
   title: c.item.title,
   order: c.order,
   year: c.item.release_year,
@@ -180,7 +182,7 @@ const btn =
       </div>
       <label class="flex min-w-0 basis-full items-center gap-2 text-meta text-ink-muted md:ml-auto md:basis-auto">
         <span class="max-sm:sr-only">Name on cards</span>
-        <input v-model="name" type="text" maxlength="30" placeholder="Anonymous Avenger" class="min-h-11 w-full min-w-0 rounded-control border border-line-strong bg-surface px-3 text-body text-ink placeholder:text-ink-subtle md:w-44">
+        <input v-model="name" type="text" maxlength="30" placeholder="Your codename" class="min-h-11 w-full min-w-0 rounded-control border border-line-strong bg-surface px-3 text-body text-ink placeholder:text-ink-subtle md:w-44">
       </label>
     </div>
 
@@ -194,6 +196,7 @@ const btn =
               class="h-full"
               :title="card.item.title"
               :order="card.order"
+              :title-id="card.id"
               :year="card.item.release_year"
               :collector="collector"
               :type="card.item.type"
@@ -262,6 +265,7 @@ const btn =
             <AchievementsAchievementCard
               :title="c.item.title"
               :order="c.order"
+              :title-id="c.id"
               :year="c.item.release_year"
               :collector="collector"
               :type="c.item.type"
