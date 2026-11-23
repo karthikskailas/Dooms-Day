@@ -123,7 +123,7 @@ const side = (s: { cx: number; cy: number; w: number }) => ({ left: px(s.cx, CAR
       <span class="truncate px-[3cqw]">{{ locked ? '—' : player }}</span>
       <span class="truncate px-[3cqw]">{{ locked ? '—' : date }}</span>
     </div>
-    <p class="absolute flex items-center justify-center font-display font-semibold uppercase tracking-[0.2em]" :style="{ ...box(CARD.label), fontSize: cq(CARD.label.size), color: GOLD }">
+    <p class="absolute flex flex-col items-center justify-center text-center font-display font-semibold uppercase leading-[1.2] tracking-[0.16em]" :style="{ ...box(CARD.label), fontSize: cq(CARD.label.size), color: GOLD }">
       <span v-if="locked">Unlock to reveal</span>
       <span v-for="(l, i) in fit.lines" v-else :key="i" class="block whitespace-nowrap" :style="{ fontSize: cq(fit.size) }">{{ l }}</span>
     </p>
