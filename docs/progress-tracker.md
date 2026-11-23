@@ -1,6 +1,6 @@
 # Marvel: Road to Doomsday — Progress Tracker
 
-**Last Updated**: 2026-11-21 (landing rework below)
+**Last Updated**: 2026-11-23 (Phase 05 map, see "Phase 05 — consolidated status" at the end)
 
 ## Current Phase
 **Phase 03 — Data architecture and TMDB integration: complete and verified against live TMDB** (after the token was added). Phases 01–03 are committed (`e53741c`, `04de6c7`, `5b9a378`, plus the live-mapping commit that follows it). Awaiting approval to start Phase 04.
@@ -243,3 +243,62 @@ Phase 04's scope is not defined in the source documents. `ai-workflow-rules.md` 
 - **Open:** where the fan-project notice lives now; countdown date comes from the video, not `collection.target_release_date`; portrait layout has empty space around the video strip.
 
 - **Update (same day):** portrait screens now show the poster from `app/assets/images/` with our own countdown (`DoomsdayCountdown.vue`, rewritten) and no video; landscape keeps the live video, now driven by the YouTube IFrame API so it calls `playVideo()` itself and has no reduced-motion exception. Checked at 390×844 (screenshot inspected; no page scroll). The user reported the video showing only YouTube icons in their own browser; cause unknown, not reproduced here (needs their browser's symptom). Landscape was not re-screenshotted after the scrim change.
+
+## Phase 05 — Interactive timeline (2026-11-23, not committed)
+
+- **Built:** `/journey/doomsday` (82 main titles) and `/universe` (82 main + 10 supplemental) share one map: pan, drag, wheel/trackpad/touch-pinch zoom, fit, reset, search, type/priority/progress filters, node preview with a mark-watched toggle, YOU ARE HERE / START HERE marker, keyboard arrows between nodes, list view, no-scroll `map` layout.
+- **Files:** `app/utils/roadmap-map.ts`, `map-viewport.ts`, `roadmap-data.ts`; `app/components/journey/{RoadmapExplorer,MapCanvas,MapNode,TitlePreview,TitleList,MapFilters}.vue`; `app/layouts/map.vue`; both route pages; `tests/roadmap-map.test.ts`; removed `JourneyPending.vue`.
+- **Decisions:** Journey = main collection; Universe adds supplemental (the data has no journey field, ARCHITECTURE §11.9.5). Edges join only consecutive `watch_order`; position carries no story meaning (stated in the Filters panel). Supplemental titles sit in a dashed frame with no edges. Current position = first unwatched main title (no "in progress" state exists in progress storage). Non-matching titles are dimmed, not removed. Faint grid texture ships (DESIGN §1 OPEN, resolved). Specials get their own type filter because 7 titles are `special`.
+- **Gaps:** progress model has only `watched`; an in-progress state would need a v2 field (`watching: boolean`) plus migration. Watching 2 before 1 leaves the marker on 1. No title detail route exists, so "Full details" is disabled. Supplemental titles have no relevance flag; shown as unclassified. Search box has an accessible label but no visible one.
+- **Verified:** `pnpm lint`, `typecheck`, `test` (139 pass), `build` pass. Browser (dev server): 1440 and 390 screenshots, 768 and 1440 overview screenshots inspected; no page scroll at 1440/768/390; wheel zoom, drag, pinch (synthetic pointer events), search, empty state, arrow-key move, list view (82 rows), preview and progress write exercised by script.
+- **Not verified:** real touch device, `prefers-reduced-motion` render, keyboard focus rings by screenshot, production-build browser run, `/impeccable critique` and `audit`, Taste Skill inspector, list-view screenshots. No automated component tests (no DOM test setup).
+- **Next:** wait for approval of Phase 06 (title detail).
+
+### Phase 05 revision — tree map (2026-11-23, owner request)
+
+- **Doomsday Journey** now shows only the 23 `is_doomsday_relevant` titles in watch order; **Whole Universe** shows all 82 + 10.
+- **Tree design:** main titles form a world-tree crown (rows of 3, 4, 5, … up, route winding left/right), trunk and roots as backdrop art (`TreeBackdrop.vue`), supplemental titles in a labelled grove beneath the roots. Position derives from `watch_order` only; the dataset has no branch or realm data, so none is drawn or implied. Blue/violet canopy haze is an approved palette exception (owner reference image).
+- **Chrome:** site nav and header removed on map pages (`layouts/map.vue`). Toolbar has Back (to `/`), a Doomsday / Whole Universe tab switch, progress, search, filters and list toggle. The fan-project footer stays.
+- **Verified:** lint, typecheck, 141 tests pass; browser screenshots at 1440 (Universe fit, Doomsday default) and 390 (preview open); no page scroll at 1440/390. Not re-verified: 768, reduced motion, production build, critique/audit.
+- **Gap:** the Fandom Yggdrasill page was not used for content because titles carry no realm data; only the form (trunk, boughs, roots) is borrowed.
+
+### Phase 05 revision 2 — real tree artwork (2026-11-23, owner request)
+
+- Replaced the generated cone with the owner's tree image (`app/assets/images/yggdrasil-tree.webp`, from their reference) as the map backdrop. Titles are glowing orbs (ring = priority, fill = watched, gold ring = current, bolt = Doomsday-relevant) joined by thin route lines, as in the game-map reference. Labels show above zoom 0.45; below it only numbered orbs remain.
+- Layout (`treePoints` in `roadmap-map.ts`): the route climbs a wavy stem up the trunk, then spirals outward through the canopy; the longest line hops the trunk where the spiral crosses it. Position is still derived from `watch_order` only; no branches or realms implied. Supplemental titles sit in a grove below the roots.
+- `TreeBackdrop.vue` now just places the image. Image rights are the owner's responsibility (supplied by them; source unknown).
+- **Verified:** lint, 142 tests; browser screenshots at 1440 (fit and zoomed). Not re-run after this revision: build, typecheck, 390/768 screenshots, reduced motion.
+
+### Phase 05 revision 3 — reverted (2026-11-23)
+
+The procedural vector tree and the growth intro animation were built and then **removed at the owner's request** (`tree-art.ts`, intro CSS and node delays deleted). The map now shows the still tree image as a temporary backdrop only.
+
+## Phase 05 — consolidated status (2026-11-23, nothing committed)
+
+### Done
+- **Data and logic:** `app/utils/roadmap-map.ts` (layout, filters, current position, keyboard neighbours), `map-viewport.ts` (pan/zoom math), `roadmap-data.ts`. Tests in `tests/roadmap-map.test.ts` (142 pass in total). All 92 titles present, original watch order and ids intact, main vs supplemental kept separate.
+- **Map UI** (`app/components/journey/`): `RoadmapExplorer`, `MapCanvas`, `MapNode`, `TitlePreview`, `TitleList`, `MapFilters`, `TreeBackdrop`. Pan/drag, wheel and pinch zoom, fit, reset, search, type/priority/progress filters, preview with mark-watched, YOU ARE HERE / START HERE, arrow-key navigation, list view, no page scroll.
+- **Routes:** `/journey/doomsday` = the 23 `is_doomsday_relevant` titles in watch order; `/universe` = all 82 main + 10 supplemental (grove under the roots). No site nav on map pages (`layouts/map.vue`); toolbar has Back and a Doomsday / Whole Universe tab switch.
+- **Look:** titles are glowing orbs on a tree-shaped route (stem up the trunk, spiral through the canopy), laid out from `watch_order` only. Backdrop is the owner's still image (`yggdrasil-tree.webp`, 2x upscaled, soft).
+- **Checks run:** `pnpm lint`, `typecheck`, `test`, `build` pass. Browser screenshots at 1440 and 390 for earlier revisions.
+
+### Not done / not verified
+- Backdrop is a low-resolution still; the owner will supply a 4K Yggdrasil video (Loki S2 finale).
+- Not re-verified after the orb redesign: 390 and 768 screenshots, reduced motion, keyboard focus rings by screenshot, production build in a browser, `/impeccable critique` and `audit`, Taste Skill inspector.
+- No in-progress state in the progress model (needs a v2 `watching` flag).
+- "Full details" is disabled until Phase 06.
+
+### Next
+1. **Owner:** download the video locally (not committed) and trim/encode per the plan below.
+2. **Backdrop video:** place the encoded files in `public/media/`, replace `TreeBackdrop.vue` with a muted, looping, `playsinline` video inside the map layer (poster WebP fallback, still for `prefers-reduced-motion`, pause when hidden). Then re-measure where the trunk and canopy sit in the frame and update the `TREE` constants so the route lies on the tree.
+3. Re-run the checks above at 1440, 768 and 390, then `/impeccable critique` and `audit`.
+4. Stop and wait for approval before Phase 06 (title detail pages).
+
+### Video plan (for the owner's file)
+- **Open decision, rights:** `CLAUDE.md` §1.1 says to use only official embeds or links and not to re-host protected video. Loki footage is Marvel/Disney material, so self-hosting an extracted clip conflicts with that rule. Options: (a) keep the still image or commission/own artwork; (b) the owner accepts the risk and keeps the video out of git (public hosting is still a re-host); (c) an official YouTube embed, which cannot be panned and zoomed with the map. Decide before the video ships.
+- **Trim:** only the final tree shot, 8–15 s, seamless loop if possible; strip audio.
+- **Desktop:** 1920×1080 (or 2560×1440 max), H.264 High, CRF ~26, about 3–5 Mbps, plus a WebM (AV1 or VP9) variant; `-movflags +faststart`.
+- **Mobile:** 720p, ideally a portrait crop around the tree (the tree is tall), H.264 baseline/main, about 1–1.5 Mbps, 24–30 fps; keep each file under about 3 MB.
+- **Poster:** one WebP frame per size for first paint and reduced-motion.
+- **Delivery:** `<video muted playsinline loop autoplay preload="metadata">` with `<source media>` per breakpoint, no 4K to phones, pause off-screen or when the tab is hidden.
+- Example: `ffmpeg -i in.mp4 -ss 0 -t 12 -an -vf "scale=1920:-2,fps=30" -c:v libx264 -crf 26 -preset slow -movflags +faststart tree-1080.mp4`; mobile: change to `scale=720:-2`, `-crf 28`, add `-profile:v main`; poster: `ffmpeg -i tree-1080.mp4 -frames:v 1 -c:v libwebp poster.webp`.

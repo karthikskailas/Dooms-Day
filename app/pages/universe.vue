@@ -1,12 +1,11 @@
 <script setup lang="ts">
-// Holding route until the interactive roadmap is built (next phase). Kept out of search indexes.
+definePageMeta({ layout: 'map' })
 useSeoMeta({
   title: 'Whole Universe — Marvel: Road to Doomsday',
-  description: 'The Whole Universe roadmap is not built yet.',
-  robots: 'noindex, nofollow',
+  description: 'The Doomsday roadmap plus supplemental Fox X-Men titles. An independent fan project.',
 })
 </script>
 
 <template>
-  <JourneyPending title="Whole Universe" />
+  <JourneyRoadmapExplorer title="Whole Universe" :include-supplemental="true" />
 </template>

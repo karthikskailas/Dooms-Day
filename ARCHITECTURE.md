@@ -295,3 +295,7 @@ Failures are never cached and stale entries are not served (`swr: false`). **Lim
 3. How the 7 `special` titles map to TMDB (movie, tv, or not present). Decided per title during mapping.
 4. Season-level credits, videos and providers instead of show-level.
 5. Doomsday Journey membership: the JSON has `priority` and `is_doomsday_relevant` but no journey field. The DOOMSDAY READY gate currently has 10 `essential` titles to count.
+
+## 12. Roadmap map (Phase 05)
+
+`app/utils/roadmap-map.ts` builds the layout (a trunk stem then a canopy spiral laid on a temporary still backdrop (`yggdrasil-tree.webp`, to be replaced by a video), derived from `watch_order` only; Doomsday view filters to `is_doomsday_relevant`), filters, current position and keyboard neighbours; `map-viewport.ts` holds pan/zoom math. Both are pure and tested in `tests/roadmap-map.test.ts`. Nodes are HTML buttons in one CSS-transformed layer with an SVG edge layer behind; no graph library. Edges exist only between consecutive watch orders. Progress is read through `useProgress`; nothing is written to the JSON.

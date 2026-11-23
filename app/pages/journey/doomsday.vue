@@ -1,12 +1,11 @@
 <script setup lang="ts">
-// Holding route until the interactive roadmap is built (next phase). Kept out of search indexes.
+definePageMeta({ layout: 'map' })
 useSeoMeta({
   title: 'Doomsday Journey — Marvel: Road to Doomsday',
-  description: 'The Doomsday Journey roadmap is not built yet.',
-  robots: 'noindex, nofollow',
+  description: 'The Doomsday-relevant titles, in watch order, on the road to Avengers: Doomsday. An independent fan project.',
 })
 </script>
 
 <template>
-  <JourneyPending title="Doomsday Journey" />
+  <JourneyRoadmapExplorer title="Doomsday Journey" :include-supplemental="false" doomsday-only />
 </template>
