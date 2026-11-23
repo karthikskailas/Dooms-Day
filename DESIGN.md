@@ -30,6 +30,7 @@ All tokens are defined once in `app/assets/css/main.css` under `@theme`. Use the
 | `line-strong` | `#667369` | **Added.** Control boundaries, inputs, unselected outlines (≥3:1) | 3.5 / 3.2 / 2.9 on void / surface / raised |
 | `doom-green` | `#1F7A47` | Primary button fill, essential badge, selected paths. **Brightened 2026-11-21** (was `#456B50`, read as dull) | ink 4.7:1, void 3.6:1 |
 | `doom-green-bright` | `#4FD07F` | Hover fill, watching state, active paths, green text. **Brightened 2026-11-21** (was `#78966D`) | void 9.9:1, raised 8.2:1 |
+| `comic-red` | `#D22B2B` | Title screen only: the slanted STEP plate (ink on it 4.8:1). Added 2026-11-23 for the Marvel feel; not for buttons, text or status | ink 4.8:1 |
 | `relic-gold` | `#C6A15B` | Current position, focus ring, achievement emphasis | 8.0:1 on void |
 | `gold-soft` | `#E0C98E` | Achievement and current-state text | 9.9:1 on raised |
 | `success` | `#83A98A` | Completed state | 7.4:1 on void |
@@ -181,3 +182,7 @@ Each page must satisfy `docs/ui-context.md` in full. The summaries below set the
 - **Accessibility:** a visually hidden `h1` names the page.
 - **Countdown component:** `DoomsdayCountdown.vue` exists again, rewritten as a compact four-unit clock used in portrait only.
 - **Trade-offs:** the unofficial fan-project notice is no longer on the landing (it is still required by `PRODUCT.md` §1 and §8; decide where it lives). In landscape the countdown's date comes from the video, in portrait from `collection.target_release_date`, so the two can drift.
+
+
+## 14. Title screen (Phase 06, 2026-11-23)
+Full-screen over the map. Artwork with a halftone dot screen (`.halftone`) and left shade; slanted red STEP plate (`.step-plate`), huge condensed title; cut-corner plate (`.cut-panel`, gold hairline edge) on the right holding where-to-watch (each platform a link that opens in a new tab) or the season's episodes; a route tracker strip along the bottom (one segment per step: green watched, gold current, tap to jump). Cut corners clip, so they are used on containers only, never on controls with focus rings. Exception recorded: `comic-red` is outside the original palette (owner request for a Marvel feel).

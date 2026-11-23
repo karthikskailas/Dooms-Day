@@ -5,6 +5,7 @@ import type {
   MovieMetadata,
   ProviderOffer,
   TitleCredits,
+  TitleEpisodes,
   TitleProviders,
   TitleVideo,
   TitleVideos,
@@ -12,7 +13,7 @@ import type {
   TvSeasonSummary,
 } from '../../../shared/types/tmdb.ts'
 import { tmdbImageUrl } from '../../../shared/utils/tmdb-image.ts'
-import type { RawMovieCredits, RawMovieDetails, RawProviders, RawTvCredits, RawTvDetails, RawVideos } from './schemas.ts'
+import type { RawMovieCredits, RawMovieDetails, RawProviders, RawTvCredits, RawTvDetails, RawTvSeason, RawVideos } from './schemas.ts'
 
 export const CAST_LIMIT = 20
 const CREW_JOBS = new Set(['Director', 'Writer', 'Screenplay', 'Story', 'Creator'])
@@ -190,5 +191,22 @@ export function normalizeProviders(raw: RawProviders, region: string): TitleProv
     rent,
     buy,
     available: flatrate.length + free.length + ads.length + rent.length + buy.length > 0,
+  }
+}
+
+export function normalizeSeasonEpisodes(raw: RawTvSeason): TitleEpisodes {
+  return {
+    seasonNumber: raw.season_number,
+    name: blank(raw.name),
+    episodes: (raw.episodes ?? [])
+      .map((e) => ({
+        episodeNumber: e.episode_number,
+        name: blank(e.name) ?? `Episode ${e.episode_number}`,
+        airDate: blank(e.air_date),
+        runtimeMinutes: e.runtime && e.runtime > 0 ? e.runtime : null,
+        overview: blank(e.overview),
+        stillUrl: tmdbImageUrl(e.still_path, 'w300'),
+      }))
+      .sort((a, b) => a.episodeNumber - b.episodeNumber),
   }
 }

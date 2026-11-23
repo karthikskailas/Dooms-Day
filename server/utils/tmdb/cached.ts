@@ -8,6 +8,7 @@ export const CACHE_SECONDS = {
   details: 60 * 60 * 24,
   credits: 60 * 60 * 24,
   videos: 60 * 60 * 12,
+  episodes: 60 * 60 * 12,
   providers: 60 * 60 * 3,
 } as const
 
@@ -46,4 +47,11 @@ export const getProviders = defineCachedFunction((t: TmdbTarget, region: string)
   maxAge: CACHE_SECONDS.providers,
   swr: false,
   getKey: (t: TmdbTarget, region: string) => `${base(t)}-${region}`,
+})
+
+export const getEpisodes = defineCachedFunction((t: TmdbTarget, season: number) => service().episodes(t, season), {
+  name: 'tmdb-episodes',
+  maxAge: CACHE_SECONDS.episodes,
+  swr: false,
+  getKey: (t: TmdbTarget, season: number) => `${base(t)}-s${season}`,
 })

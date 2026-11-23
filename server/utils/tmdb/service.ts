@@ -1,10 +1,11 @@
-import type { TitleCredits, TitleMetadata, TitleProviders, TitleVideos } from '../../../shared/types/tmdb.ts'
+import type { TitleCredits, TitleEpisodes, TitleMetadata, TitleProviders, TitleVideos } from '../../../shared/types/tmdb.ts'
 import type { TmdbMediaType } from '../../../shared/types/tmdb-mapping.ts'
 import type { TmdbClient } from './client.ts'
 import {
   normalizeMovie,
   normalizeMovieCredits,
   normalizeProviders,
+  normalizeSeasonEpisodes,
   normalizeTv,
   normalizeTvCredits,
   normalizeVideos,
@@ -15,6 +16,7 @@ import {
   providersSchema,
   tvCreditsSchema,
   tvDetailsSchema,
+  tvSeasonSchema,
   videosSchema,
 } from './schemas.ts'
 
@@ -47,6 +49,11 @@ export function createTmdbService(client: TmdbClient) {
 
     async videos(t: TmdbTarget): Promise<TitleVideos> {
       return normalizeVideos(await client.get(`/${t.mediaType}/${t.tmdbId}/videos`, videosSchema, { language: LANGUAGE }))
+    },
+
+    /** Episodes of one season of a TV title. */
+    async episodes(t: TmdbTarget, seasonNumber: number): Promise<TitleEpisodes> {
+      return normalizeSeasonEpisodes(await client.get(`/tv/${t.tmdbId}/season/${seasonNumber}`, tvSeasonSchema, { language: LANGUAGE }))
     },
 
     async providers(t: TmdbTarget, region: string): Promise<TitleProviders> {

@@ -20,6 +20,8 @@ export interface UserPreferences {
 export interface UserProgressState {
   version: 1
   titles: Record<string, UserTitleProgress>
+  /** Watched episodes per series title, as season * 1000 + episode. Optional in old saves. */
+  episodes: Record<string, number[]>
   preferences: UserPreferences
   updatedAt: string
 }

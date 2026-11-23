@@ -50,6 +50,9 @@ onMounted(() => {
   onBeforeUnmount(() => ro.disconnect())
 })
 
+const route = computed(() =>
+  layout.nodes.flatMap((n) => (n.kind === 'main' ? [{ id: n.id, order: n.order, title: n.item.title, watched: isWatched(n.id) }] : [])),
+)
 const currentId = computed(() => currentTitleId(layout, isWatched))
 const nextId = computed(() => {
   const i = layout.nodes.findIndex((n) => n.id === currentId.value)
@@ -71,6 +74,12 @@ function clearFilters() {
 
 function select(id: string) {
   selectedId.value = id
+}
+
+/** The title before (-1) or after (+1) the open one, in route order. */
+function neighbourId(step: number) {
+  const i = layout.nodes.findIndex((n) => n.id === selectedId.value)
+  return i < 0 ? null : (layout.nodes[i + step]?.id ?? null)
 }
 
 function pickFromList(id: string) {
@@ -126,7 +135,7 @@ const toolButton =
           :marker-text="markerText"
           :selected-id="selectedId"
           :visible-ids="visibleIds"
-          :preview-open="selected !== null"
+          :preview-open="false"
           :top-inset="topInset"
           @select="select"
         />
@@ -240,21 +249,18 @@ const toolButton =
       <UiButton variant="secondary" @click="clearFilters">Clear filters</UiButton>
     </div>
 
-    <!-- Preview: right drawer on wide screens, bottom sheet on narrow ones. -->
-    <div
+    <!-- Title screen: opens over the map; "Timeline" returns to it. -->
+    <JourneyTitleDetail
       v-if="selected"
-      class="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex h-1/2 flex-col justify-end md:inset-x-auto md:bottom-3 md:right-3 md:top-(--top) md:h-auto md:w-[400px] md:justify-start"
-      :style="{ '--top': `${topInset}px` }"
-    >
-      <JourneyTitlePreview
-        :key="selected.id"
-        class="pointer-events-auto"
-        :node="selected"
-        :watched="isWatched(selected.id)"
-        :current="selected.id === currentId"
-        @close="closePreview"
-        @toggle-watched="progress.setWatched(selected.id, !isWatched(selected.id))"
-      />
-    </div>
+      :node="selected"
+      :watched="isWatched(selected.id)"
+      :current="selected.id === currentId"
+      :prev-id="neighbourId(-1)"
+      :next-id="neighbourId(1)"
+      :route="route"
+      @timeline="closePreview"
+      @go="select"
+      @toggle-watched="progress.setWatched(selected.id, !isWatched(selected.id))"
+    />
   </div>
 </template>

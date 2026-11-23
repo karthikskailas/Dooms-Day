@@ -28,7 +28,7 @@ export interface LoadResult {
 }
 
 export function emptyProgress(now: Date = new Date()): UserProgressState {
-  return { version: 1, titles: {}, preferences: { displayName: null }, updatedAt: now.toISOString() }
+  return { version: 1, titles: {}, episodes: {}, preferences: { displayName: null }, updatedAt: now.toISOString() }
 }
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v)
@@ -52,6 +52,18 @@ function parseEntry(key: string, value: unknown): UserTitleProgress | null {
   if (completedAt === undefined || addedToWatchlistAt === undefined) return null
   if (!isNullableString(notes, NOTES_MAX)) return null
   return { titleId: key, watched, completedAt, addedToWatchlist, addedToWatchlistAt, notes }
+}
+
+/** Episode lists are best-effort: a bad entry is dropped, never the whole save. */
+function parseEpisodes(value: unknown): Record<string, number[]> {
+  const out: Record<string, number[]> = {}
+  if (!isRecord(value)) return out
+  for (const [id, list] of Object.entries(value)) {
+    if (!TITLE_ID.test(id) || !Array.isArray(list)) continue
+    const clean = [...new Set(list.filter((n): n is number => Number.isInteger(n) && n >= 0 && n < 1_000_000))].sort((a, b) => a - b)
+    if (clean.length) out[id] = clean
+  }
+  return out
 }
 
 function parsePreferences(value: unknown): UserPreferences | null {
@@ -85,7 +97,7 @@ export function parseProgress(raw: string | null, now: Date = new Date()): LoadR
   if (!preferences) dropped++
 
   return {
-    state: { version: 1, titles, preferences: preferences ?? { displayName: null }, updatedAt: data.updatedAt },
+    state: { version: 1, titles, episodes: parseEpisodes(data.episodes), preferences: preferences ?? { displayName: null }, updatedAt: data.updatedAt },
     status: dropped > 0 ? 'recovered' : 'loaded',
     dropped,
   }
@@ -171,6 +183,19 @@ export function createProgressStore(storage: StorageLike | null, clock: () => Da
     setWatchlist(titleId: string, on: boolean) {
       const now = clock().toISOString()
       return update(titleId, (e) => ({ ...e, addedToWatchlist: on, addedToWatchlistAt: on ? (e.addedToWatchlistAt ?? now) : null }))
+    },
+
+    /** Marks one episode (season * 1000 + episode) of a series title watched or not. */
+    setEpisodeWatched(titleId: string, episodeKey: number, on: boolean) {
+      assertTitleId(titleId)
+      const have = new Set(state.episodes[titleId] ?? [])
+      if (on) have.add(episodeKey)
+      else have.delete(episodeKey)
+      const { [titleId]: _old, ...rest } = state.episodes
+      const episodes = have.size ? { ...rest, [titleId]: [...have].sort((a, b) => a - b) } : rest
+      state = { ...state, episodes, updatedAt: clock().toISOString() }
+      save()
+      return state
     },
 
     /** Blank clears the note; text is trimmed and capped at 2000 characters. */

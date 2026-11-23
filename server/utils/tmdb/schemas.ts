@@ -130,3 +130,21 @@ export type RawMovieCredits = z.infer<typeof movieCreditsSchema>
 export type RawTvCredits = z.infer<typeof tvCreditsSchema>
 export type RawVideos = z.infer<typeof videosSchema>
 export type RawProviders = z.infer<typeof providersSchema>
+
+export const tvSeasonSchema = z.object({
+  season_number: z.number(),
+  name: str,
+  episodes: z
+    .array(
+      z.object({
+        episode_number: z.number(),
+        name: str,
+        air_date: str,
+        runtime: num,
+        overview: str,
+        still_path: str,
+      }),
+    )
+    .nullish(),
+})
+export type RawTvSeason = z.infer<typeof tvSeasonSchema>

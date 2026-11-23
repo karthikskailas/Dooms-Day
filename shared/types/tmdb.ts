@@ -66,6 +66,22 @@ export interface TitleCredits {
   crew: CrewMember[]
 }
 
+export interface TvEpisode {
+  episodeNumber: number
+  name: string
+  airDate: string | null
+  runtimeMinutes: number | null
+  overview: string | null
+  stillUrl: string | null
+}
+
+/** One season of a show, for the episode list. */
+export interface TitleEpisodes {
+  seasonNumber: number
+  name: string | null
+  episodes: TvEpisode[]
+}
+
 export interface TitleVideo {
   key: string
   name: string
@@ -105,6 +121,7 @@ export interface TitleProviders {
 export type ApiErrorCode =
   | 'invalid_title_id'
   | 'invalid_region'
+  | 'invalid_season'
   | 'title_not_found'
   | 'tmdb_not_mapped'
   | 'credentials_missing'

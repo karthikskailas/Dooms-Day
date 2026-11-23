@@ -5,6 +5,7 @@
  * Palette values come from CLAUDE.md §7; the greens were brightened (owner directive, CLAUDE.md §1.1). Two tokens are added for contrast:
  *   --color-danger-text  (text on dark surfaces; #C66B61 fails 4.5:1 on raised panels)
  *   --color-line-strong  (control boundaries; --color-line is 1.8:1 and decorative only)
+ *   --color-comic-red    (title screen only: the step plate and watched stamp; ink on it is 4.8:1)
  */
 @theme {
   --color-void: #0B0E0C;
@@ -20,6 +21,8 @@
   --color-doom-green-bright: #4FD07F;
   --color-relic-gold: #C6A15B;
   --color-gold-soft: #E0C98E;
+  --color-comic-red: #D22B2B;
+  --color-comic-red: #D22B2B;
   --color-danger: #C66B61;
   --color-danger-text: #D98278;
   --color-success: #83A98A;
@@ -129,5 +132,56 @@
 @layer components {
   .map-reveal {
     animation: map-reveal 1500ms ease-in-out backwards;
+  }
+}
+
+@keyframes detail-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@layer components {
+  .detail-fade {
+    animation: detail-fade 700ms ease-out backwards;
+  }
+}
+
+/*
+ * Title screen "comic plate" language: halftone dots over artwork, cut-corner panels, a slanted step plate.
+ * Cut corners clip, so they go on containers and plates, never on a control that needs a visible focus ring.
+ */
+@layer components {
+  .halftone {
+    background-image: radial-gradient(circle at center, rgb(0 0 0 / 0.5) 1px, transparent 1.4px);
+    background-size: 5px 5px;
+  }
+
+  .cut-panel {
+    clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+  }
+
+  .step-plate {
+    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+  }
+}
+
+/*
+ * Title screen "comic plate" language: halftone dots over artwork, cut-corner panels, a slanted step plate.
+ * Cut corners clip, so they go on containers and plates, never on a control that needs a visible focus ring.
+ * --color-comic-red is used here only (the step plate; ink on it is 4.8:1).
+ */
+@layer components {
+  .halftone {
+    background-image: radial-gradient(circle at center, rgb(0 0 0 / 0.5) 1px, transparent 1.4px);
+    background-size: 5px 5px;
+  }
+
+  .cut-panel {
+    clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+  }
+
+  .step-plate {
+    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
   }
 }
