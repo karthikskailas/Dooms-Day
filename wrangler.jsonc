@@ -7,6 +7,6 @@
   "assets": { "binding": "ASSETS", "directory": "./.output/public" },
   "kv_namespaces": [
     // Create it once with `wrangler kv namespace create COLLECTORS` and paste the id it prints.
-    { "binding": "COLLECTORS", "id": "REPLACE_WITH_KV_NAMESPACE_ID" }
+    { "binding": "COLLECTORS", "id": "be17ece92a2f4554bb5e7769602d4b31" }
   ]
 }
