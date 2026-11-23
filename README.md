@@ -155,14 +155,14 @@ docs/                   Product, UI and workflow notes (data model sections supe
 
 ## Deploy to Cloudflare Pages
 
-Live at `https://doomsday-tracker.pages.dev`. One-time setup (needs your Cloudflare account; an agent cannot log in for you): `npx wrangler login`, `npx wrangler kv namespace create COLLECTORS` (its id is in `wrangler.jsonc`), then create the Pages project and store the TMDB token as a secret, never in a file:
+Live at `https://doomsday-tracker-app.pages.dev`. One-time setup (needs your Cloudflare account; an agent cannot log in for you): `npx wrangler login`, `npx wrangler kv namespace create COLLECTORS` (its id is in `wrangler.jsonc`), then create the Pages project and store the TMDB token as a secret, never in a file:
 
 ```powershell
-npx wrangler pages project create doomsday-tracker --production-branch main
+npx wrangler pages project create doomsday-tracker-app --production-branch main
 ```
 
 ```powershell
-npx wrangler pages secret put NUXT_TMDB_API_TOKEN --project-name doomsday-tracker
+npx wrangler pages secret put NUXT_TMDB_API_TOKEN --project-name doomsday-tracker-app
 ```
 
 Every deploy:

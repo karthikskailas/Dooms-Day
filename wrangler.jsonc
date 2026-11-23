@@ -1,7 +1,7 @@
 {
-  // Cloudflare Pages deployment (https://doomsday-tracker.pages.dev). Build with `pnpm build:cf`, then
+  // Cloudflare Pages deployment (https://doomsday-tracker-app.pages.dev). Build with `pnpm build:cf`, then
   // `npx wrangler pages deploy`.
-  "name": "doomsday-tracker",
+  "name": "doomsday-tracker-app",
   "compatibility_date": "2026-11-21",
   "compatibility_flags": ["nodejs_compat"],
   "pages_build_output_dir": "./dist",
