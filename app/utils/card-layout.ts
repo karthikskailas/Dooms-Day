@@ -2,6 +2,9 @@
 export const CARD_W = 810
 export const CARD_H = 1080
 
+/** The card's own outline inside the 810 x 1080 design space; everything outside it is empty. */
+export const VIEW = { x: 90, y: 46, w: 627, h: 1005 }
+
 export interface Box {
   x: number
   y: number
@@ -17,7 +20,7 @@ export const CARD = {
   serialSide: { cx: 645, cy: 405, w: 420, size: 22.7 },
   step: { cx: 405, cy: 667, size: 72.9 },
   nameDate: { x: 120, y: 752, w: 570, h: 56, size: 25.1 },
-  label: { x: 240, y: 820, w: 330, h: 64, size: 21.9 },
+  label: { x: 240, y: 820, w: 330, h: 64, size: 20 },
   foot: { x: 180, y: 905, w: 450, h: 70, size: 17.8 },
 }
 

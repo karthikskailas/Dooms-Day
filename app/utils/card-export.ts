@@ -2,7 +2,7 @@
 // positions (card-layout.ts) and filter (card-theme.ts), so the saved image matches what is on screen.
 // Limit: ctx.filter is not supported by every Safari version; there the frame keeps its original colours.
 import { cardFilter, type CardPriority } from './card-theme.ts'
-import { CARD, CARD_H, CARD_W, DIM, GOLD, PALE, pad, serialOf, titleSize } from './card-layout.ts'
+import { CARD, CARD_H, CARD_W, DIM, GOLD, PALE, VIEW, pad, serialOf, titleSize } from './card-layout.ts'
 
 /** URLs of the four card layers, imported where the bundler can resolve them. */
 export interface CardLayers {
@@ -18,6 +18,7 @@ export interface CardExport {
   year: number
   type: string
   priority: CardPriority
+  tagline: string
   featuring: string[]
   player: string
   date: string
@@ -26,7 +27,6 @@ export interface CardExport {
 }
 
 const SCALE = 1080 / CARD_W // 1080 x 1440 output
-const PRIORITY = { essential: 'Essential', recommended: 'Recommended', optional: 'Optional' } as const
 
 function load(src: string, cors = false): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -66,8 +66,6 @@ async function drawCard(c: CardExport, layers: CardLayers): Promise<{ canvas: HT
 
   ctx.save()
   ctx.filter = finish
-  ctx.drawImage(bg, 0, 0, CARD_W, CARD_H)
-
   const w = CARD.window
   ctx.save()
   ctx.beginPath()
@@ -120,12 +118,28 @@ async function drawCard(c: CardExport, layers: CardLayers): Promise<{ canvas: HT
   const nd = CARD.nameDate
   text(c.player, nd.x + nd.w / 4, nd.y + nd.h / 2, nd.size, PALE, 600, 0.12, 0, nd.w / 2 - 40)
   text(c.date, nd.x + (nd.w * 3) / 4, nd.y + nd.h / 2, nd.size, PALE, 600, 0.12, 0, nd.w / 2 - 40)
-  text(PRIORITY[c.priority], CARD.label.x + CARD.label.w / 2, CARD.label.y + CARD.label.h / 2, CARD.label.size, GOLD, 600, 0.2)
+  // The tagline wraps to at most two lines inside the plate.
+  const words = c.tagline.split(' ')
+  ctx.font = `600 ${CARD.label.size}px "Barlow Condensed", sans-serif`
+  ctx.letterSpacing = `${CARD.label.size * 0.16}px`
+  const lines: string[] = []
+  for (const w of words) {
+    const last = lines[lines.length - 1]
+    if (last !== undefined && ctx.measureText(`${last} ${w}`.toUpperCase()).width < CARD.label.w - 70) lines[lines.length - 1] = `${last} ${w}`
+    else lines.push(w)
+  }
+  const lh = CARD.label.size * 1.2
+  lines.slice(0, 2).forEach((l, i, a) => text(l, CARD.label.x + CARD.label.w / 2, CARD.label.y + CARD.label.h / 2 + (i - (a.length - 1) / 2) * lh, CARD.label.size, GOLD, 600, 0.16))
   const f = CARD.foot
   text(c.featuring.slice(0, 3).join(' · '), f.x + f.w / 2, f.y + f.h * 0.34, f.size, GOLD, 600, 0.16, 0, f.w)
   text(`${c.type} · ${c.year}`, f.x + f.w / 2, f.y + f.h * 0.68, f.size, DIM, 600, 0.16, 0, f.w)
 
-  return { canvas, art, bg }
+  // Crop to the card's own outline; the rest of the canvas is empty.
+  const out = document.createElement('canvas')
+  out.width = Math.round(VIEW.w * SCALE)
+  out.height = Math.round(VIEW.h * SCALE)
+  out.getContext('2d')!.drawImage(canvas, VIEW.x * SCALE, VIEW.y * SCALE, VIEW.w * SCALE, VIEW.h * SCALE, 0, 0, out.width, out.height)
+  return { canvas: out, art, bg }
 }
 
 const toBlob = (canvas: HTMLCanvasElement) =>
@@ -141,7 +155,7 @@ const toBlob = (canvas: HTMLCanvasElement) =>
 // sits between them. The backdrop is the title's poster, blurred and dimmed (the card's scene without a poster).
 const STORY_W = 1080
 const STORY_H = 1920
-const STORY_CARD_W = 900
+const STORY_CARD_W = 820
 
 export async function renderCard(c: CardExport, layers: CardLayers, format: CardFormat = 'card'): Promise<Blob> {
   const { canvas, art, bg } = await drawCard(c, layers)
@@ -164,9 +178,9 @@ export async function renderCard(c: CardExport, layers: CardLayers, format: Card
   ctx.fillStyle = vignette
   ctx.fillRect(0, 0, STORY_W, STORY_H)
 
-  const h = (STORY_CARD_W * CARD_H) / CARD_W
+  const h = (STORY_CARD_W * VIEW.h) / VIEW.w
   const x = (STORY_W - STORY_CARD_W) / 2
-  const y = 290
+  const y = 270
   ctx.save()
   ctx.shadowColor = 'rgba(0,0,0,0.7)'
   ctx.shadowBlur = 60

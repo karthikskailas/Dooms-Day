@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import frame from '../../assets/cards/frame.webp'
-import bg from '../../assets/cards/bg.webp'
 import ring from '../../assets/cards/ring.webp'
 import knight from '../../assets/cards/knight.webp'
 import { cardFilter, dominantHue, type CardPriority } from '../../utils/card-theme.ts'
-import { CARD, CARD_H, CARD_W, DIM, GOLD, PALE, pad, serialOf, titleSize } from '../../utils/card-layout.ts'
+import { CARD, CARD_H, CARD_W, DIM, GOLD, PALE, VIEW, pad, serialOf, titleSize } from '../../utils/card-layout.ts'
 
 // One collectible, built for one title. Everything is laid out in the 810 x 1080 space of the owner's card design
 // (Canva export): positions are percentages of that space and text sizes use container units, so the card scales as
@@ -17,6 +16,8 @@ const props = defineProps<{
   year: number
   type: string
   priority: CardPriority
+  /** The one line under the name and date. */
+  tagline: string
   /** Main characters, from the roadmap data. */
   featuring: string[]
   player: string
@@ -29,8 +30,6 @@ const props = defineProps<{
   reveal?: number
 }>()
 const emit = defineEmits<{ hue: [hue: number | null] }>()
-
-const label = { essential: 'Essential', recommended: 'Recommended', optional: 'Optional' } as const
 
 // Sample the poster's dominant hue once it loads (needs CORS; falls back to the original gold and green).
 const hue = ref<number | null>(null)
@@ -67,13 +66,17 @@ const side = (s: { cx: number; cy: number; w: number }) => ({ left: px(s.cx, CAR
 
 <template>
   <figure
-    class="relative isolate aspect-[3/4] w-full select-none overflow-hidden bg-void text-ink [container-type:inline-size]"
+    class="relative isolate w-full select-none overflow-hidden text-ink"
+    :style="{ aspectRatio: `${VIEW.w} / ${VIEW.h}` }"
     :class="reveal ? 'card-unlock' : ''"
     :aria-label="`Achievement card: ${title}, step ${order}${locked ? ', locked' : ''}`"
   >
+    <!-- The design is laid out in 810 x 1080 units; this crops it to the card's own outline. -->
+    <div
+      class="absolute [container-type:inline-size]"
+      :style="{ left: `${(-VIEW.x / VIEW.w) * 100}%`, top: `${(-VIEW.y / VIEW.h) * 100}%`, width: `${(CARD_W / VIEW.w) * 100}%`, height: `${(CARD_H / VIEW.h) * 100}%` }"
+    >
     <div class="absolute inset-0" :class="locked ? 'grayscale brightness-50' : ''" :style="{ filter: locked ? undefined : filter }">
-      <img :src="bg" alt="" class="absolute inset-0 size-full object-cover" draggable="false">
-
       <!-- Character window -->
       <div class="absolute overflow-hidden bg-black" :style="box(CARD.window)">
         <img :src="knight" alt="" class="absolute max-w-none" :style="{ left: px(-CARD.window.x, CARD.window.w), top: px(-CARD.window.y, CARD.window.h), width: px(CARD_W, CARD.window.w), height: px(CARD_H, CARD.window.h) }" draggable="false">
@@ -112,7 +115,7 @@ const side = (s: { cx: number; cy: number; w: number }) => ({ left: px(s.cx, CAR
       <span class="truncate px-[3cqw]">{{ locked ? '—' : date }}</span>
     </div>
     <p class="absolute flex items-center justify-center font-display font-semibold uppercase tracking-[0.2em]" :style="{ ...box(CARD.label), fontSize: cq(CARD.label.size), color: GOLD }">
-      {{ label[priority] }}
+      <span class="max-w-full">{{ locked ? 'Unlock to reveal' : tagline }}</span>
     </p>
     <p class="absolute flex flex-col items-center justify-center text-center font-display uppercase leading-snug tracking-[0.16em]" :style="{ ...box(CARD.foot), fontSize: cq(CARD.foot.size), color: DIM }">
       <template v-if="locked">Mark this title watched to unlock</template>
@@ -125,5 +128,6 @@ const side = (s: { cx: number; cy: number; w: number }) => ({ left: px(s.cx, CAR
     <!-- Unlock flash and light sweep -->
     <div v-if="reveal" class="card-flash pointer-events-none absolute inset-0" aria-hidden="true" />
     <div v-if="reveal" class="card-sweep pointer-events-none absolute inset-0" aria-hidden="true" />
+    </div>
   </figure>
 </template>

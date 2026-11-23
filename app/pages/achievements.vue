@@ -3,6 +3,7 @@ import { Download, ChevronLeft, ChevronRight, Map as MapIcon, Share2, Sparkles }
 import type { TitleMetadata, TitleResponse } from '../../shared/types/tmdb.ts'
 import { roadmap } from '../utils/roadmap-data.ts'
 import { buildLayout } from '../utils/roadmap-map.ts'
+import { taglineFor } from '../utils/card-taglines.ts'
 import { fileNameFor, renderCard, type CardFormat } from '../utils/card-export.ts'
 import frame from '../assets/cards/frame.webp'
 import bg from '../assets/cards/bg.webp'
@@ -73,6 +74,7 @@ async function makeFile() {
       year: c.item.release_year,
       type: c.item.type,
       priority: c.item.priority,
+      tagline: taglineFor(c.id, c.order),
       featuring: c.item.characters,
       player: player.value,
       date: date.value,
@@ -147,15 +149,16 @@ const btn =
     </div>
 
     <div class="flex min-h-0 flex-1 items-center justify-center">
-      <div class="h-full max-w-full aspect-[3/4]">
+      <div class="h-full max-w-full" style="aspect-ratio: 627 / 1005">
         <AchievementsAchievementCard
           :key="`${card.id}-${reveal}`"
-          class="h-full shadow-[0_24px_60px_-20px_rgb(0_0_0/0.8)]"
+          class="h-full"
           :title="card.item.title"
           :order="card.order"
           :year="card.item.release_year"
           :type="card.item.type"
           :priority="card.item.priority"
+          :tagline="taglineFor(card.id, card.order)"
           :featuring="card.item.characters"
           :reveal="reveal"
           :player="player"
