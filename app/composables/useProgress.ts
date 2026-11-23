@@ -61,6 +61,7 @@ export function useProgress() {
     watchlist: computed(() => watchlistEntries(state.value)),
     watchedCount: (titleIds: readonly string[]) => countWatched(state.value, titleIds),
     setWatched: (titleId: string, watched: boolean) => mutate((s) => s.setWatched(titleId, watched)),
+    resetWatched: () => mutate((s) => s.resetWatched()),
     watchedEpisodes: (titleId: string): readonly number[] => state.value.episodes[titleId] ?? [],
     setEpisodeWatched: (titleId: string, key: number, on: boolean) => mutate((s) => s.setEpisodeWatched(titleId, key, on)),
     setWatchlist: (titleId: string, on: boolean) => mutate((s) => s.setWatchlist(titleId, on)),

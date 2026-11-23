@@ -19,6 +19,8 @@ const props = defineProps<{
   current: boolean
   prevId: string | null
   nextId: string | null
+  prevTitle: string | null
+  nextTitle: string | null
   /** The numbered route, for the tracker strip. */
   route: { id: string; order: number; title: string; watched: boolean }[]
 }>()
@@ -161,9 +163,28 @@ const trailerUrl = computed(() =>
   videos.value?.trailer ? `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videos.value.trailer.key)}?autoplay=1&rel=0&modestbranding=1&playsinline=1` : null,
 )
 
+/** Left and right arrows move along the route, unless the key is meant for a field or the season picker. */
+function onArrow(e: KeyboardEvent, id: string | null) {
+  const t = e.target as HTMLElement
+  if (!id || trailerOpen.value || panelOpen.value || t.closest('select, input, textarea')) return
+  emit('go', id)
+}
+
+// Marking a title watched unlocks its achievement card: show the doors over this screen.
+const showReveal = ref(false)
+watch(
+  () => props.watched,
+  (now, was) => {
+    showReveal.value = now && !was
+  },
+)
+watch(() => props.node.id, () => (showReveal.value = false))
+
 const back = ref<HTMLButtonElement | null>(null)
 onMounted(() => back.value?.focus({ preventScroll: true }))
 
+const step =
+  'flex min-h-14 min-w-0 items-center gap-2 border border-line-strong bg-void/70 px-3 text-control font-semibold uppercase tracking-[0.04em] text-ink transition-colors duration-150 hover:border-relic-gold hover:bg-surface-soft disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-line-strong disabled:hover:bg-void/70'
 const bar =
   'inline-flex min-h-11 items-center gap-2 rounded-control border border-line-strong bg-void/70 px-3 text-control font-semibold uppercase tracking-[0.06em] text-ink transition-colors duration-150 hover:border-relic-gold hover:bg-surface-soft disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-line-strong disabled:hover:bg-void/70'
 </script>
@@ -174,6 +195,8 @@ const bar =
     aria-modal="true"
     :aria-label="`${item.title}, details`"
     class="absolute inset-0 z-40 overflow-hidden bg-void"
+    @keydown.left="onArrow($event, prevId)"
+    @keydown.right="onArrow($event, nextId)"
     @keydown.esc.stop="trailerOpen ? (trailerOpen = false) : panelOpen ? (panelOpen = false) : emit('timeline')"
   >
     <!-- Artwork, then a halftone print screen and a left-weighted shade so text and panel stay legible. -->
@@ -194,14 +217,6 @@ const bar =
         <button ref="back" type="button" :class="bar" @click="emit('timeline')">
           <ArrowLeft :size="18" aria-hidden="true" />
           Timeline
-        </button>
-        <button type="button" :class="bar" :disabled="!prevId" aria-label="Previous title" @click="prevId && emit('go', prevId)">
-          <ChevronLeft :size="18" aria-hidden="true" />
-          <span class="hidden sm:inline">Previous</span>
-        </button>
-        <button type="button" :class="bar" :disabled="!nextId" aria-label="Next title" @click="nextId && emit('go', nextId)">
-          <span class="hidden sm:inline">Next</span>
-          <ChevronRight :size="18" aria-hidden="true" />
         </button>
         <button type="button" :class="[bar, 'ml-auto']" aria-label="Close and return to the timeline" @click="emit('timeline')">
           <X :size="18" aria-hidden="true" />
@@ -242,7 +257,7 @@ const bar =
               <Play :size="18" aria-hidden="true" />
               Trailer
             </UiButton>
-            <UiButton size="lg" class="max-md:w-full max-md:px-2" :variant="watched || trailerUrl ? 'secondary' : 'primary'" @click="toggleWatched">
+            <UiButton size="lg" class="max-md:w-full max-md:px-2 max-md:text-[0.8125rem] max-md:tracking-normal" :variant="watched || trailerUrl ? 'secondary' : 'primary'" @click="toggleWatched">
               <Check :size="18" aria-hidden="true" />
               <span class="md:hidden">{{ watched ? 'Watched' : 'Mark watched' }}</span>
               <span class="hidden md:inline">{{ watched ? 'Watched' : isTv ? 'Mark season watched' : 'Mark as watched' }}</span>
@@ -389,6 +404,24 @@ const bar =
         </div>
       </div>
 
+      <!-- Previous / next sit at the bottom, in thumb reach; the arrow keys do the same on a keyboard. -->
+      <div class="grid shrink-0 grid-cols-2 gap-3">
+        <button type="button" :class="step" :disabled="!prevId" @click="prevId && emit('go', prevId)">
+          <ChevronLeft :size="20" class="shrink-0" aria-hidden="true" />
+          <span class="min-w-0 text-left">
+            <span class="block text-[0.6875rem] tracking-wider text-ink-subtle">Previous</span>
+            <span class="block truncate">{{ prevTitle ?? 'Start of the route' }}</span>
+          </span>
+        </button>
+        <button type="button" :class="[step, 'justify-end']" :disabled="!nextId" @click="nextId && emit('go', nextId)">
+          <span class="min-w-0 text-right">
+            <span class="block text-[0.6875rem] tracking-wider text-ink-subtle">Next</span>
+            <span class="block truncate">{{ nextTitle ?? 'End of the route' }}</span>
+          </span>
+          <ChevronRight :size="20" class="shrink-0" aria-hidden="true" />
+        </button>
+      </div>
+
       <!-- Tracker: the whole route at a glance. Tap a segment to jump to that title. -->
       <nav v-if="route.length" class="shrink-0" aria-label="Route progress">
         <p class="mb-1.5 flex items-baseline justify-between text-meta font-semibold uppercase tracking-wider text-ink-muted">
@@ -413,6 +446,20 @@ const bar =
         </ol>
       </nav>
     </div>
+
+    <AchievementsAchievementReveal
+      v-if="showReveal && node.kind === 'main'"
+      :title-id="node.id"
+      :title="item.title"
+      :order="node.order"
+      :year="item.release_year"
+      :type="item.type"
+      :priority="item.priority"
+      :featuring="item.characters"
+      :art="details?.posterUrl ?? null"
+      :date="new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase()"
+      @close="showReveal = false"
+    />
 
     <!-- Trailer -->
     <div v-if="trailerOpen && trailerUrl" class="absolute inset-0 z-10 flex items-center justify-center bg-void/95 p-3 md:p-10" role="dialog" aria-modal="true" aria-label="Trailer">

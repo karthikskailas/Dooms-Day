@@ -185,6 +185,13 @@ export function createProgressStore(storage: StorageLike | null, clock: () => Da
       return update(titleId, (e) => ({ ...e, addedToWatchlist: on, addedToWatchlistAt: on ? (e.addedToWatchlistAt ?? now) : null }))
     },
 
+    /** Clears every watched title and episode. Keeps the display name. */
+    resetWatched() {
+      state = { ...emptyProgress(clock()), preferences: state.preferences }
+      save()
+      return state
+    },
+
     /** Marks one episode (season * 1000 + episode) of a series title watched or not. */
     setEpisodeWatched(titleId: string, episodeKey: number, on: boolean) {
       assertTitleId(titleId)

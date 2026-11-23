@@ -133,11 +133,12 @@ export interface MapLayout {
  * `doomsdayOnly` keeps just the titles flagged is_doomsday_relevant, still in watch order, after the two Fox X-Men films.
  */
 /**
- * Disney+'s official "Countdown to Avengers: Doomsday" list opens with the two Fox films X-Men (2000) and
- * X2: X-Men United (2003). They live in the supplemental collection (no watch order), so the Doomsday route
- * borrows them as its first two steps. Source: https://thedirect.com/article/disney-plus-adds-mcu-project-avengers-doomsday-movies-list
+ * Disney+'s official "Countdown to Avengers: Doomsday" list opens with the Fox films X-Men (2000) and
+ * X2: X-Men United (2003), and the announced cast includes Fox-era actors (Mystique, Cyclops, Gambit, Kelsey Grammer),
+ * so The Last Stand joins them. They live in the supplemental collection (no watch order), so the Doomsday route
+ * borrows them as its first three steps. Source: https://thedirect.com/article/disney-plus-adds-mcu-project-avengers-doomsday-movies-list
  */
-export const DOOMSDAY_FOX_IDS = ['legacy_xmen_001', 'legacy_xmen_002'] as const
+export const DOOMSDAY_FOX_IDS = ['legacy_xmen_001', 'legacy_xmen_002', 'legacy_xmen_003'] as const
 
 export function buildLayout(data: RoadmapDataset, includeSupplemental: boolean, doomsdayOnly = false): MapLayout {
   const main = data.titles.filter((t) => !doomsdayOnly || t.is_doomsday_relevant).sort((a, b) => a.watch_order - b.watch_order)

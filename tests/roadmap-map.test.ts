@@ -35,12 +35,12 @@ describe('layout: collections and order', () => {
     }
   })
 
-  it('the journey view has the two Fox X-Men films then the Doomsday-relevant main titles, in watch order, and no supplemental frame', () => {
+  it('the journey view has the three Fox X-Men films then the Doomsday-relevant main titles, in watch order, and no supplemental frame', () => {
     const relevant = data.titles.filter((t) => t.is_doomsday_relevant)
-    expect(journey.nodes).toHaveLength(25)
-    expect(journey.nodes.map((n) => n.id)).toEqual(['legacy_xmen_001', 'legacy_xmen_002', ...relevant.map((t) => t.id)])
-    expect(journey.nodes.map((n) => n.kind === 'main' && n.order)).toEqual(Array.from({ length: 25 }, (_, i) => i + 1))
-    expect(journey.edges).toHaveLength(24)
+    expect(journey.nodes).toHaveLength(27)
+    expect(journey.nodes.map((n) => n.id)).toEqual(['legacy_xmen_001', 'legacy_xmen_002', 'legacy_xmen_003', ...relevant.map((t) => t.id)])
+    expect(journey.nodes.map((n) => n.kind === 'main' && n.order)).toEqual(Array.from({ length: 27 }, (_, i) => i + 1))
+    expect(journey.edges).toHaveLength(26)
     expect(journey.supplementalFrame).toBeNull()
     expect(full.supplementalFrame).not.toBeNull()
   })

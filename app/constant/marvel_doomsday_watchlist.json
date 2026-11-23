@@ -1168,10 +1168,10 @@
       "type": "movie",
       "watch_order": 68,
       "priority": "recommended",
-      "is_doomsday_relevant": false,
+      "is_doomsday_relevant": true,
       "importance_statement": "Expands the Quantum Realm and introduces Kang's multiverse-era threat.",
-      "doomsday_connection": "Useful multiverse-saga context, although Kang is not the announced Doomsday villain.",
-      "connection_status": "indirect",
+      "doomsday_connection": "Introduces Cassie Lang, played by Kathryn Newton on the announced Doomsday cast. Kang is not the announced villain.",
+      "connection_status": "confirmed",
       "characters": [
         "Scott Lang",
         "Hope van Dyne",

@@ -1,7 +1,10 @@
 
 <script setup lang="ts">
-import { ChevronLeft, List, Map as MapIcon, Search, SlidersHorizontal } from 'lucide-vue-next'
+import { ChevronLeft, List, Map as MapIcon, Search, SlidersHorizontal, Trophy } from 'lucide-vue-next'
 import { roadmap } from '../../utils/roadmap-data.ts'
+import { collectionMeta } from '../../utils/collection.ts'
+import { parseReleaseDate } from '../../utils/countdown.ts'
+import { pace } from '../../utils/pace.ts'
 import {
   buildLayout,
   currentTitleId,
@@ -43,6 +46,10 @@ const root = ref<HTMLElement | null>(null)
 const bar = ref<HTMLElement | null>(null)
 // Height of the toolbar's first row; the canvas, list and preview keep clear of it.
 const topInset = ref(72)
+// Phones open on the list: it reads top to bottom with no map to learn. After the intro they still get the tree.
+onMounted(() => {
+  if (!introRequested.value && window.matchMedia('(max-width: 767px)').matches) mode.value = 'list'
+})
 onMounted(() => {
   if (!bar.value) return
   const ro = new ResizeObserver(() => (topInset.value = (bar.value?.offsetHeight ?? 60) + 12))
@@ -59,6 +66,8 @@ const nextId = computed(() => {
   const n = i >= 0 ? layout.nodes[i + 1] : undefined
   return n?.kind === 'main' ? n.id : null
 })
+const currentNode = computed(() => layout.nodes.find((n) => n.id === currentId.value) ?? null)
+const routePace = computed(() => pace(mainIds.length, watchedCount.value, parseReleaseDate(collectionMeta.target_release_date), Date.now()))
 const watchedCount = computed(() => progress.watchedCount(mainIds))
 const percent = computed(() => Math.round((watchedCount.value / mainIds.length) * 100))
 const markerText = computed(() => (watchedCount.value > 0 ? 'You are here' : 'Start here'))
@@ -80,6 +89,11 @@ function select(id: string) {
 function neighbourId(step: number) {
   const i = layout.nodes.findIndex((n) => n.id === selectedId.value)
   return i < 0 ? null : (layout.nodes[i + step]?.id ?? null)
+}
+
+function neighbourTitle(step: number) {
+  const id = neighbourId(step)
+  return layout.nodes.find((n) => n.id === id)?.item.title ?? null
 }
 
 function pickFromList(id: string) {
@@ -159,72 +173,81 @@ const toolButton =
 
     <!-- Toolbar -->
     <div class="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col gap-2 bg-linear-to-b from-void/90 to-transparent p-3">
-      <div ref="bar" class="flex flex-wrap items-center gap-2">
-        <NuxtLink to="/" :class="[toolButton, 'pointer-events-auto']" aria-label="Back to home">
-          <ChevronLeft :size="18" aria-hidden="true" />
-          <span class="hidden sm:inline">Back</span>
-        </NuxtLink>
-
-        <nav class="pointer-events-auto flex overflow-hidden rounded-control border border-line-strong bg-surface-raised" aria-label="Journey">
-          <NuxtLink
-            v-for="tab in tabs"
-            :key="tab.to"
-            :to="tab.to"
-            exact-active-class=""
-            class="inline-flex min-h-11 items-center px-3 text-control font-semibold uppercase tracking-[0.06em] text-ink-muted transition-colors duration-150 hover:text-ink aria-[current=page]:bg-doom-green aria-[current=page]:text-ink"
-          >
-            <span class="sm:hidden">{{ tab.short }}</span><span class="hidden sm:inline">{{ tab.label }}</span>
+      <div ref="bar" class="flex flex-wrap items-center gap-2 md:flex-nowrap md:gap-3">
+        <!-- Left: where you are -->
+        <div class="order-1 flex items-center gap-2">
+          <NuxtLink to="/" :class="[toolButton, 'pointer-events-auto max-sm:min-w-11 max-sm:px-0']" aria-label="Back to home">
+            <ChevronLeft :size="18" aria-hidden="true" />
+            <span class="hidden sm:inline">Back</span>
           </NuxtLink>
-        </nav>
 
-        <div class="pointer-events-auto flex items-center gap-2 rounded-control bg-void/90 px-2 py-1" role="group" :aria-label="`${title} progress`">
-          <h1 class="sr-only">{{ title }}</h1>
-          <p class="whitespace-nowrap text-control font-semibold tabular-nums">
-            {{ watchedCount }}<span class="hidden sm:inline"> of {{ mainIds.length }} watched</span><span class="sm:hidden">/{{ mainIds.length }}</span>
-          </p>
-          <div class="hidden h-1.5 w-20 overflow-hidden rounded-full bg-line md:block" aria-hidden="true">
-            <div class="h-full bg-doom-green-bright" :style="{ width: `${percent}%` }" />
-          </div>
-          <span class="hidden text-meta tabular-nums text-ink-muted md:inline">{{ percent }}%</span>
+          <nav class="pointer-events-auto flex overflow-hidden rounded-control border border-line-strong bg-surface-raised" aria-label="Journey">
+            <NuxtLink
+              v-for="tab in tabs"
+              :key="tab.to"
+              :to="tab.to"
+              exact-active-class=""
+              class="inline-flex min-h-11 items-center px-2.5 text-control font-semibold uppercase tracking-[0.06em] text-ink-muted transition-colors duration-150 hover:text-ink aria-[current=page]:bg-doom-green aria-[current=page]:text-ink sm:px-3"
+            >
+              <span class="xl:hidden">{{ tab.short }}</span><span class="hidden xl:inline">{{ tab.label }}</span>
+            </NuxtLink>
+          </nav>
         </div>
 
-        <label class="pointer-events-auto relative min-w-44 flex-1 md:max-w-sm">
-          <span class="sr-only">Search titles</span>
-          <Search :size="18" class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" aria-hidden="true" />
-          <input
-            v-model="filters.query"
-            type="search"
-            placeholder="Search titles"
-            autocomplete="off"
-            class="min-h-11 w-full rounded-control border border-line-strong bg-surface py-2 pl-10 pr-3 text-body text-ink placeholder:text-ink-subtle focus-visible:outline-relic-gold"
-            @keydown.enter.prevent="jumpToFirstMatch"
+        <!-- Middle: progress (phones read it in the bar at the bottom) -->
+        <div class="pointer-events-auto order-2 hidden items-center gap-3 rounded-control bg-void/90 px-3 py-1 md:mx-auto md:flex" role="group" :aria-label="`${title} progress`">
+          <p class="whitespace-nowrap text-control font-semibold tabular-nums">{{ watchedCount }} of {{ mainIds.length }} watched</p>
+          <div class="hidden h-1.5 w-24 overflow-hidden rounded-full bg-line xl:block" aria-hidden="true">
+            <div class="h-full bg-doom-green-bright" :style="{ width: `${percent}%` }" />
+          </div>
+          <span class="hidden text-meta tabular-nums text-ink-muted xl:inline">{{ percent }}%</span>
+        </div>
+        <h1 class="sr-only">{{ title }}</h1>
+
+        <!-- Right: find things, change the view, open your cards. One row on phones; separate items of the bar from md up. -->
+        <div class="order-5 flex basis-full items-center gap-2 md:contents">
+        <div class="flex min-w-0 flex-1 items-center gap-2 md:order-3 md:flex-none">
+          <label class="pointer-events-auto relative min-w-0 flex-1 md:w-44 md:flex-none xl:w-64">
+            <span class="sr-only">Search titles</span>
+            <Search :size="18" class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" aria-hidden="true" />
+            <input
+              v-model="filters.query"
+              type="search"
+              placeholder="Search titles"
+              autocomplete="off"
+              class="min-h-11 w-full rounded-control border border-line-strong bg-surface py-2 pl-10 pr-3 text-body text-ink placeholder:text-ink-subtle focus-visible:outline-relic-gold"
+              @keydown.enter.prevent="jumpToFirstMatch"
+            >
+          </label>
+          <button
+            type="button"
+            :class="[toolButton, 'pointer-events-auto', filtersOpen || (active && !filters.query) ? 'border-doom-green-bright' : '']"
+            :aria-expanded="filtersOpen"
+            aria-controls="map-filters"
+            :aria-label="'Filters'"
+            @click="filtersOpen = !filtersOpen"
           >
-        </label>
+            <SlidersHorizontal :size="18" aria-hidden="true" />
+            <span class="hidden xl:inline">Filters</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-2 md:order-4">
+          <button v-if="mode === 'map'" type="button" :class="[toolButton, 'pointer-events-auto max-sm:min-w-11 max-sm:px-0']" aria-label="List view" @click="mode = 'list'">
+            <List :size="18" aria-hidden="true" />
+            <span class="hidden xl:inline">List</span>
+          </button>
+          <button v-else type="button" :class="[toolButton, 'pointer-events-auto max-sm:min-w-11 max-sm:px-0']" aria-label="Map view" @click="showMap">
+            <MapIcon :size="18" aria-hidden="true" />
+            <span class="hidden xl:inline">Map</span>
+          </button>
+          <NuxtLink to="/achievements" :class="[toolButton, 'pointer-events-auto border-relic-gold/60 text-gold-soft max-sm:px-2.5']" :aria-label="`Achievement cards, ${watchedCount} unlocked`">
+            <Trophy :size="18" aria-hidden="true" />
+            <span class="hidden sm:inline">Cards</span>
+            <span class="tabular-nums">{{ watchedCount }}</span>
+          </NuxtLink>
+        </div>
 
-        <button
-          type="button"
-          :class="[toolButton, 'pointer-events-auto', filtersOpen || (active && !filters.query) ? 'border-doom-green-bright' : '']"
-          :aria-expanded="filtersOpen"
-          aria-controls="map-filters"
-          @click="filtersOpen = !filtersOpen"
-        >
-          <SlidersHorizontal :size="18" aria-hidden="true" />
-          Filters
-        </button>
-
-        <button
-          v-if="mode === 'map'"
-          type="button"
-          :class="[toolButton, 'pointer-events-auto']"
-          @click="mode = 'list'"
-        >
-          <List :size="18" aria-hidden="true" />
-          List view
-        </button>
-        <button v-else type="button" :class="[toolButton, 'pointer-events-auto']" @click="showMap">
-          <MapIcon :size="18" aria-hidden="true" />
-          Map view
-        </button>
+        </div>
       </div>
 
       <div v-show="filtersOpen" id="map-filters" class="pointer-events-auto max-w-xl">
@@ -249,6 +272,29 @@ const toolButton =
       <UiButton variant="secondary" @click="clearFilters">Clear filters</UiButton>
     </div>
 
+    <JourneyRouteStrip
+      v-if="!selected"
+      :next-title="currentNode?.item.title ?? null"
+      :order="currentNode?.kind === 'main' ? currentNode.order : null"
+      :watched="watchedCount"
+      :total="mainIds.length"
+      :pace="routePace"
+      :share-label="`${title}:`"
+      :over-map="mode === 'map'"
+      @open="currentId && select(currentId)"
+      @reset="progress.resetWatched()"
+    />
+
+    <!-- Crawlable copy of the route: the map itself is drawn in the browser, so this is what search engines and screen readers get first. -->
+    <section class="sr-only" :aria-label="`${title}, in order`">
+      <h2>{{ title }}: what to watch before Avengers: Doomsday, in order</h2>
+      <ol>
+        <li v-for="n in layout.nodes.filter((m) => m.kind === 'main')" :key="n.id">
+          {{ n.kind === 'main' ? n.order : '' }}. {{ n.item.title }} ({{ n.item.release_year }}, {{ n.item.type }}). {{ n.item.doomsday_connection }}
+        </li>
+      </ol>
+    </section>
+
     <!-- Title screen: opens over the map; "Timeline" returns to it. -->
     <JourneyTitleDetail
       v-if="selected"
@@ -257,6 +303,8 @@ const toolButton =
       :current="selected.id === currentId"
       :prev-id="neighbourId(-1)"
       :next-id="neighbourId(1)"
+      :prev-title="neighbourTitle(-1)"
+      :next-title="neighbourTitle(1)"
       :route="route"
       @timeline="closePreview"
       @go="select"

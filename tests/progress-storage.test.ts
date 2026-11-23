@@ -245,3 +245,17 @@ describe('watched episodes', () => {
     expect(bad.state.episodes).toEqual({ marvel_048: [1] })
   })
 })
+
+describe('reset', () => {
+  it('clears titles and episodes but keeps the display name', () => {
+    const s = newStore(fakeStorage().storage)
+    s.hydrate()
+    s.setWatched('marvel_001', true)
+    s.setEpisodeWatched('marvel_048', 1001, true)
+    s.setDisplayName('Nick')
+    s.resetWatched()
+    expect(s.state.titles).toEqual({})
+    expect(s.state.episodes).toEqual({})
+    expect(s.state.preferences.displayName).toBe('Nick')
+  })
+})
