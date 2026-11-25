@@ -63,7 +63,13 @@ function finish() {
 onMounted(async () => {
   // Reduced motion: no full-screen video, go straight to the map.
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return finish()
-  src.value = window.matchMedia('(min-width: 768px)').matches ? '/media/intro-1080.mp4' : '/media/intro-720.mp4'
+  // Whole file first (see utils/intro-video.ts); the black screen with Skip shows meanwhile. A failed or slow (20 s) download skips the intro.
+  try {
+    src.value = await Promise.race([preloadIntro(), new Promise<never>((_, no) => setTimeout(() => no(new Error('slow')), 20000))])
+  } catch {
+    return finish()
+  }
+  if (leaving.value) return // skipped while loading
   await nextTick()
   skip.value?.focus({ preventScroll: true })
   const v = video.value

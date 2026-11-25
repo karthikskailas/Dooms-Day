@@ -18,6 +18,7 @@ onMounted(() => {
   progress.hydrate()
   name.value = progress.state.value.preferences.displayName ?? ''
   input.value?.focus()
+  preloadIntro().catch(() => {}) // start the intro download while the player types a name
 })
 
 function enter() {

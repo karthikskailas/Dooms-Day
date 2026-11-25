@@ -416,3 +416,10 @@ The procedural vector tree and the growth intro animation were built and then **
 - Footer link "Report a mistake" (`app/components/layout/FeedbackButton.vue`, in `SiteFooter.vue`) opens a native dialog: message (5-1000 chars), optional contact, page path sent automatically.
 - `POST /api/feedback` (`server/api/feedback.post.ts`) saves to the existing `COLLECTORS` KV under keys `feedback:<ISO time>-<rand>`; 5 per hour per address (in memory). Read them in Cloudflare dashboard > Workers & Pages > KV > COLLECTORS, prefix `feedback:`. Locally they land in `.data/collectors/feedback/`.
 - Checked in dev at 390px: footer is 62px tall, no page scroll, dialog opens, send shows thank-you, entry saved. Not checked: production Cloudflare KV write, 768/1440 screenshots, keyboard run. The landing and Achievements pages (layout `bare`) have no footer, so no button there.
+
+## Intro video loading (2026-11-25)
+
+- Cause found on the live site: Cloudflare Pages answers a `Range` request with `200` and the whole file (no `Accept-Ranges`, no 206). iPhone Safari will not play a video from such a server, and every browser had to start the 8 MB download only when the intro began.
+- Fix: `app/utils/intro-video.ts` downloads the intro whole and plays it from a blob URL. `NamePrompt.vue` starts the download when it opens (while the player types), `MapIntro.vue` awaits the same promise (20 s limit, then skips the intro; Skip works while loading).
+- Re-encoded both files (moov already at the front): `intro-1080.mp4` 8.3 MB to 4.1 MB, `intro-720.mp4` 3.8 MB to 2.6 MB (720 file is now 1280x576, crf 29).
+- Checked in dev at 390px: file fetched at the name prompt, intro plays from `blob:` URL. Not checked: a real iPhone, the deployed site, slow-network timing. The landing YouTube backdrop (desktop) was not changed.
