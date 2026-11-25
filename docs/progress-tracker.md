@@ -410,3 +410,9 @@ The procedural vector tree and the growth intro animation were built and then **
 - Reduced motion: global CSS already shortens animation; `MapIntro.vue` now skips the intro video when `prefers-reduced-motion` is set. The landing YouTube backdrop still autoplays muted by owner directive (see `HeroBackdrop.vue`).
 - Code check of labels: icon buttons have `aria-label`, inputs have labels. No automated or screen-reader audit, no keyboard run, no contrast measurement, no real phone, QR code not scanned.
 - Verified: lint, `pnpm build`, built server returns 200 for `/sitemap.xml`, `/favicon.svg`; Clarity tag and favicon link in HTML. Not verified: Clarity receiving data, favicon in a browser tab.
+
+## Report a mistake (2026-11-25)
+
+- Footer link "Report a mistake" (`app/components/layout/FeedbackButton.vue`, in `SiteFooter.vue`) opens a native dialog: message (5-1000 chars), optional contact, page path sent automatically.
+- `POST /api/feedback` (`server/api/feedback.post.ts`) saves to the existing `COLLECTORS` KV under keys `feedback:<ISO time>-<rand>`; 5 per hour per address (in memory). Read them in Cloudflare dashboard > Workers & Pages > KV > COLLECTORS, prefix `feedback:`. Locally they land in `.data/collectors/feedback/`.
+- Checked in dev at 390px: footer is 62px tall, no page scroll, dialog opens, send shows thank-you, entry saved. Not checked: production Cloudflare KV write, 768/1440 screenshots, keyboard run. The landing and Achievements pages (layout `bare`) have no footer, so no button there.

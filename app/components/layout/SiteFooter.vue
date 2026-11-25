@@ -15,6 +15,9 @@ import { Heart } from 'lucide-vue-next'
           <a href="https://linkspaces.me/karthikskailas" target="_blank" rel="noopener noreferrer" class="font-semibold text-ink underline underline-offset-2 transition-colors duration-150 hover:text-gold-soft">Karthik</a>
           for Marvel fans
         </span>
+        <span class="mx-2 max-md:hidden" aria-hidden="true">·</span>
+        <br class="md:hidden">
+        <LayoutFeedbackButton />
       </p>
     </LayoutPageContainer>
   </footer>
