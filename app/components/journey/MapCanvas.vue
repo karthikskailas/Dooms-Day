@@ -53,6 +53,7 @@ const freeRect = () => {
 const nodeById = (id: string) => props.layout.nodes.find((n) => n.id === id)
 
 function go(next: View, animate = true, ms = 350) {
+  pending = null
   animating.value = animate
   duration.value = ms
   view.value = next
@@ -164,10 +165,24 @@ let dragging = false
 let suppressClick = false
 let lastPinch: { dist: number; cx: number; cy: number } | null = null
 
-const local = (e: PointerEvent) => {
-  const r = el.value!.getBoundingClientRect()
-  return { x: e.clientX - r.left, y: e.clientY - r.top }
+// Touch input arrives faster than frames and reading the element's rect on every move forces a layout, which is what made
+// swiping on phones lag. So: the rect is read once per gesture, and view changes from moves are applied once per frame.
+let box = { left: 0, top: 0 }
+let pending: View | null = null
+let raf = 0
+const current = () => pending ?? view.value
+function setView(v: View) {
+  pending = v
+  if (!raf)
+    raf = requestAnimationFrame(() => {
+      raf = 0
+      if (pending) view.value = pending
+      pending = null
+    })
 }
+onBeforeUnmount(() => cancelAnimationFrame(raf))
+
+const local = (e: PointerEvent) => ({ x: e.clientX - box.left, y: e.clientY - box.top })
 const pinchState = () => {
   const [a, b] = [...pointers.values()]
   return { dist: Math.hypot(a!.x - b!.x, a!.y - b!.y), cx: (a!.x + b!.x) / 2, cy: (a!.y + b!.y) / 2 }
@@ -177,6 +192,10 @@ let downAt = { x: 0, y: 0 }
 function onPointerDown(e: PointerEvent) {
   if (e.pointerType === 'mouse' && e.button !== 0) return
   animating.value = false
+  if (pointers.size === 0) {
+    const r = el.value!.getBoundingClientRect()
+    box = { left: r.left, top: r.top }
+  }
   pointers.set(e.pointerId, local(e))
   if (pointers.size === 1) {
     downAt = { ...local(e) }
@@ -196,18 +215,25 @@ function onPointerMove(e: PointerEvent) {
 
   if (pointers.size >= 2 && lastPinch) {
     const now = pinchState()
-    const zoomed = zoomAt(view.value, lastPinch.cx, lastPinch.cy, view.value.k * (now.dist / lastPinch.dist))
-    view.value = { ...zoomed, x: zoomed.x + (now.cx - lastPinch.cx), y: zoomed.y + (now.cy - lastPinch.cy) }
+    const v = current()
+    const zoomed = zoomAt(v, lastPinch.cx, lastPinch.cy, v.k * (now.dist / lastPinch.dist))
+    setView({ ...zoomed, x: zoomed.x + (now.cx - lastPinch.cx), y: zoomed.y + (now.cy - lastPinch.cy) })
     lastPinch = now
     moved = true
     return
   }
+  let dx = p.x - prev.x
+  let dy = p.y - prev.y
   if (!dragging && Math.hypot(p.x - downAt.x, p.y - downAt.y) > DRAG_THRESHOLD) {
     dragging = true
     el.value?.setPointerCapture(e.pointerId)
+    // Catch up with the finger: the first few pixels were spent on the threshold.
+    dx = p.x - downAt.x
+    dy = p.y - downAt.y
   }
   if (dragging) {
-    view.value = { ...view.value, x: view.value.x + p.x - prev.x, y: view.value.y + p.y - prev.y }
+    const v = current()
+    setView({ ...v, x: v.x + dx, y: v.y + dy })
     moved = true
   }
 }
@@ -236,7 +262,8 @@ function onWheel(e: WheelEvent) {
   const factor = Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0015))
   animating.value = false
   moved = true
-  view.value = zoomAt(view.value, e.clientX - r.left, e.clientY - r.top, view.value.k * factor)
+  const v = current()
+  setView(zoomAt(v, e.clientX - r.left, e.clientY - r.top, v.k * factor))
 }
 
 // ---------- Keyboard ----------
